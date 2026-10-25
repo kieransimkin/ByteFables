@@ -1,0 +1,21 @@
+{
+  "name": "bytefables",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic public identities and experimental reversible binary stories for the DanceFlow ecosystem",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "exports": {
+    ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" }
+  },
+  "types": "./dist/index.d.ts",
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --project tsconfig.json --noEmit",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "check": "npm run typecheck && npm run test"
+  },
+  "devDependencies": { "typescript": "5.8.3" },
+  "license": "MIT"
+}

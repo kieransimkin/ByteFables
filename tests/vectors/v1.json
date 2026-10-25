@@ -1,0 +1,31 @@
+{
+  "description": "ByteFables prototype-v1 canonical vectors; no secret material",
+  "identity": [
+    {
+      "namespace": "danceflow",
+      "kind": "node-id",
+      "hex": "000102ff",
+      "digestHex": "63284e2c78a88440be8ceedca69dc3e195e494a6f5cf6ebf7356904bc69ee058",
+      "fingerprint": "bf1-63284e2c78a88440be8ceedc",
+      "svgSha256": "2ea0901d92713025fb0c17f196e4b4f2e525d086ca6ec719d957e6ffaba7dc82"
+    },
+    {
+      "namespace": "test",
+      "kind": "opaque",
+      "hex": "",
+      "digestHex": "11c9717a52b4b71029eaf3f38edbdccb856fe7b21339fd20608098c9287aa1ea",
+      "fingerprint": "bf1-11c9717a52b4b71029eaf3f3",
+      "svgSha256": "8f3ed212889ff52dc42899b8452a9d0d5c431ee8d20dc6b34f2b43339bfe8f7e"
+    }
+  ],
+  "story": [
+    {
+      "hex": "",
+      "text": "BYTEFABLES-STORY-PROTOTYPE-1\nThe quiet crab regularly rests.\nAt dawn the shy badger rests.\nThe happy badger always rests.\nAt dawn the brave badger ambles.\nThe brave badger always rests.\nThe brave bat periodically rests.\nAt dawn the zany hare sleeps.\nAt dawn the curious otter dances."
+    },
+    {
+      "hex": "000102ff",
+      "text": "BYTEFABLES-STORY-PROTOTYPE-1\nThe quiet crab regularly rests.\nAt dawn the shy badger rests.\nThe happy badger always rests.\nAt dawn the brave badger ambles.\nThe brave badger always rests.\nThe bright badger always rests.\nThe brave badger regularly rests.\nThe calm wolf sporadically rests.\nAt dawn the zany fox sings.\nAt dawn the bright hare sleeps.\nThe daring hare always rests."
+    }
+  ]
+}
