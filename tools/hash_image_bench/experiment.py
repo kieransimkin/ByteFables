@@ -21,7 +21,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[2]
 VERSION = 'bytefables.hash-image-experiment.v1'
-STRATEGIES = ('direct', 'narrative', 'structured', 'compact', 'scene', 'contrasts')
+STRATEGIES = ('direct', 'narrative', 'structured', 'compact', 'scene', 'contrasts', 'fractal')
 MAX_OUTPUT_TEXT = 32768
 
 
@@ -50,18 +50,33 @@ def validate_public_hex(s):
     return s.lower()
 
 
-def bitplan(public_hex, namespace='danceflow', kind='node-id', *, node_executable='node'):
-    """Canonical planning uses ByteFables TS, not a second inconsistent Python bit map."""
+def bitplan(public_hex, namespace='danceflow', kind='node-id', *, node_executable='node', short_bytes=None):
+    """Canonical planning uses ByteFables TS, not a second inconsistent Python bit map.
+
+    With short_bytes, the FULL original value is passed only to the local
+    ByteFables CLI; the returned ledger operates on the shortened public bytes.
+    """
     public_hex = validate_public_hex(public_hex)
     cmd = [node_executable, str(ROOT / 'bin' / 'bytefables.mjs'), 'visual-features',
            '--confirm-public', '--public-hex', public_hex, '--namespace', namespace,
            '--kind', kind, '--prompt-bits', '1']
+    if short_bytes is not None:
+        if type(short_bytes) is not int or short_bytes not in (3, 4, 8):
+            raise ValueError('Short public hashes must be 3, 4 or 8 bytes')
+        if len(public_hex) // 2 <= short_bytes:
+            raise ValueError('Shortening requires an original public hash longer than the output')
+        cmd += ['--derive-short-bytes', str(short_bytes)]
     result = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT, timeout=15, check=False)
     if result.returncode:
         raise ValueError('ByteFables public feature planner failed (build first)')
     data = json.loads(result.stdout)
-    if data.get('bitCount') != len(public_hex) * 4 or len(data.get('choices', [])) != data['bitCount']:
+    expected_bits = (short_bytes if short_bytes is not None else len(public_hex)//2) * 8
+    if data.get('bitCount') != expected_bits or len(data.get('choices', [])) != expected_bits:
         raise ValueError('Malformed canonical feature plan')
+    if short_bytes is not None:
+        meta = data.get('shortDerivation')
+        if not isinstance(meta, dict) or meta.get('bytes') != short_bytes or meta.get('hex') != data.get('publicHex'):
+            raise ValueError('Malformed short-hash provenance')
     return {k: v for k, v in data.items() if k not in ('selectedFeatures', 'baselinePrompt', 'baselineStyle', 'promptBitBudget', 'claimsBitExactImage')}
 
 
@@ -89,6 +104,8 @@ def descriptor(features, *, strategy):
         return 'A singular sculpted identity emblem in an original environment. Main features: ' + '; '.join(x for x in lines if x.startswith('main subject')) + '. Supporting details: ' + '; '.join(x for x in lines if not x.startswith('main subject')) + '. No text.'
     if strategy == 'contrasts':
         return 'Identity sculpture with positive desired features: ' + '; '.join(lines) + '. These choices are deliberate and must not be inverted. No text.'
+    if strategy == 'fractal':
+        return 'One original mathematical-fractal identity sculpture with nested self-similar structure, recursive patterns across several scales, and these explicit visual decisions: ' + '; '.join(lines) + '. Avoid letters, numbers, watermarks and logos.'
     raise ValueError('Unknown prompt strategy')
 
 
@@ -107,15 +124,35 @@ def audit_prompt(prompt, features):
 
 
 def prepare(public_hex: str, output_dir, *, namespace='danceflow', kind='node-id',
-            budgets=(8,16,32), strategies=('direct','narrative','structured'),
-            paired_bits=(), node_executable='node'):
-    """Construct a deterministic experiment matrix and baseline prompt candidates."""
-    base = validate_public_hex(public_hex)
+            budgets=None, strategies=('direct','narrative','structured'),
+            paired_bits=(), node_executable='node', short_bytes=None):
+    """Construct deterministic PUBLIC experiment cases from direct or shortened bytes.
+
+    In shortened mode, paired single-bit mutations are of the *derived short
+    bytes*, not the original hash. This preserves controlled one-feature-flip
+    experiments, but those counterfactual short values have no known parent.
+    """
+    input_hex = validate_public_hex(public_hex)
+    derivation = None
+    if short_bytes is not None:
+        original = bitplan(input_hex, namespace, kind, node_executable=node_executable,
+                           short_bytes=short_bytes)
+        derivation = original['shortDerivation']
+        base = original['publicHex']
+    else:
+        base = input_hex
+    total_bits = len(base) * 4
+    if budgets is None:
+        budgets = tuple(n for n in (8, 16, 32) if n <= total_bits)
+        if total_bits in (24, 64) and total_bits not in budgets:
+            budgets += (total_bits,)
+        if not budgets:
+            budgets = (total_bits,)
     if not budgets or not strategies:
         raise ValueError('Choose at least one feature budget and prompt strategy')
     if any(s not in STRATEGIES for s in strategies):
         raise ValueError('Unknown prompt strategy')
-    if any(type(n) is not int or not 1 <= n <= len(base) * 4 for n in budgets):
+    if any(type(n) is not int or not 1 <= n <= total_bits for n in budgets):
         raise ValueError('Feature budgets must be 1..hash bits')
     case_values = [('original', base, None)]
     if len(paired_bits) > 32:
@@ -146,14 +183,24 @@ def prepare(public_hex: str, output_dir, *, namespace='danceflow', kind='node-id
                 candidates.append(row)
     experiment = {
         'schema': VERSION, 'createdBy': 'ByteFables / public-only', 'namespace': namespace, 'kind': kind,
-        'basePublicHex': base, 'hashBits': len(base)*4, 'axisSpec': 'bytefables.visual-bits.v1',
+        'basePublicHex': base, 'hashBits': total_bits, 'axisSpec': 'bytefables.visual-bits.v1',
         'budgets': list(budgets), 'strategies': list(strategies), 'pairedBits': list(paired_bits),
         'cases': cases, 'candidates': candidates,
         'status': 'prompt-baseline-only',
         'guarantees': {'bitToChoiceMapping': 'lossless', 'promptImage': 'NOT reversible',
                        'modelFidelity': 'NOT measured', 'originalKeyExposure': 'PUBLIC INPUT ONLY'}
     }
-    experiment['experimentId'] = digest({k: experiment[k] for k in ('schema','namespace','kind','basePublicHex','budgets','strategies','pairedBits')})[:20]
+    if derivation is not None:
+        experiment['shortHashDerivation'] = derivation
+        experiment['longSourcePublicHex'] = input_hex
+        experiment['pairedBitDomain'] = 'derived-short-hash; synthetic, not parent-derived'
+        experiment['warning'] = 'The visual seed has at most %d bits of source information; output images do not recover them.' % total_bits
+    keys = ('schema','namespace','kind','basePublicHex','budgets','strategies','pairedBits')
+    fingerprint = {k: experiment[k] for k in keys}
+    if derivation is not None:
+        fingerprint.update(longSourcePublicHex=input_hex,
+                           shortHashScheme=derivation['scheme'])
+    experiment['experimentId'] = digest(fingerprint)[:20]
     persist(output_dir / 'experiment.json', experiment)
     return experiment
 
@@ -297,7 +344,10 @@ def compute_image_diagnostics(path):
 
 def render_local_models(experiment_dir, models_path, *, execute=False, max_jobs=48,
                         repetitions=2, seed_policy='paired', allow_cpu=False, only_model=None,
-                        only_writer=None, only_strategy=None, only_budget=None):
+                        only_writer=None, only_strategy=None, only_budget=None,
+                        latent_policy='gaussian', fractal_beta=1.0, fractal_mix=0.25,
+                        conditioning_policy='none', fractal_family='julia',
+                        fractal_seed_mode='avalanche', img2img_strength=0.55):
     """Controlled full writer x generator x seed crossing. Downloads never occur."""
     directory=Path(experiment_dir)
     experiment=load(directory/'experiment.json')
@@ -307,6 +357,34 @@ def render_local_models(experiment_dir, models_path, *, execute=False, max_jobs=
     if not models:raise ValueError('No selected local models')
     if not 1<=repetitions<=32 or not 1<=max_jobs<=100000:raise ValueError('Invalid job/repetition bounds')
     if seed_policy not in ('paired','identity'):raise ValueError('Unknown seed policy')
+    if latent_policy not in ('gaussian', 'fractal-spectral') or type(fractal_beta) not in (int,float) or not 0<=fractal_beta<=3 or type(fractal_mix) not in (int,float) or not 0<=fractal_mix<=0.8:
+        raise ValueError('Unsupported or out-of-range fractal latent recipe')
+    if latent_policy=='fractal-spectral' and fractal_mix==0:
+        raise ValueError('Fractal spectral experiment requires a nonzero mix; use gaussian for the control')
+    if (conditioning_policy not in ('none','fractal-img2img') or
+            fractal_family not in ('julia','burning-ship','ifs-fern','fbm') or
+            fractal_seed_mode not in ('avalanche','axis-isolated') or
+            type(img2img_strength) not in (int,float) or not .1<=img2img_strength<=.95):
+        raise ValueError('Invalid fractal image-conditioning policy')
+    if conditioning_policy=='fractal-img2img' and latent_policy!='gaussian':
+        raise ValueError('Separate fractal image conditioning and spectral latent noise into controlled experiments')
+    fractal_images={}
+    if conditioning_policy=='fractal-img2img':
+        report_path=directory/'fractal'/'report.json'
+        if not report_path.is_file():
+            raise ValueError('Generate public fractal source images with render-fractals before conditioned diffusion')
+        fractal_report=load(report_path)
+        if fractal_report.get('sourceExperimentId')!=experiment['experimentId']:
+            raise ValueError('Fractal source report belongs to a different experiment')
+        for r in fractal_report['receipts']:
+            if r['family']==fractal_family and r['seedMode']==fractal_seed_mode:
+                f=(directory/r['imageFile']).resolve()
+                if not f.is_relative_to(directory.resolve()) or not f.is_file() or \
+                   sha256(f.read_bytes()).hexdigest()!=r['imageSha256']:
+                    raise ValueError('Missing/tampered pre-rendered fractal reference')
+                fractal_images[r['caseId']]=r
+        if any(c['caseId'] not in fractal_images for c in experiment['cases']):
+            raise ValueError('Missing conditioned fractal case; re-run render-fractals for requested family/mode')
     jobs=[]
     for candidate in experiment['candidates']:
         if only_writer is not None and candidate['writerId'] != only_writer:continue
@@ -318,12 +396,20 @@ def render_local_models(experiment_dir, models_path, *, execute=False, max_jobs=
                 # Paired policy holds diffusion noise seed fixed across all hashes and prompt writers.
                 seed=int(digest({'exp': experiment['experimentId'], 'repeat':repeat})[:16],16) if seed_policy=='paired' else (
                     int(case['visualSeed64'])+repeat) % (2**64)
-                job={'jobId':digest({'candidate':candidate['candidateId'], 'model':model['id'],
-                                     'seed':seed, 'repeat':repeat})[:24],
+                key={'candidate':candidate['candidateId'], 'model':model['id'],
+                     'seed':seed, 'repeat':repeat}
+                if latent_policy!='gaussian':
+                    key.update({'latentPolicy':latent_policy,'beta':fractal_beta,'mix':fractal_mix})
+                if conditioning_policy!='none':
+                    key.update({'conditioning':conditioning_policy,'family':fractal_family,
+                                'seedMode':fractal_seed_mode,'strength':img2img_strength,
+                                'sourceSha256':fractal_images[case['caseId']]['imageSha256']})
+                job={'jobId':digest(key)[:24],
                      'caseId':candidate['caseId'], 'candidateId':candidate['candidateId'],
                      'writerId':candidate['writerId'], 'strategy':candidate['strategy'],
                      'bitBudget':candidate['bitBudget'], 'imageModel':model['id'],
-                     'repeat':repeat,'seed':seed,'seedPolicy':seed_policy}
+                     'repeat':repeat,'seed':seed,'seedPolicy':seed_policy,
+                     'latentPolicy':latent_policy,'conditioningPolicy':conditioning_policy}
                 jobs.append((job,model,candidate))
     if len(jobs)>max_jobs:raise ValueError(f'Requested {len(jobs)} model inference jobs exceeds --max-jobs {max_jobs}')
     if not execute:
@@ -346,6 +432,12 @@ def render_local_models(experiment_dir, models_path, *, execute=False, max_jobs=
         pipeline=DiffusionPipeline.from_pretrained(model['localPath'],local_files_only=True,
                     torch_dtype=dtype, use_safetensors=True)
         pipeline.to(device)
+        if conditioning_policy=='fractal-img2img':
+            if model.get('family') not in ('stable-diffusion','stable-diffusion-xl'):
+                raise ValueError('Fractal img2img research currently supports only local SD/SDXL text2img checkpoints')
+            from diffusers import AutoPipelineForImage2Image
+            # Reuse the existing local checkpoint components; never download weights.
+            pipeline=AutoPipelineForImage2Image.from_pipe(pipeline).to(device)
         for job,cfg,candidate in jobs:
             if cfg['id']!=model['id']:continue
             receipt=directory/'renders'/f"{job['jobId']}.json"
@@ -357,6 +449,27 @@ def render_local_models(experiment_dir, models_path, *, execute=False, max_jobs=
                     'generator':torch.Generator(device=device).manual_seed(job['seed'])}
             if cfg.get('negativePrompt',True) and candidate.get('negativePrompt'):
                 inputs['negative_prompt']=candidate['negativePrompt']
+            conditioning_receipt={}
+            if conditioning_policy=='fractal-img2img':
+                from PIL import Image
+                source=fractal_images[job['caseId']]
+                with Image.open(directory/source['imageFile']) as loaded:
+                    init=loaded.convert('RGB').resize((cfg['width'],cfg['height']), Image.Resampling.LANCZOS)
+                inputs['image']=init
+                inputs['strength']=img2img_strength
+                conditioning_receipt={'method':'fractal-image-init','family':fractal_family,
+                                      'seedMode':fractal_seed_mode,'strength':img2img_strength,
+                                      'sourceImageSha256':source['imageSha256'],
+                                      'sourceImageFile':source['imageFile'],
+                                      'resampling':'Pillow Lanczos to model width/height',
+                                      'note':'SD img2img conditioning, NOT guaranteed visual hash-bit recovery'}
+            latent_receipt={}
+            if latent_policy=='fractal-spectral':
+                # Unsupported model families fail instead of silently substituting
+                # another pipeline's latent shape or changing the experiment.
+                from .fractal_latents import inject_fractal_latents
+                latent_receipt=inject_fractal_latents(pipeline,cfg,inputs,job,
+                    beta=fractal_beta,mix=fractal_mix,device=device,dtype=dtype)
             token_audit={}
             # Record possible prompt truncation. A model's several tokenizers may have different caps.
             for tokenizer_name in ('tokenizer','tokenizer_2','tokenizer_3'):
@@ -374,7 +487,8 @@ def render_local_models(experiment_dir, models_path, *, execute=False, max_jobs=
                  'inferenceSettings':{'width':cfg['width'],'height':cfg['height'],
                                       'steps':cfg['steps'],'guidance':cfg['guidance'],
                                       'dtype':model.get('dtype','float16'),'device':device},
-                 'promptSha256':sha256(candidate['prompt'].encode('utf8')).hexdigest()}
+                 'promptSha256':sha256(candidate['prompt'].encode('utf8')).hexdigest(),
+                 'latentRecipe':latent_receipt, 'conditioningRecipe':conditioning_receipt}
             try:
                 if device=='cuda':torch.cuda.reset_peak_memory_stats()
                 begin=time.monotonic()

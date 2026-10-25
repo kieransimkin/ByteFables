@@ -1,0 +1,12 @@
+{
+  "scheme": "bytefables.sha256-left-truncated-public-identity.v1",
+  "namespace": "danceflow",
+  "kind": "node-id",
+  "sourceHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "parentDigestHex": "707eaff9ed0f89ef507893fbd713b57da921852f1c3901687e85e4c0a2cdd628",
+  "output": {
+    "3": "707eaf",
+    "4": "707eaff9",
+    "8": "707eaff9ed0f89ef"
+  }
+}

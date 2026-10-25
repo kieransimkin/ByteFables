@@ -8,6 +8,7 @@ import { PublicRecord, publicRecordDigest } from '../framing/public-record.js';
 import { encodeHex } from '../codecs/hex.js';
 import { ModuleMatrix } from '../ir/module-matrix.js';
 import { createVectorScene, type VectorScene } from '../ir/vector-scene.js';
+import { planPublicFractal, type FractalFamily, type FractalPalette } from '../identity/fractal-seed.js';
 
 export const FRAMERUDIMENTS_BRIDGE_VERSION = 'bytefables.framerudiments.layer.v1';
 export type IdentityPalette = 'neon' | 'mono' | 'pastel';
@@ -23,7 +24,7 @@ export interface IdentityLayerOptions extends LayerPlacement {
 export type FrameRudimentsLayer = Readonly<{
   readonly id: string;
   readonly type: 'rudiment';
-  readonly renderer: 'bytefables-pixel-v1' | 'bytefables-matrix-v1' | 'bytefables-scene-v1';
+  readonly renderer: 'bytefables-pixel-v1' | 'bytefables-matrix-v1' | 'bytefables-scene-v1' | 'bytefables-fractal-v1';
   readonly bounds: readonly [number, number, number, number];
   readonly motion: Readonly<{ kind: 'named'; pattern: 'circle' }>;
   readonly axes: readonly [number];
@@ -153,6 +154,42 @@ export function createFrameRudimentsSceneLayer(
     bridge_version: FRAMERUDIMENTS_BRIDGE_VERSION,
     scene: { width: checked.width, height: checked.height,
       primitives: checked.primitives.map(item => ({ ...item })) }
+  });
+}
+
+export interface FractalLayerOptions extends LayerPlacement {
+  readonly family?: FractalFamily;
+  readonly palette?: FractalPalette;
+  readonly quality?: 'draft' | 'standard';
+}
+
+/**
+ * Public data -> deterministic, registered FrameRudiments fractal generator.
+ * Only the frozen public digest and 8 explicitly chosen source bits reach the
+ * host; all effects, modulation and media rendering stay in FrameRudiments.
+ */
+export async function createFrameRudimentsFractalLayer(
+  record: PublicRecord, options: FractalLayerOptions
+): Promise<FrameRudimentsLayer> {
+  if (!options || !Array.isArray(options.bounds) || options.bounds.length !== 4) {
+    throw new TypeError('Fractal layer requires a bounded viewport');
+  }
+  const width = options.bounds[2]! - options.bounds[0]!;
+  const height = options.bounds[3]! - options.bounds[1]!;
+  if (!Number.isSafeInteger(width) || !Number.isSafeInteger(height) ||
+      width < 16 || height < 16 || width > 1024 || height > 1024 ||
+      width * height > 262144) {
+    throw new RangeError('Fractal layer viewport requires 16..1024 px and <=262144 source pixels');
+  }
+  const family = options.family ?? 'julia';
+  const palette = options.palette ?? 'neon';
+  const quality = options.quality ?? 'draft';
+  if (!['draft', 'standard'].includes(quality)) throw new TypeError('Invalid fractal quality');
+  const plan = await planPublicFractal(record, family, palette);
+  return base(options, 'bytefables-fractal-v1', {
+    bridge_version: FRAMERUDIMENTS_BRIDGE_VERSION,
+    family: plan.family, palette: plan.palette,
+    seed_hex: plan.seedHex, feature_bits: plan.featureBits, quality
   });
 }
 

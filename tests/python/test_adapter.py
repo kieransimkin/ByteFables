@@ -27,7 +27,8 @@ class TestByteFablesFrameRudiments(unittest.TestCase):
     def test_native_registration_contract_and_deterministic_identity(self):
         registry = register_bytefables_renderers(FakeRegistry())
         self.assertEqual(set(registry.factories), {
-            'bytefables-pixel-v1', 'bytefables-matrix-v1', 'bytefables-scene-v1'
+            'bytefables-pixel-v1', 'bytefables-matrix-v1', 'bytefables-scene-v1',
+            'bytefables-fractal-v1'
         })
         self.assertRaises(ValueError, register_bytefables_renderers, registry)
         options = { 'bridge_version': BRIDGE_VERSION, 'palette': 'neon',

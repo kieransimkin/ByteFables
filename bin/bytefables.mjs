@@ -5,7 +5,8 @@ import {
   executePublicFormat, decodePublicRecord, publicRecordFingerprint,
   createFrameRudimentsIdentityLayer, planPublicWatermark,
   encodeStoryV2, encodeScheduledStory, inspectStoryV2, createFrameRudimentsStoryPreview,
-  makeVisualBitPlan, choosePromptBits, composeBaselinePrompt
+  makeVisualBitPlan, choosePromptBits, composeBaselinePrompt,
+  createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes
 } from '../dist/index.js';
 
 const help = `ByteFables public-only CLI (no wallet/private-key support)
@@ -16,8 +17,13 @@ const help = `ByteFables public-only CLI (no wallet/private-key support)
       [--theme nature|technology|music|fantasy|science|humour] [--profile prefix|scheduled] [--stats]
   bytefables story-preview --confirm-public --public-hex HEX --namespace NS --kind KIND
       [--theme THEME] [--box 0,0,640,120] [--font-size N] [--max-sentences N]
+  bytefables short-hashes --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--bytes 3|4|8]    # no --bytes emits all three; long PUBLIC input only
   bytefables visual-features --confirm-public --public-hex HEX --namespace NS --kind KIND
-      [--prompt-bits 8|16|32|64|128|256] [--style direct|narrative|structured]
+      [--derive-short-bytes 3|4|8] [--prompt-bits N] [--style direct|narrative|structured]
+  bytefables fractal-layer --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--family julia|burning-ship|ifs-fern|fbm] [--palette neon|pastel|mono]
+      [--quality draft|standard] [--id ID] [--bounds 0,0,128,128]
   bytefables watermark-plan --confirm-public --public-hex HEX --namespace NS --kind KIND
       --carrier image|audio|video|text --mime-type MIME
       [--width N --height N] [--sample-rate N --channels N]
@@ -135,6 +141,25 @@ async function main(args) {
       });
       console.log(JSON.stringify(layer, null, 2)); return;
     }
+    case 'fractal-layer': {
+      const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace', '--kind',
+        '--id', '--bounds', '--family', '--palette', '--quality']);
+      requirePublic(opt);
+      if (!opt['--public-hex'] || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Fractal layer requires public hex, namespace and kind');
+      }
+      const rawBounds = opt['--bounds'] ?? '0,0,128,128';
+      if (!/^\d+,\d+,\d+,\d+$/.test(rawBounds)) throw new TypeError('Invalid layer bounds');
+      const record = new PublicRecord(ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace: opt['--namespace'], kind: opt['--kind']
+      }));
+      console.log(JSON.stringify(await createFrameRudimentsFractalLayer(record, {
+        id: opt['--id'] ?? 'bytefables-fractal', bounds: rawBounds.split(',').map(Number),
+        family: opt['--family'] ?? 'julia', palette: opt['--palette'] ?? 'neon',
+        quality: opt['--quality'] ?? 'draft'
+      }), null, 2));
+      return;
+    }
     case 'story-encode': {
       const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace', '--kind',
         '--theme', '--profile', '--stats']);
@@ -178,9 +203,28 @@ async function main(args) {
           fontSize: numberOpt('--font-size', 24),
           maxSentences: numberOpt('--max-sentences', 2) }), null, 2)); return;
     }
+    case 'short-hashes': {
+      const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace', '--kind', '--bytes']);
+      requirePublic(opt);
+      if (opt['--public-hex'] === undefined || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Missing public short-hash input');
+      }
+      const source = ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace: opt['--namespace'], kind: opt['--kind']
+      });
+      let hashes;
+      if (opt['--bytes'] === undefined) {
+        hashes = await deriveShortPublicHashes(source);
+      } else {
+        if (!/^(3|4|8)$/.test(opt['--bytes'])) throw new TypeError('Choose 3, 4 or 8 bytes');
+        hashes = [await deriveShortPublicHash(source, Number(opt['--bytes']))];
+      }
+      console.log(JSON.stringify({ hashes, warning: 'DISPLAY ONLY; preserve full public identity for lookup and verification' }, null, 2));
+      return;
+    }
     case 'visual-features': {
       const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace',
-        '--kind', '--prompt-bits', '--style']);
+        '--kind', '--prompt-bits', '--style', '--derive-short-bytes']);
       requirePublic(opt);
       if (opt['--public-hex'] === undefined || !opt['--namespace'] || !opt['--kind']) {
         throw new TypeError('Missing public visual-feature input');
@@ -188,12 +232,24 @@ async function main(args) {
       const source = ByteValue.public(decodeHex(opt['--public-hex']), {
         namespace: opt['--namespace'], kind: opt['--kind']
       });
-      const plan = await makeVisualBitPlan(source);
+      let derived = null;
+      if (opt['--derive-short-bytes'] !== undefined) {
+        if (!/^(3|4|8)$/.test(opt['--derive-short-bytes'])) {
+          throw new TypeError('Choose 3, 4 or 8 derived bytes');
+        }
+        derived = await deriveShortPublicHash(source, Number(opt['--derive-short-bytes']));
+      }
+      const selectedValue = derived ? ByteValue.public(decodeHex(derived.hex), {
+        namespace: source.namespace, kind: source.kind
+      }) : source;
+      const plan = await makeVisualBitPlan(selectedValue);
       const rawBudget = opt['--prompt-bits'] ?? String(Math.min(12, plan.bitCount));
       if (!/^\d+$/.test(rawBudget)) throw new TypeError('Invalid prompt bit budget');
       const budget = Number(rawBudget);
       const style = opt['--style'] ?? 'direct';
-      console.log(JSON.stringify({ ...plan, promptBitBudget: budget,
+      console.log(JSON.stringify({ ...plan,
+        ...(derived ? { shortDerivation: derived } : {}),
+        promptBitBudget: budget,
         selectedFeatures: choosePromptBits(plan, budget),
         baselinePrompt: composeBaselinePrompt(plan, budget, style),
         baselineStyle: style,

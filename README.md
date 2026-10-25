@@ -157,6 +157,52 @@ See [experimental specification](docs/specs/hash-image-benchmark-v1.md),
 [compact-model research](docs/IMAGE_MODEL_RESEARCH.md) and
 [example local checkpoint configs](experiments/tiny-image-models.example.json).
 
+
+## Experimental fractal seeding (PUBLIC hashes only)
+
+ByteFables now prepares versioned hash-derived fractal parameters and registers
+`bytefables-fractal-v1` into **FrameRudiments'** existing source/effects pipeline.
+Four CPU experimental generators (Julia, Burning Ship, IFS fern, fractal fBm)
+use eight named opposing binary features; all remaining public hash bytes
+influence the deterministic avalanche seed, but **no image is reversible**.
+
+A new `render-fractals` benchmark command compares original/one-bit-flip sources
+under two seeding policies: `avalanche` (new hash = new seed) and `axis-isolated`
+(fixed source seed to measure just the first eight feature controls). PNG receipts,
+independent checksums, per-family diagnostics, pairwise differences and an
+offline gallery are produced. It runs locally on CPU without downloading model weights.
+
+The optional local image-model runner also supports SD/SDXL-only experimental
+`--latent-policy fractal-spectral` (correlated initial noise) and
+`--conditioning-policy fractal-img2img` (a checksum-verified source fractal
+image). **Both require independent GPU/quality experiments; neither has been
+validated to improve outputs**. They must not be conflated with reversible key
+storage, credential creation, watermarking, or image identity authentication.
+
+See [fractal-seeding contract, research, instructions and experimental controls](docs/specs/fractal-seeding-v1.md).
+
+## Compact public identities — 3, 4 and 8 bytes
+
+The standardised **leftmost SHA-256 truncation** method is used for compact,
+version-labelled *display aliases*. ByteFables first hashes the entire typed
+PUBLIC value with its unchanged domain-separated identity SHA-256, then takes
+3/4/8 bytes. These aliases are 24/32/64 bits respectively; shorter forms are
+prefixes of longer ones. The original full public identity remains authoritative.
+
+```sh
+npm run build
+node bin/bytefables.mjs short-hashes --confirm-public --public-hex 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f --namespace danceflow --kind node-id
+node bin/bytefables.mjs visual-features --confirm-public --public-hex 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f --namespace danceflow --kind node-id --derive-short-bytes 3 --prompt-bits 24
+python -m tools.hash_image_bench prepare --confirm-public --public-hex 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f --short-hash-bytes 8 --output _work/short-image-64
+```
+
+Directly supplied 3-, 4- and 8-byte PUBLIC hashes also work in the existing
+semantic feature planner and image/fractal benchmark paths. The default prompt
+budgets adapt to 24/32/64 bits. No short alias is collision-proof or a suitable
+cryptographic verifier, and expanding it into a 64-bit noise seed does not
+restore information lost by shortening. See
+[the normative format specification](docs/specs/short-public-hashes-v1.md).
+
 ## Development
 
 Requires Node.js >=20 and TypeScript 5.8.3. There are no runtime dependencies.

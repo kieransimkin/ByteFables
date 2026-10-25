@@ -848,3 +848,63 @@ against a frozen, one-bit-to-one-opposing-feature semantic contract. See
 **Exit:** no model ranking without actual inference; no "256-bit image" claim
 without an independent error-controlled exact decoder; no usable private key
 workflow in this module.
+
+
+## BF-W15: Fractal seeding and tiny-image generation experiments (experimental)
+
+**Source:** [BF-FRACTAL-001](specs/fractal-seeding-v1.md). This workstream is
+linked to Wave B public identity renderers, the FrameRudiments host integration,
+and the local tiny-LLM/image model benchmark. It is NOT part of secret archival.
+
+**F15.1 — Complete:** Domain-separated public-record fractal seed and fixed
+opposing feature axes; four bounded generator families registered into
+FrameRudiments; TS/Python vector and fail-closed style validation.
+
+**F15.2 — Complete:** CPU static-fractal gallery, original/single-bit-flip
+counterfactuals, avalanche vs fixed-seed trials, PNG receipts, checksums, pixel
+statistics and change metrics. 8 axes are explicitly manipulable, not 256
+recoverable bits. Both nondegenerate and collapsed outputs remain in reports.
+
+**F15.3 — Experimental code path:** Local SD/SDXL spectral-correlated-noise
+latents with paired Gaussian controls; explicit beta/mix and checkpoint
+validation. Requires actual model inference to make performance claims.
+
+**F15.4 — Experimental code path:** SHA-verified FrameRudiments fractal source
+image as local SD/SDXL image-to-image initial condition; adjustable strength.
+Requires real local checkpoint acceptance and output quality studies.
+
+**F15.5 — Next:** Score 1k+ public hashes and stratified bit flips across 16,
+32, 64 and 128px icons; human-blinded feature recognition; artist-controlled
+palette libraries; reject or mark degenerate seeds rather than cherry-picking.
+
+**F15.6 — Next:** Evaluate bounded Julia family parameter search, Newton basins,
+fractal flames, orbit traps, complex-polynomial symmetries, L-systems and
+transformable IFS; cross-runtime determinism fixtures and optional GPU kernels.
+The original GPL flam3 source must not be copied into this MIT package.
+
+**F15.7 — Later:** ControlNet/IP-Adapter where checkpoint support and licensing
+permit, deterministic fractal animations using native FrameRudiments clock,
+per-pixel identity shader themes and shared DanceRudiments parameters. Content
+provenance, source image verification and reduced-motion output are required.
+
+**Exit:** statistically supported comparative table of distinctive identity
+success rate, visual collisions, validated feature adherence, GPU/CPU costs and
+failure rates across direct fractal, normal Gaussian diffusion, structured
+fractal noise and fractal img2img. No ability to reconstruct original hash
+from art is claimed.
+
+## Compact public identity profiles: 24/32/64 bits (implemented)
+
+- New SHA-256 parent identity prefix aliases for 3-, 4-, 8-byte human/display
+  IDs, with strict format labels and immutable golden vectors. The unchanged
+  public identity digest remains authoritative.
+- Public-only registry adapters and CLI subcommand, optional shortening in
+  `visual-features`, and short-size-aware feature budgets in the image benchmark.
+- Semantic counterfactual flips remain distinguishable from original-input
+  avalanche tests; do not extrapolate high-bit diffusion seeds to additional
+  visual information capacity.
+- Future benchmark work: population-level collision measurements, recognisability
+  at icon sizes, independently scored model feature adherence and cross-family
+  visual collision/ambiguity studies.
+
+Normative details: [short-public-hashes-v1.md](specs/short-public-hashes-v1.md).

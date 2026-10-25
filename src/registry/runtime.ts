@@ -6,8 +6,10 @@ import { encodeExperimentalStory } from '../grammar/story.js';
 import { encodeStoryV2 } from '../grammar/story-v2.js';
 import { encodeScheduledStory } from '../grammar/scheduled-story.js';
 import { identityFingerprint } from '../identity/identity.js';
+import { deriveShortPublicHash } from '../identity/short-hash.js';
 import { renderPixelAvatar } from '../identity/pixel-avatar.js';
 import { makeVisualBitPlan } from '../identity/visual-bits.js';
+import { planPublicFractal } from '../identity/fractal-seed.js';
 import { createFrameRudimentsIdentityLayer } from '../engine/framerudiments.js';
 import { FORMAT_MANIFEST, getFormatManifest, type FormatManifestEntry, type FormatGuarantee } from './manifest.js';
 
@@ -48,9 +50,13 @@ const adapters: ReadonlyMap<string, (record: PublicRecord) => Promise<string | U
   ['encodeStoryV2', async (record: PublicRecord) => encodeStoryV2(record.value)],
   ['encodeScheduledStory', async (record: PublicRecord) => encodeScheduledStory(record.value)],
   ['identityFingerprint', async (record: PublicRecord) => identityFingerprint(record.value)],
+  ['deriveShortPublicHash24', async (record: PublicRecord) => (await deriveShortPublicHash(record.value, 3)).label],
+  ['deriveShortPublicHash32', async (record: PublicRecord) => (await deriveShortPublicHash(record.value, 4)).label],
+  ['deriveShortPublicHash64', async (record: PublicRecord) => (await deriveShortPublicHash(record.value, 8)).label],
   ['publicRecordFingerprint', async (record: PublicRecord) => publicRecordFingerprint(record)],
   ['renderPixelAvatar', async (record: PublicRecord) => renderPixelAvatar(record.value)],
   ['makeVisualBitPlan', async (record: PublicRecord) => JSON.stringify(await makeVisualBitPlan(record.value))],
+  ['planPublicFractal', async (record: PublicRecord) => JSON.stringify(await planPublicFractal(record))],
   ['makeFrameRudimentsIdentityLayer', async (record: PublicRecord) =>
     JSON.stringify(await createFrameRudimentsIdentityLayer(record, { id: 'bytefables-identity', bounds: [0, 0, 128, 128] }))]
 ]);

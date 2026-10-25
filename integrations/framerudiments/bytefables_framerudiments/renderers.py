@@ -255,7 +255,10 @@ def register_bytefables_renderers(registry):
     the host's layer-scoped ``post_effects``, ``effect_graph`` and native
     DanceRudiments modulation remain the only effect pipelines.
     """
+    from .fractals import FractalRenderer
+
     for key, renderer in (
+        ("bytefables-fractal-v1", FractalRenderer),
         ("bytefables-pixel-v1", PixelRenderer),
         ("bytefables-matrix-v1", MatrixRenderer),
         ("bytefables-scene-v1", VectorSceneRenderer),

@@ -152,3 +152,33 @@ audited and executed in an operator-controlled sandbox with resource limits.
 FrameRudiments owns all production rendering and effects; ByteFables holds
 raw source render receipts strictly as benchmark evidence. Auto-evaluation
 with CLIP is a fallible proxy, not proof of recoverable hash bits.
+
+
+## Fractal identity and small-model benchmarking (experimental)
+
+The new public fractal generator accepts only a context-derived 256-bit digest
+and eight validated, explicit public feature bits. Its output is **not** a
+reversible encoding, secret backup, watermark, authentication mark, or
+cryptographic uniqueness proof. Different public inputs can produce the same
+or similar visible pattern. An image model's inferred fidelity is never an
+identity check. Runtime classification of caller-supplied public data is still
+not a reliable secret-memory boundary.
+
+The optional spectral latent-noise experiment changes the model's Gaussian
+prior and has no security or quality guarantee. The optional img2img experiment
+reads only checksum-verified locally produced public fractal images and fails
+if source files are missing or changed. Model checkpoints must exist locally;
+no implicit downloads, remote prompt endpoints, arbitrary scripts or model
+licence promises are included. Keep the result gallery and full hex values
+PUBLIC; never supply wallet seeds, key material or private records.
+
+## Short public hash aliases (v1)
+
+Optional 3/4/8-byte public display aliases follow SHA-256 left truncation. They
+are not cryptographically unique or authenticators. A visual seed derived from
+24 or 32 source bits has at most that many bits of possible variation, even
+if SHA-256 produces a 256-bit visual-seed digest. Never use a shortened public
+alias in place of an original node ID, address, full digest, signature or MAC;
+collisions are expected at scales described in `docs/specs/short-public-hashes-v1.md`.
+Only publicly classified inputs are admitted, and misclassification by callers
+remains a security boundary that TypeScript alone cannot enforce.

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 from .experiment import (STRATEGIES, prepare, add_llm_candidates, render_local_models,
                          report_experiment, validate_model_file, evaluate_local_clip, export_framerudiments_assets)
+from .fractal import FAMILIES, MODES, render_fractal_study
 
 
 def positive_integers(value):
@@ -23,9 +24,13 @@ def main():
     prep.add_argument('--namespace',default='danceflow')
     prep.add_argument('--kind',default='node-id')
     prep.add_argument('--output',required=True)
-    prep.add_argument('--budgets',type=positive_integers,default=(8,16,32))
+    prep.add_argument('--budgets',type=positive_integers,default=None,
+                      help='Defaults adapt to 3/4/8-byte hashes: 8,16,24 / 8,16,32 / 8,16,32,64')
     prep.add_argument('--strategies',default='direct,narrative,structured')
-    prep.add_argument('--paired-bits',type=positive_integers,default=())
+    prep.add_argument('--paired-bits',type=positive_integers,default=(),
+                      help='Flips derived short-hash bits when --short-hash-bytes is used')
+    prep.add_argument('--short-hash-bytes',type=int,choices=(3,4,8),
+                      help='Derive this 24/32/64-bit public hash from the longer input first')
     prep.add_argument('--node',default='node')
     prompt=subs.add_parser('write-prompts',help='Use local OpenAI-compatible LLM to write prompts')
     prompt.add_argument('--experiment',required=True)
@@ -47,6 +52,20 @@ def main():
     render.add_argument('--only-writer')
     render.add_argument('--only-strategy')
     render.add_argument('--only-budget',type=int)
+    render.add_argument('--latent-policy',choices=['gaussian','fractal-spectral'],default='gaussian')
+    render.add_argument('--fractal-beta',type=float,default=1.0)
+    render.add_argument('--fractal-mix',type=float,default=0.25)
+    render.add_argument('--conditioning-policy',choices=['none','fractal-img2img'],default='none')
+    render.add_argument('--fractal-family',choices=FAMILIES,default='julia')
+    render.add_argument('--fractal-seed-mode',choices=MODES,default='avalanche')
+    render.add_argument('--img2img-strength',type=float,default=0.55)
+    fractal=subs.add_parser('render-fractals',help='CPU deterministic FrameRudiments fractal sources, paired-bit study; no neural weights')
+    fractal.add_argument('--experiment',required=True)
+    fractal.add_argument('--families',default=','.join(FAMILIES))
+    fractal.add_argument('--modes',default=','.join(MODES))
+    fractal.add_argument('--size',type=int,default=128)
+    fractal.add_argument('--quality',choices=['draft','standard'],default='draft')
+    fractal.add_argument('--max-images',type=int,default=100)
     report=subs.add_parser('report',help='Aggregate prompt checks and actual image receipts')
     report.add_argument('--experiment',required=True)
     report.add_argument('--blind-judgments',help='JSONL with jobId and answers, made without seeing hash choices')
@@ -64,9 +83,12 @@ def main():
     if args.command=='prepare':
         out=prepare(args.public_hex,args.output,namespace=args.namespace,kind=args.kind,
                     budgets=args.budgets,strategies=tuple(args.strategies.split(',')),
-                    paired_bits=args.paired_bits,node_executable=args.node)
+                    paired_bits=args.paired_bits,node_executable=args.node,
+                    short_bytes=args.short_hash_bytes)
         result={'experimentId':out['experimentId'],'cases':len(out['cases']),
-                'candidates':len(out['candidates']),'bitCount':out['hashBits'],'path':str(Path(args.output).resolve())}
+                'candidates':len(out['candidates']),'bitCount':out['hashBits'],
+                'shortHashDerivation':out.get('shortHashDerivation'),
+                'path':str(Path(args.output).resolve())}
     elif args.command=='write-prompts':
         if not 0<=args.temperature<=2 or not 1<=args.max_calls<=1000 or args.seed<0:
             p.error('Invalid LLM parameter bounds')
@@ -77,7 +99,14 @@ def main():
         result=render_local_models(args.experiment,args.models,execute=args.execute,
             max_jobs=args.max_jobs,repetitions=args.repetitions,
             seed_policy=args.seed_policy,allow_cpu=args.allow_cpu,only_model=args.only_model,
-            only_writer=args.only_writer,only_strategy=args.only_strategy,only_budget=args.only_budget)
+            only_writer=args.only_writer,only_strategy=args.only_strategy,only_budget=args.only_budget,
+            latent_policy=args.latent_policy,fractal_beta=args.fractal_beta,fractal_mix=args.fractal_mix,
+            conditioning_policy=args.conditioning_policy,fractal_family=args.fractal_family,
+            fractal_seed_mode=args.fractal_seed_mode,img2img_strength=args.img2img_strength)
+    elif args.command=='render-fractals':
+        result=render_fractal_study(args.experiment, families=tuple(args.families.split(',')),
+            modes=tuple(args.modes.split(',')), size=args.size, quality=args.quality,
+            max_images=args.max_images)
     elif args.command=='report':
         result=report_experiment(args.experiment,judgments_path=args.blind_judgments)
     elif args.command=='score-clip':

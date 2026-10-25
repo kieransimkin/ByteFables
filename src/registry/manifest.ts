@@ -174,6 +174,38 @@ export const FORMAT_MANIFEST = validateFormatManifest([
     carriers: ['text'], integrity: 'none', errorCorrection: 'none', deterministic: true,
     offlineSafe: true, runtime: ['node', 'browser'], adapter: 'identityFingerprint'
   },
+  // Short display aliases: fixed-prefix projection of the FULL canonical 256-bit public identity.
+  // Cannot be used for authentication or full node lookup.
+  {
+    formatId: 'identity/short-hash-24-v1', version: '1.0.0', category: 'identity', maturity: 'foundation',
+    guarantee: 'identity-only', input: 'public-record', sensitivity: 'public-only',
+    reference: 'https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/short-public-hashes-v1.md',
+    standardStatus: 'internal', license: 'MIT', referenceVectors: 'tests/vectors/short-public-hashes-v1.json',
+    decoder: null, minInputBytes: 4, maxInputBytes: 1048576, maxOutputBytes: 48,
+    capacity: 'digest-prefix', estimatedExpansion: null, mediaTypes: ['text/plain'],
+    carriers: ['text'], integrity: 'none', errorCorrection: 'none', deterministic: true,
+    offlineSafe: true, runtime: ['node', 'browser'], adapter: 'deriveShortPublicHash24'
+  },
+  {
+    formatId: 'identity/short-hash-32-v1', version: '1.0.0', category: 'identity', maturity: 'foundation',
+    guarantee: 'identity-only', input: 'public-record', sensitivity: 'public-only',
+    reference: 'https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/short-public-hashes-v1.md',
+    standardStatus: 'internal', license: 'MIT', referenceVectors: 'tests/vectors/short-public-hashes-v1.json',
+    decoder: null, minInputBytes: 5, maxInputBytes: 1048576, maxOutputBytes: 48,
+    capacity: 'digest-prefix', estimatedExpansion: null, mediaTypes: ['text/plain'],
+    carriers: ['text'], integrity: 'none', errorCorrection: 'none', deterministic: true,
+    offlineSafe: true, runtime: ['node', 'browser'], adapter: 'deriveShortPublicHash32'
+  },
+  {
+    formatId: 'identity/short-hash-64-v1', version: '1.0.0', category: 'identity', maturity: 'foundation',
+    guarantee: 'identity-only', input: 'public-record', sensitivity: 'public-only',
+    reference: 'https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/short-public-hashes-v1.md',
+    standardStatus: 'internal', license: 'MIT', referenceVectors: 'tests/vectors/short-public-hashes-v1.json',
+    decoder: null, minInputBytes: 9, maxInputBytes: 1048576, maxOutputBytes: 48,
+    capacity: 'digest-prefix', estimatedExpansion: null, mediaTypes: ['text/plain'],
+    carriers: ['text'], integrity: 'none', errorCorrection: 'none', deterministic: true,
+    offlineSafe: true, runtime: ['node', 'browser'], adapter: 'deriveShortPublicHash64'
+  },
   {
     formatId: 'identity/record-fingerprint-v1', version: '1.0.0', category: 'identity', maturity: 'foundation',
     guarantee: 'identity-only', input: 'public-record', sensitivity: 'public-only',
@@ -205,6 +237,17 @@ export const FORMAT_MANIFEST = validateFormatManifest([
     carriers: ['file', 'text'], integrity: 'none', errorCorrection: 'none',
     deterministic: true, offlineSafe: true, runtime: ['node', 'browser'],
     adapter: 'makeVisualBitPlan'
+  },
+  {
+    formatId: 'identity/fractal-seed-plan-v1', version: '1.0.0', category: 'identity',
+    maturity: 'experimental', guarantee: 'identity-only', input: 'public-record',
+    sensitivity: 'public-only',
+    reference: 'https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/fractal-seeding-v1.md',
+    standardStatus: 'internal', license: 'MIT', referenceVectors: 'tests/fractal.test.mjs',
+    decoder: null, minInputBytes: 1, maxInputBytes: 512, maxOutputBytes: 8192,
+    capacity: 'visual-bounded', estimatedExpansion: null, mediaTypes: ['application/json'],
+    carriers: ['file', 'text'], integrity: 'none', errorCorrection: 'none',
+    deterministic: true, offlineSafe: true, runtime: ['node', 'browser'], adapter: 'planPublicFractal'
   },
   {
     formatId: 'symbol/module-matrix-ir-v1', version: '1.0.0', category: 'symbol', maturity: 'foundation',

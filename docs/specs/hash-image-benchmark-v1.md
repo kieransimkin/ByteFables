@@ -74,6 +74,32 @@ If a genuinely recoverable image is required, overlay or embed a separately
 **verified** QR/matrix/other lossless encoding with real readback, using
 FrameRudiments' protected optical rendering profile, not this artistic codec.
 
+## Compact 24/32/64-bit profiles
+
+ByteFables supports direct PUBLIC 3-, 4- and 8-byte hash inputs or deterministic
+shortening from a longer typed PUBLIC hash. It uses the existing SHA-256
+identity digest and **leftmost 3/4/8-byte truncation**, not modulo or XOR folding.
+See [the short-hash specification](short-public-hashes-v1.md) for provenance,
+exact distribution assumptions and collision budgets.
+
+- Short profiles contain exactly **24, 32, 64 source bits**; no additional
+  distinguishable identities are created by deriving longer noise seeds.
+- Automatic experiment budgets: `8,16,24` for 3-byte; `8,16,32` for 4-byte;
+  and `8,16,32,64` for 8-byte. Explicit budgets over capacity fail.
+- `prepare --short-hash-bytes {3,4,8}` stores full input provenance, performs
+  the initial derivation once, and then treats the shortened bytes as the
+  benchmarked input. This is NOT equivalent to flipping a bit in the original
+  full digest before shortening.
+- `pairedBits` for shortened profiles refer to **short-hash bit positions**,
+  allowing clean one-feature counterfactual experiments. These modified aliases
+  are synthetic feature-control vectors, not necessarily derivable from a
+  known longer value.
+- Compare separate long-input avalanche experiments by flipping a long input
+  bit *before* the SHA-256 step, then examining the short-prefix difference.
+- Always report collisions at the level of the **actual shortened byte values**
+  as well as any subsequent visual collisions. Retain the complete canonical
+  parent ID as ground truth.
+
 ## Experiment matrix
 
 For each source value:

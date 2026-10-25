@@ -1,0 +1,44 @@
+{
+  "schema": "bytefables.fractal-cross-runtime.v1",
+  "publicOnly": true,
+  "publicHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+  "options": {
+    "id": "fractal",
+    "bounds": [
+      0,
+      0,
+      128,
+      128
+    ],
+    "family": "julia",
+    "palette": "neon",
+    "quality": "draft"
+  },
+  "layer": {
+    "id": "fractal",
+    "type": "rudiment",
+    "renderer": "bytefables-fractal-v1",
+    "bounds": [
+      0,
+      0,
+      128,
+      128
+    ],
+    "motion": {
+      "kind": "named",
+      "pattern": "circle"
+    },
+    "axes": [
+      0
+    ],
+    "history_frames": 1,
+    "style": {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "family": "julia",
+      "palette": "neon",
+      "seed_hex": "528cff3a598333373f419790f93b0217b7411d743706e2480f5ecf3f562b666b",
+      "feature_bits": "00000000",
+      "quality": "draft"
+    }
+  }
+}

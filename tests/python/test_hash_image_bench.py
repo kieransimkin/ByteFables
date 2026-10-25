@@ -55,6 +55,45 @@ class BenchTests(unittest.TestCase):
             self.assertTrue((Path(d)/'experiment.json').exists())
             with self.assertRaises(FileExistsError): prepare(SOURCE,d)
 
+    def test_short_hash_profiles_and_controlled_bit_flips(self):
+        for n, expected_budgets in ((3,[8,16,24]),(4,[8,16,32]),(8,[8,16,32,64])):
+            plan=bitplan(SOURCE,short_bytes=n)
+            self.assertEqual(plan['bitCount'],8*n)
+            self.assertEqual(len(plan['publicHex']),2*n)
+            self.assertEqual(len(plan['choices']),8*n)
+            self.assertEqual(plan['shortDerivation']['bytes'],n)
+            self.assertTrue(plan['shortDerivation']['parentDigestHex'].startswith(plan['publicHex']))
+            with tempfile.TemporaryDirectory() as d:
+                exp=prepare(SOURCE,d,short_bytes=n,strategies=('direct',),paired_bits=(0,8*n-1))
+                self.assertEqual(exp['hashBits'],8*n)
+                self.assertEqual(exp['budgets'],expected_budgets)
+                self.assertEqual(exp['pairedBitDomain'],'derived-short-hash; synthetic, not parent-derived')
+                self.assertEqual(exp['longSourcePublicHex'],SOURCE)
+                self.assertEqual(exp['basePublicHex'],plan['publicHex'])
+                self.assertEqual(len(exp['cases']),3)
+                self.assertEqual(len(exp['candidates']),len(expected_budgets)*3)
+                first=exp['cases'][0]['features']
+                for case, changed in ((exp['cases'][1],[0]),(exp['cases'][2],[8*n-1])):
+                    self.assertEqual([i for i,(a,b) in enumerate(zip(first,case['features']))
+                                      if a['bit']!=b['bit']],changed)
+                self.assertNotEqual(exp['experimentId'],
+                    prepare(plan['publicHex'],Path(d)/'direct',budgets=tuple(expected_budgets),
+                            strategies=('direct',),paired_bits=(0,8*n-1))['experimentId'])
+
+    def test_direct_3_4_8_byte_inputs_autoselect_valid_budgets(self):
+        for n, budgets in ((3,[8,16,24]),(4,[8,16,32]),(8,[8,16,32,64])):
+            with tempfile.TemporaryDirectory() as d:
+                exp=prepare('a5'*n,d,strategies=('direct',))
+                self.assertEqual(exp['budgets'],budgets)
+                self.assertEqual(exp['hashBits'],n*8)
+                self.assertNotIn('shortHashDerivation',exp)
+        with tempfile.TemporaryDirectory() as d:
+            with self.assertRaisesRegex(ValueError,'Feature budgets'):
+                prepare('aa'*3,d,budgets=(32,))
+        for n in (3,4,8):
+            with self.assertRaisesRegex(ValueError,'longer'):
+                bitplan('00'*n,short_bytes=n)
+
     def test_prompt_coverage_and_contradiction_are_only_lexical(self):
         c=[{'selected':'spiky','opposite':'smooth','featureId':'shape'}]
         self.assertEqual(audit_prompt('spiky',c)['literalCoverage'],1)

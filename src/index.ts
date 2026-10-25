@@ -3,6 +3,9 @@ export type { ByteValueOptions, Sensitivity, PublicByteValue, SecretByteValue } 
 export { encodeHex, decodeHex } from './codecs/hex.js';
 export { encodeBase32, decodeBase32 } from './codecs/base32.js';
 export { identityDigest, identityFingerprint } from './identity/identity.js';
+export { SHORT_HASH_LENGTHS, SHORT_HASH_SCHEME, truncateSha256Digest,
+  deriveShortPublicHash, deriveShortPublicHashes } from './identity/short-hash.js';
+export type { ShortHashBytes, ShortPublicHash } from './identity/short-hash.js';
 export { renderPixelAvatar } from './identity/pixel-avatar.js';
 export type { PixelAvatarOptions } from './identity/pixel-avatar.js';
 export { CATALOGUE } from './catalogue.js';
@@ -33,9 +36,10 @@ export type { SpatialSceneDraft, TemporalSceneDraft, AcousticPacketStreamDraft,
 // FrameRudiments is the sole host for new graphics and effect generation.
 export { FRAMERUDIMENTS_BRIDGE_VERSION, createFrameRudimentsIdentityLayer,
   createFrameRudimentsMatrixLayer, createFrameRudimentsSceneLayer,
+  createFrameRudimentsFractalLayer,
   frameRudimentsEffectTarget } from './engine/framerudiments.js';
 export type { FrameRudimentsLayer, LayerPlacement, IdentityLayerOptions,
-  IdentityPalette } from './engine/framerudiments.js';
+  IdentityPalette, FractalLayerOptions } from './engine/framerudiments.js';
 
 // Experimental watermark message framing and planning only. No media embedder yet.
 export { WATERMARK_MESSAGE_V1, encodePublicWatermarkMessage,
@@ -67,3 +71,7 @@ export type { FrameStoryPreview, FrameTextBlock, StoryPreviewOptions } from './e
 // Experimental LLM/image benchmark: public hash bits to visually opposing axes.
 export { VISUAL_BITS_VERSION, makeVisualBitPlan, choosePromptBits, composeBaselinePrompt } from './identity/visual-bits.js';
 export type { VisualBitChoice, VisualBitPlan, BaselinePromptStyle } from './identity/visual-bits.js';
+
+// Research-stage public-only fractal identity plans. No reversible key encoding.
+export { FRACTAL_SEED_VERSION, FRACTAL_FAMILIES, FRACTAL_BINARY_AXES, planPublicFractal } from './identity/fractal-seed.js';
+export type { FractalFamily, FractalPalette, FractalSeedPlan } from './identity/fractal-seed.js';
