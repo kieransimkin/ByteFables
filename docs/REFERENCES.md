@@ -35,3 +35,38 @@ are interchangeable.
 
 Reviewed for architectural planning on 2026-10-25. Each adapter requires its
 own current upstream status and conformance assessment at implementation time.
+
+## Expanded output and rendering research (2026-10-25)
+
+The [evidence survey](RESEARCH_SURVEY_2026-10.md) groups primary references by
+text/mnemonics, QR/industrial optical symbols, paper/metal/3D archiving,
+visual identity art, sound/NFC/tactile channels and GPU/media outputs. The
+[format atlas](OUTPUT_FORMAT_ATLAS.md) is the exhaustive *candidate taxonomy*,
+not a list of supported code. The [pipeline](OUTPUT_PIPELINE.md) defines how
+logical encodings, protection, symbols, renderers and carriers compose. The
+[updated implementation plan](IMPLEMENTATION_PLAN.md) maps each area to
+milestones and acceptance evidence.
+
+Additional especially actionable primary references:
+
+- [ISO/IEC 18004:2024](https://webstore.iec.ch/en/publication/99495) QR and
+  [ISO/IEC 16022:2024](https://www.iso.org/standard/80926.html) Data Matrix.
+- [ISO/IEC 24778](https://www.iso.org/standard/82441.html) Aztec,
+  [ISO/IEC 23941](https://www.iso.org/standard/77404.html) rMQR,
+  [ISO/IEC 23634](https://webstore.iec.ch/en/publication/75648) JAB Code.
+- [RFC 9285](https://www.rfc-editor.org/rfc/rfc9285.html) Base45 for QR,
+  [RFC 6330](https://www.rfc-editor.org/rfc/rfc6330.html) RaptorQ fountain FEC.
+- [Blockchain Commons LifeHash](https://github.com/BlockchainCommons/LifeHash),
+  [NFC Forum NDEF](https://nfc-forum.org/build/specifications/data-exchange-format-ndef-technical-specification/),
+  [ggwave](https://github.com/ggerganov/ggwave).
+- [glTF registry](https://registry.khronos.org/glTF/),
+  [KTX registry](https://registry.khronos.org/KTX/),
+  [3MF](https://3mf.io/spec/),
+  [PDF/A](https://pdfa.org/resource/iso-19005-pdfa/).
+- [LayerCode optical 3D](https://www.cs.columbia.edu/cg/layercode/index.html),
+  [MIT InfraredTags](https://hcie.csail.mit.edu/research/infraredtags/infraredtags.html),
+  [OPTAR paper optical archive](https://paperbackup.github.io/).
+
+New/draft/proprietary specifications must be checked again for current status
+and licensed access at implementation time. No raw-key import features are
+implemented merely because a specification is cited.

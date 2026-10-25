@@ -1,7 +1,11 @@
 # ByteFables staged implementation plan
 
 **Date:** 2026-10-25. This is a technical roadmap, not a claim that phases
-have shipped. Plan items reference [DESIGN.md](DESIGN.md) and [SECURITY.md](../SECURITY.md).
+have shipped. Plan items reference [DESIGN.md](DESIGN.md),
+[SECURITY.md](../SECURITY.md), the
+[format atlas](OUTPUT_FORMAT_ATLAS.md),
+[rendering pipeline](OUTPUT_PIPELINE.md), and
+[research survey](RESEARCH_SURVEY_2026-10.md).
 
 ## Stage map and dependency gates
 
@@ -18,7 +22,10 @@ have shipped. Plan items reference [DESIGN.md](DESIGN.md) and [SECURITY.md](../S
 | **8** | Multi-runtime & ecosystem release | Stages 1–7 as needed | Golden vectors across runtimes; audited package/release flow |
 
 Stages 2–4 may proceed in parallel after Stage 1. Stage 7 is an independent
-safety gate; a successful encoder does not implicitly satisfy it.
+safety gate; a successful encoder does not implicitly satisfy it. The
+**comprehensive output programme** appended below extends this original stage
+map into parallel workstreams BF-W1 through BF-W14 with explicit dependencies,
+50 ranked engineering issues, and rendering/readback acceptance matrices.
 
 ## Stage 0 — repository foundation **[included in initial patch]**
 
@@ -225,8 +232,450 @@ plus independent recovery-tool readback for each advertised archival format.
 
 ## Status accounting
 
-The repository was confirmed empty before the initial patch. The patch is
-created against an empty Git index, so `git apply --check` works after `git
-init` or directly inside the empty checkout. Files are **not pushed** by
-producing the patch. Do not claim GitHub Actions have passed until a commit is
-pushed and the workflow reports success.
+The original ByteFables bootstrap has since been committed, per the project
+maintainer, and its `main` file tree was inspected on GitHub on 2026-10-25.
+The 13-bit grammar remains explicitly experimental. Do not infer current CI,
+release, package registry or secret-backup readiness from a source commit.
+This extension only adds research/design/roadmap documents, not functioning
+new output encoders or renderers.
+
+---
+
+# Comprehensive rendering and output programme (October 2026 extension)
+
+**Intent:** broaden the original Stages 0–8 without changing any committed
+prototype's wire format or treating a candidate as shipped. Read the
+[research survey](RESEARCH_SURVEY_2026-10.md),
+[output-format atlas](OUTPUT_FORMAT_ATLAS.md) and
+[output pipeline](OUTPUT_PIPELINE.md) first. These documents enumerate the
+candidate universe; this section assigns dependencies and release gates.
+
+## Programme model and definition of done
+
+Every new format follows:
+
+```text
+canonical public value (or future gated secret input)
+    -> lossless codec or non-reversible identity derivation
+    -> optional framing/checksum/ECC/secret-sharing [distinct]
+    -> symbol / scene intermediate representation
+    -> exporter file bytes / device transport
+    -> independent decode or visual verification
+    -> immutable versioned fixture + capability registry metadata
+```
+
+**Never conflate:** the ability of a PNG to preserve image pixels with the
+ability of an identicon to preserve its source bytes; QR symbol ECC with
+cryptographic authentication; multi-share secret recovery with repairing a
+damaged plate; an NFC chip's readability with physical permanence; a PDF/A
+archive's compliance with actual restorability decades later.
+
+A candidate advances from `researched -> prototype -> implementation-tested ->
+interop-qualified -> security-qualified (secrets only)` only after these gates:
+
+1. **Specification:** pinned normative reference / originating research, status,
+   compatible format identifiers, usable licence and independent implementation.
+2. **Binary fidelity:** typed byte length, framing, canonicalisation, padding,
+   deterministic decoding or explicit `identity-only`, adversarial parser limits.
+3. **Failure model:** truncation, substitution, erasure, burst errors, duplicate
+   fragments, interference, hardware failure and expected decoder behaviour.
+4. **Rendering fidelity:** exported source plus independent readback from **the
+   exported artifact**, not just the original in-memory symbol matrix.
+5. **Security:** public/secret classification, sink allowlist, no unauthorised
+   bytes in previews or metadata; secret releases pass original Stage 7.
+6. **Product:** metadata in capability registry, CLI/gallery UX, docs, golden
+   vectors, licensing and accessibility; traceable issue/maintainer ownership.
+
+A display-only style can skip the recovery decoder but must still preserve
+*stable seed/domain/style provenance*, list its effective visual distinctiveness
+limitations and retain the canonical full public identifier.
+
+## Ordered delivery waves
+
+| Wave | Dependencies | User-visible deliverable | Evidence gate |
+|---|---|---|---|
+| **A. Core transport spine** | Existing Stage 0, Stage 1 | Immutable manifest + registry, canonical CBOR envelopes, typed `ModuleMatrix`/`VectorScene`, reference CLI | Negative vectors, compatibility snapshots, no secret API |
+| **B. Public identity and graphics** | A | 12+ stable avatar styles, SVG/PNG/WebP/ICO, cards, atlas and Next.js gallery | 16px/32px recognition, renderer consistency, 1k-node load |
+| **C. Common recovery carriers** | A | Hex/Base32/Base45/Bytewords, QR + PDF/SVG/PNG public recovery sheets | Independent scanners/decoders, offline public demonstration |
+| **D. Grammar and wallet compatibility** | A | 33-bit and variable story codecs; BIP-39/SeedQR/UR read/write of **public fixtures only** | Proof of unique parse, official vectors, no real key workflows |
+| **E. Industrial and animated optics** | C | Data Matrix, Aztec, PDF417, Micro/rMQR, multi-frame UR and BBQr, printed label profiles | Real scanner/device tests for named formats |
+| **F. Audio, NFC and accessibility** | A + selected C | TTS/SSML, BRF, alt text, MIDI/earcons, LED/haptics, sound modem, NFC NDEF | Independent device readback; microphone/camera opt-in |
+| **G. Procedural 3D and game assets** | B | GLB/3MF reliefs, instanced WebGL scenes, Unity atlases/KTX2, shader identities | Cross-runtime determinism and performance evidence |
+| **H. Archival resilience laboratory** | C + E | ECC benchmark, damaged-medium corpus, steel/laser/plotter, OPTAR and specialist codes research | Measured, documented restore success/failure distributions |
+| **I. Independent secret archive** | C + D + H + original Stage 7 | Separately distributed reviewed offline recovery tool | Independent cryptography/security review and real wallet recovery |
+
+Multiple waves can proceed in parallel after A. Wave I **does not ship** just
+because C, D and H have code; Stage 7 review remains a hard stop. Scope changes
+that affect a published binary format require a new version and migration note.
+
+## Workstream specifications, milestones and acceptance gates
+
+### BF-W1: Input, metadata, capacity and renderer registry (Wave A)
+
+- Formal typed input: namespace, kind, public/secret sensitivity, algorithm,
+  data length, network, endian/version and original record context.
+- `ByteFables` canonical CBOR schema specified in CDDL; length-prefix and
+  context domain separation; deterministic CBOR subset, no float ambiguity.
+- Registry manifest carries unique `formatId`, semver/immutable `version`,
+  standards status, reversible/identity-only flag, entropy/capacity, sensitivity
+  policy, estimated density and expansion, supported MIME and carrier, decoder,
+  resource limits, ECC characteristics, licences and reference vectors.
+- Capability introspection, public-only format planning API, input-size router,
+  no runtime invocation of `planned` entries.
+- Plugin input/output intermediate types as defined in OUTPUT_PIPELINE.md.
+
+**Exit:** registry can express every atlas class without adding `if/else` to
+crypto core; all sample manifests validate against schemas and backward
+compatibility tests; a consumer can distinguish `identity-only` from `lossless`.
+
+### BF-W2: Canonical text, mnemonic, symbol and spoken codecs (Waves A, C, D, F)
+
+- Strict Base64/url, Base45, Crockford Base32, Base58Check, Bech32/m,
+  decimal/octal/binary, multibase, JSON/CBOR/ASCII-armor and Bytewords normal,
+  URI and minimal representations.
+- Full words/provenance/checksum for BIP-39 and Formosa as separate read/write
+  adapters; SLIP-39 and codex32 only after secure reference implementations and
+  official vectors. RFC1751, RFC2289 and network-specific mnemonic formats
+  isolated in compatibility adapters.
+- Structured output: numbered chunks, lines with CRC/check values, fixed-
+  width handwriting grids, word prefix aids, phonetic alphabet, Braille byte
+  units, Morse text, pronunciation/SSML and VTT/SRT captions.
+- Freeze dictionaries with digests; never substitute a new wordlist in-place.
+
+**Exit:** exact round trip with independent published vectors; useful spoken or
+printed fallback for each enabled recovery format; no implicit BIP39 wallet
+conversion or use of passphrases without gated wallet-specific semantics.
+
+### BF-W3: Grammar compiler and linguistic laboratory (Wave D)
+
+- Design 33-bit reference pack, independent sentence patterns (adverb/adjective/
+  noun, action, dialogue, conditional, time, music, science, place, mythology).
+- Prefix-decodable structural markers; finite-state grammar with agreement,
+  number, tense and inflection; context-dependent lists of guaranteed capacity.
+- Formally account for selector bits, filler words, checksum, packet length and
+  padding; use enumerative coding for non-power-of-two vocabularies only when
+  a proof of inverse is available.
+- Variable-size grammar scheduler optimises readability/spoken duration,
+  alliteration, syllable complexity and output width under exact bit capacity.
+- Human study of homophones, proper nouns, script confusables and visual
+  similarity; deterministic render and language tests at 128/160/192/224/256,
+  512 and large arbitrary payload sizes.
+
+**Exit:** no two legal bitstrings in a published codebook decode to the same
+story; fixtures reproducible across versions; measured copy/recall performance.
+
+### BF-W4: 2D symbol interoperability (Waves C and E)
+
+- **P0:** QR Model 2 encoder/independent decoder tests, binary vs Base45 mode,
+  four ECC grades, capacity planner, module-size and quiet-zone enforcement;
+  SVG vector master with PNG/PDF/print/laser exports.
+- **P1:** Data Matrix ECC200 and Aztec; PDF417; readback scanner plugin and
+  physical print templates; Bytewords, typed UR and SeedQR interoperability.
+- **P2:** Micro QR, rMQR, Han Xin, MaxiCode, Code128/39/93, DotCode and other
+  industrial symbols, with scanner support gated per format.
+- **Lab:** JAB multi-colour, Ultracode (draft status must be checked),
+  Xerox DataGlyphs-inspired marks, HCCB, OPTAR dot archives, Bokode, infrared,
+  fiducial-in-QR hybrids and geometry-constrained decorative codes.
+
+**Exit:** per-format reference fixtures, 2 independent decoders where practical,
+real-world readback and a clear unsupported-reader warning when applicable;
+art overlays cannot invalidate quiet zones or checksum margins.
+
+### BF-W5: Temporal and segmented optical formats (Wave E)
+
+- Native multi-part UR v2 fountain encoder/reassembler, typed CBOR, strict
+  fragment bounds, duplicate/reorder/drop tests and progress reporting.
+- BBQr and independently defined sequential/structured append QR adapter,
+  static contact sheet, GIF/APNG/animated SVG/MP4/WebM or display-led scanner
+  stream **without treating compressed video frames as exact symbols**.
+- Frame timing, exposure/motion blur, safe maximum payload and recovery after
+  interrupted capture. Render a human fallback ID for every session.
+
+**Exit:** independent reconstructing decoder from the **rendered animation**;
+complete payload verified against full digest after loss/reorder within
+published test conditions; deterministic timeline and bounded memory.
+
+### BF-W6: Public avatar and graphic family catalogue (Waves B and G)
+
+- Preserve current 5x5 pixel v1; add grid/symmetry, polygons, Voronoi,
+  heraldry, knotwork, sigils, runes, framed crests, pixel art, mosaics, flags,
+  type/colour motifs, OpenSSH-style random art and pin-compatible LifeHash.
+- Sprite/character families: animals, robots, fantasy characters, masks,
+  accessories and theme layers with frozen seed assignments and metadata.
+- Natural/mathematical generators: L-system plants, crystals, terrain, river
+  networks, constellations, kaleidoscope, reaction-diffusion, cellular automata,
+  fractals, iterative attractors, audio-derived visual motifs and shader arts.
+- Composite Object Identity Block-style cards with full canonical ID, kind,
+  alias/phrase, public-only QR and accessibility description; manual sprite
+  overrides leave the primary node identifier unchanged.
+
+**Exit:** at least 20 stable catalogue profiles with deterministic Node/browser
+vectors; 16/32/64/128/512px output checks; colour-vision and user-confusion
+study; full-id disclosure on identity confirmation (not image-only trust).
+
+### BF-W7: Image, vector, accessibility and document exporters (Waves B, C, F)
+
+- **Bitmap:** PNG, WebP, AVIF, GIF, APNG, JPEG (identity-only or explicitly
+  lossy), TIFF/PBM/PGM high-contrast archival, ICO, iconset, favicons.
+- **Vector:** SVG (canonical), EPS/PostScript where justified, monochrome
+  plotter paths, PDF vector and PDF/A (compliance validator), raster profiles,
+  multi-resolution thumbnails and print-ready tiled posters.
+- **Document:** A4/A5/Letter cards, fold-booklets, numbered recovery worksheets,
+  bilingual *instructions* (not unversioned translations of binary wordlists),
+  optical contact sheets, Braille BRF, alt text, captions, metadata manifests.
+- **Web:** CSS background/data-URI, picture/srcset, favicon/OG-card,
+  accessible React component, Canvas/WebGL texture and worker-supplied image.
+- Exporters must expose colour profile, DPI and exact dimensions/bleed, margin,
+  quiet zone, line widths and typography/frozen font metadata if used.
+
+**Exit:** reconstruct source from published recovery documents/optical symbols;
+print/raster output quality metrics, no secret record in EXIF/preview or file
+name; PDF/A verification where claimed; low-resolution identity legibility.
+
+### BF-W8: 3D, volumetric, tactile and manufacturing (Waves G and H)
+
+- Generated 3D glyphs and characters, reliefs, extruded public QR matrix,
+  voxels, height/normal/displacement/roughness maps, point clouds and
+  procedural orbital objects for public node identity.
+- Export GLB/glTF (primary runtime), OBJ/PLY/STL, 3MF (manufacturing profile),
+  DXF, SVG laser paths, STEP only through measured CAD-compatible exporter,
+  G-code only by controlled integration with reviewed slicer/firmware.
+- Investigate embossing, punched paper/card, perforated mesh, milling,
+  ceramic tiles, stitched textiles, engraved steel, etch, PCB copper, microfilm,
+  infrared marker layering and other repeatable physical binary carriers.
+- Pixel/geometry scale and orientation labels, relief depth constraints,
+  real-world camera scanning and model-versioned CAD precision.
+
+**Exit:** fabricated symbol independent scan/readback under recorded material,
+finish, module pitch, illumination and decoder; 3D visual avatars validated as
+identity-only unless a separate decoder is proven. No uncontrolled machine
+instructions; never assume durable media ensures correct wallet restore.
+
+### BF-W9: GPU, video, live scene and game engine deliverables (Wave G)
+
+- Sprite strips, multi-resolution sprite atlases with packed UV JSON, animated
+  sprite sheets, GL texture uploads, mipmapped KTX2/BasisU, Unity sprite prefabs,
+  GLB/3MF scene data, interactive HTML demos and WebXR/AR presentations.
+- WebGL2/WebGPU and Canvas2D compute/renderer fallback strategy; shader DSL,
+  versioned RNG/noise/cellular models, stable layout and deterministic seeds.
+- Media export: APNG/GIF/WebP animation, SVG animations, Lottie/Rive only if
+  semantic conversion is compatible, WebM/MP4 loops and video thumbnails.
+- Optimise the 1k–100k node graph case: thumbnail LOD, atlas batching,
+  memory/latency cache metrics, colour accessibility, reduced-motion/static
+  fallbacks; link optional performance sharing with FrameRudiments/PrismMoves.
+
+**Exit:** no broken identity when spritesheet packing changes; 1k-node UI and
+representative large graph scene benchmarks published; pinned ref seed yields
+stable assets across Node/WebGL/Unity within advertised determinism tier.
+
+### BF-W10: Audio, speech, signals and tactile channels (Wave F)
+
+- Generate stable public musical signatures/earcons, MIDI note/beat patterns,
+  PCM WAV/FLAC, audible identity cues, rhythm/call-and-response, TTS-readable
+  names and offline SSML/VTT transcription metadata.
+- A distinct modem/transport adapter for ggwave-style FSK sound exchange,
+  optionally Morse LED/light patterns with explicit frame, checksum and FEC.
+- NFC NDEF import/export and read-back compatibility on actual tags; hardware
+  reader modes with separate permission and size profiles.
+- Braille characters/uncontracted binary cells, embossed paper/BRF, semantic
+  tactile markings and haptic feedback sequences for accessible recognition.
+
+**Exit:** public binary recoverability only from transport modes with proven
+decoder; real-device latency/loss tests and accessible alternatives. A tune,
+TTS voice or vibration is not an arbitrary-byte backup unless formally encoded.
+
+### BF-W11: Long-term durability, erasure, redundancy and offline archive (Wave H)
+
+- Integrity checks: per-packet CRC, cryptographic digest commitment, object
+  context and complete original length; correct intentional vs accidental
+  corruption framing.
+- Reed–Solomon/BCH/erasure/fountain schemes as independent tested components,
+  with exact advertised correction limits; PAR2/RaptorQ-style redundancy for
+  media sets only when interoperable.
+- Media templates: monochrome paper/PDF-A; laser/metal/stamp; machine scanner
+  targets; optical strips and microfilm; fabrication metadata and material
+  test evidence. Printing and destructive tests use **public dummy data**.
+- Measured failure/fidelity across copying, faxing, grayscale conversions,
+  page/fragment omissions, blur, glare, scratching, oxidisation and ageing.
+- Recovery kit: open specification, one-page decoder instructions, software
+  and source snapshot, human transcription fallback, multiple geographical
+  copies and periodic verified readback guidance.
+
+**Exit:** documented test corpus contains both successes and failures;
+independently recovered bytes plus type and metadata equal the original record.
+Do not advertise unconditional correction or medium life span.
+
+### BF-W12: Specialist experimental laboratory (Wave H and later)
+
+- Multi-colour code density vs scanner/printing quality: JAB, Ultracode,
+  photographic colour stripes and multi-spectral tags.
+- Novel codes: fractal/fiducial patterns, data-bearing procedural artwork,
+  polar/annular codes, conformal curved-surface codes, shadow-projection art,
+  IR-visible/UV/fluorescence/micro-dot tags and lenticular/holographic designs.
+- Experimental **lossless** storytelling: haiku/rhymes/poetry, structured
+  dialogue, phonetic checksums, conditional grammar/weighted slot scheduling,
+  multi-language frozen dictionaries, physical letter/tile/card puzzles.
+- Emerging media: 5D laser glass, DNA storage, photographic and magnetic
+  archival experiments, wearable displays, e-paper, haptics, acoustic and light
+  data links, braided or woven relief artifacts.
+- Explicitly distinguish source-backed results from new codec ideas;
+  steganographic image/watermark-only private-key backups not recommended.
+
+**Exit:** publish reproducible public fixture, sample artifact, complete
+specification and independent decoder. Keep lab features unavailable to the
+secret-backup release until reviewed and reproducible.
+
+### BF-W13: Integration, packaging, discoverability and plugin ecosystem (Waves B–I)
+
+- ByteFables manifest for DanceFlow discovery, MCP component description,
+  media type router, CLI `inspect/list/render/encode/verify` commands for
+  **public values only**, TypeScript/React/Next.js integration, Python bridge
+  only against shared vectors.
+- Expose public fallback avatar and optional gallery/card renderer to thought
+  graphs, workspace orbs, profile cards, asset thumbnails, scene nodes and
+  branded media across DanceFlow. The source node key is always canonical.
+- Backend async/worker job status, batch streaming, deterministic caching,
+  `rendererVersion+options+identityDigest` keys, no remote work for secret input.
+- Documentation/demo matrix shows implemented vs experimental vs researched,
+  warns of missing optional dependencies and required readback devices.
+
+**Exit:** published package/registry only for independently validated formats;
+MCP/CLI cannot cause an unreviewed decoder or secret backup flow to run. Report
+actual performance and coverage instead of inventing it.
+
+### BF-W14: Wallet-specific secret archival security gate (Wave I)
+
+- Maintain a wholly separated offline companion, with import/export consent,
+  no clipboard/telemetry/browser logs/remote printers, protected memory design
+  for supported runtimes, backups not uploaded to remote art services.
+- BIP-39/SLIP-39/seedQR/UR and any encrypted container must retain network,
+  curve, account/derivation, descriptor or policy context as applicable.
+- Independent reviewed cryptography, canonical format/cross-vendor restore
+  tests, no unprompted key generation, no auto-correction without verified
+  original authentication and explicit operator decision.
+- Recovery drills on real compatible devices using test vectors and test funds;
+  separate confidentiality protection from accidental-damage recovery.
+
+**Exit:** Stage 7 release criteria independently signed off. Existing
+TypeScript `ByteValue<'secret'>` labels are **not** a safety guarantee; no
+production key backup recommendation before this gate.
+
+## Issue-ready milestone backlog (ordered within areas)
+
+Each item gets an issue link, maintainer, target wave, input fixtures, evidence
+location and explicit done/blocked status. A P1 item can proceed in parallel
+once prerequisites are satisfied; P2 is research or deployment dependent.
+
+| ID | Priority | Work item / reviewable acceptance evidence | Prereq |
+|---|---|---|---|
+| BF-001 | P0 | Registry schema, capability manifest and typed format planner; negative maturity tests | Stage 0 |
+| BF-002 | P0 | ByteFables CBOR/CDDL envelope and public canonical vectors | BF-001 |
+| BF-003 | P0 | `ModuleMatrix` and `VectorScene` immutable intermediate artifacts | BF-001 |
+| BF-004 | P0 | Public QR Model 2 adapter with ECC and 2 independent decoders | BF-003 |
+| BF-005 | P0 | SVG and PNG exporters with exact-size/quiet-zone conformance | BF-003 |
+| BF-006 | P0 | Bytewords normal/URI/minimal with reference vectors | BF-002 |
+| BF-007 | P0 | 33-bit grammar theme and bijection/fuzz corpus | Existing Stage 2 |
+| BF-008 | P0 | Public identity card with full ID and QR | BF-004, Stage 1 |
+| BF-009 | P0 | 16/32/128px avatar profiles, favicon, batch caching | Stage 1 |
+| BF-010 | P0 | GitHub Pages interactive gallery, actual format capability badges | BF-001, 008, 009 |
+| BF-011 | P1 | PDF/public print sheets (A4/A5/Letter), scan/readback checks | BF-004, 005 |
+| BF-012 | P1 | Base45, strict Base64, Crockford Base32 and Base58Check | BF-001 |
+| BF-013 | P1 | BIP-39 official-vector compatibility (dummy inputs only) | BF-002 |
+| BF-014 | P1 | SeedQR/CompactSeedQR interoperability using public test fixtures | BF-013, 004 |
+| BF-015 | P1 | Typed UR v2 fountain encoder/decoder, bad/missing fragment tests | BF-002, 004 |
+| BF-016 | P1 | Data Matrix ECC200 with scanner fixtures | BF-003 |
+| BF-017 | P1 | Aztec and PDF417 adapters, independent readers | BF-003 |
+| BF-018 | P1 | Art pack v1 (20+ renderer variants) incl. LifeHash compatible mode | BF-001, Stage 1 |
+| BF-019 | P1 | Identity gallery 1k-node and 16px confusion/accessibility test | BF-018 |
+| BF-020 | P1 | GPU spritesheet/atlas, metadata, texture cache eviction metrics | BF-018 |
+| BF-021 | P1 | File bundle, manifest + recovery/readme and independent verification | BF-002, 005 |
+| BF-022 | P1 | Story variable-capacity grammar scheduler + proof of unique parse | BF-007 |
+| BF-023 | P1 | Language/homophone transcription pilot with fixed lexicons | BF-007 |
+| BF-024 | P1 | Model interoperability for Formosa (draft-pinned) | BF-013, 007 |
+| BF-025 | P1 | Multi-frame UR displays and BBQr benchmark fixture | BF-015 |
+| BF-026 | P1 | Monochrome 3D engrave/DXF/3MF public optical symbol export | BF-004, 011 |
+| BF-027 | P1 | GLB/GLTF node token + Unity atlas/scene adapter | BF-018, 020 |
+| BF-028 | P1 | Node fallback API / DanceFlow MCP capability integration | BF-001, 018 |
+| BF-029 | P1 | Large graph (10k+) profiling, WebGL/WebGPU progressive LOD | BF-020, 028 |
+| BF-030 | P1 | CI protocol-fuzzing, scanned artifact corpus and licence ledger | BF-001 |
+| BF-031 | P2 | Micro QR, rMQR and Han Xin scanner survey and prototype | BF-004 |
+| BF-032 | P2 | DotCode/Code128/industrial print/DPM comparison | BF-016 |
+| BF-033 | P2 | JAB coloured marks, Ultracode specification/status research | BF-016 |
+| BF-034 | P2 | OPTAR / printable large-file erasure baseline (public data) | BF-021 |
+| BF-035 | P2 | Metal/stamp/laser/calibration templates and destructive scan report | BF-026 |
+| BF-036 | P2 | Animated SVG/APNG/WebM loss testing of optical frames | BF-025 |
+| BF-037 | P2 | Public NFC NDEF reader/writer with real tag readback | BF-002 |
+| BF-038 | P2 | ggwave-style public acoustic modem/WAV receiver experiment | BF-002 |
+| BF-039 | P2 | SSML/VTT offline speech, earcons/MIDI and accessible names | BF-007, 018 |
+| BF-040 | P2 | Braille BRF, raised relief and 8-dot byte-cell study | BF-011 |
+| BF-041 | P2 | OpenSSH Randomart, geometric/voronoi/cellular avatar variants | BF-018 |
+| BF-042 | P2 | Procedural landscape, heraldry, animal, mythology and music themes | BF-018 |
+| BF-043 | P2 | Shader/particle/motion loops, KTX2 texture and WebXR preview | BF-027 |
+| BF-044 | P2 | Microfilm, photographic archive, PCB/tile/textile research demos | BF-035 |
+| BF-045 | P2 | HCCB/Bokode/IR/3D hidden tags reader viability experiment | BF-035 |
+| BF-046 | P2 | Reversible poetry/dialogue/conditional story language experiment | BF-022 |
+| BF-047 | P2 | Audio/LED/Morse/haptic public identity-and-transport study | BF-039 |
+| BF-048 | P2 | SLIP-39, codex32 and encrypted wallet format feasibility review | BF-013, W14 |
+| BF-049 | **BLOCKED** | Independent secret key archive and restore workflows | Stage 7, W14 |
+| BF-050 | P1 | Source/digest manifest, SBOM, release verification and registry freshness | BF-001 |
+
+**P0 = next release-fundable**, **P1 = primary roadmap**, **P2 = candidate/lab**,
+**BLOCKED = no shipping regardless of completed upstream work until security
+review**. Priorities are planning judgements, not reported project commitments.
+
+## Public demonstration products to ship incrementally
+
+1. **Identity Wall:** enter or select a *public* hash/node ID; compare 20+
+   avatar themes, naming templates, snapshots, cards, orbiting 3D node and
+   accessible high-contrast alternatives; exact seed and renderer version shown.
+2. **Codec Workbench:** encode a dummy byte string into strict text, story,
+   QR, Bytewords, CBOR and back; live bit-capacity/overhead and checksum budget;
+   no network or sensitive material by default.
+3. **Print/Scan Laboratory:** public test fixtures with SVG/PNG/PDF/3MF
+   previews, export DPI and module pitch, deliberate damage toggle, independent
+   decoder results and a reproducible failure corpus.
+4. **Transport Lab:** chunked/animated optical streams, optional speaker and
+   NFC adapters, real-world recovery graphs and device compatibility matrix.
+5. **Node Identity Integration:** consistent fallback profile art in graph
+   views, orbit workspace navigation and asset/media catalogues, with cache
+   manifest and full public ID on inspection.
+6. **Offline Recovery Companion (future):** separate release, no launch or
+   import path unless all security and interoperability gates are complete.
+
+## Output QA and measurement matrix
+
+| Output family | Round trip | Interop | Rendering | Physical/device test | Visual recognition | Security |
+|---|---|---|---|---|---|---|
+| Exact text, mnemonic, story | Mandatory | Reference vectors | Layout/print readability | Human transcription | Optional | Secret gate for wallet use |
+| QR/Data Matrix/Aztec/PDF417 | Mandatory | Independent reader | Quiet zone, capacity, contrast | Camera/print/engraving | No security inference | Secret gate |
+| UR/BBQr/multi-part | Mandatory | Independent receiver | All frames & timing | Drop/reorder/glare | N/A | Secret gate |
+| Identity avatar/card | **Not applicable** | Style-reference vectors | 16px to 4K, alt text | Browser/Unity if relevant | User confusion study | Public only |
+| 3D/laser relief | Mandatory only if data-bearing | Independent 3D decoder | Module geometry | Real part scan | If identity art | Public initially |
+| Audio/LED/NFC transport | Mandatory if data-bearing | Independent device | Timing/signal profile | Interference, power, range | If earcon | Public initially |
+| Print/microfilm/metal archive | Mandatory | Independent offline restore | DPI/material limits | Repeated physical readback | N/A | Secret gate |
+
+Make profiles fail *closed* if a format cannot fit the payload and metadata,
+if a renderer would violate optical module geometry, if resource limits are
+exceeded, or if a secret value is about to enter a public/art/cloud device sink.
+A format without a decoder must be catalogued as **non-reversible**.
+
+## Roadmap upkeep and definition of coverage
+
+- Never implement a new visual style by modifying a frozen encoder/identity
+  digest. Keep separate scene renderers and canonical `styleVersion`.
+- For `OUTPUT_FORMAT_ATLAS.md`, track each line's **state** (`research`,
+  `prototype`, `tested`, `interoperable`, `released`), format/version, an issue,
+  code owner, actual licence and a golden vector, without suggesting every
+  listed candidate is committed work.
+- Record rejected candidates with a reason (reader availability, weak
+  durability, licensing, security, low demand, overlap); maintain a separate
+  "experimental gallery" so ambitious ideas remain discoverable.
+- Refresh external draft statuses before releases; BIP-450, BIP-93 and
+  Ultracode are drafts/under development as of this survey, not approved
+  proof of wallet interoperability.
+- One golden dummy byte payload (128, 256, 512, 4,096 and larger sizes) should
+  be rendered through every supported *lossless* pipeline and decoded by a
+  distinct code path; capture the full artifact checksums and failures.
+- Publish a verified **coverage dashboard** with `implemented/compatible/
+  experimentally demonstrated/researched`, scanner and device matrix,
+  performance measurements, and security badges based only on actual reviews.

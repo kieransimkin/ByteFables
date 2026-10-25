@@ -7,6 +7,18 @@
 **Target:** reusable DanceFlow component, usable standalone by Node.js, web UI,
 CLI, Python/WASM clients and ecosystem MCP adapters.
 **Implementation roadmap:** [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)
+**Expanded output programme:** [output-format atlas](OUTPUT_FORMAT_ATLAS.md),
+[layered renderer/export pipeline](OUTPUT_PIPELINE.md),
+[research/evidence survey](RESEARCH_SURVEY_2026-10.md).
+
+**October 2026 architecture extension:** Output formats are compositional
+stages rather than one-to-one codecs: typed source -> logical encoding ->
+framing/protection -> symbol/scene -> renderer/export -> physical carrier.
+A public identicon PNG is not losslessly reversible merely because its image
+file is lossless. An optical code may be recoverable, but only with its
+required framing, decoder and checksum. The current `ByteValue` and 13-bit
+story prototype remain unchanged; the expanded plan is **not implemented**.
+
 
 ## 1. Vision
 

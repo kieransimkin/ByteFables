@@ -24,7 +24,15 @@ non-repudiation or exact identity. Use original public keys/full hashes and
 cryptographic verification for those decisions.
 
 See [the design](docs/DESIGN.md), [the staged roadmap](docs/IMPLEMENTATION_PLAN.md),
+[output-format atlas](docs/OUTPUT_FORMAT_ATLAS.md),
+[composable rendering/export pipeline](docs/OUTPUT_PIPELINE.md),
+[October 2026 research survey](docs/RESEARCH_SURVEY_2026-10.md),
 [security policy](SECURITY.md), and [reference catalogue](docs/REFERENCES.md).
+
+The expanded roadmap now covers lossless text, key standards, QR/industrial
+barcodes, animation, public 2D/3D avatars, WebGL/Unity sprites, print/metal,
+audio/LED/NFC, accessibility and speculative storage media. **Those formats are
+planned/researched, not implemented** by the first TypeScript foundation.
 
 ## Development
 
