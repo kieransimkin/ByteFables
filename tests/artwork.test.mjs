@@ -7,9 +7,9 @@ import { ByteValue, PublicRecord, createFrameRudimentsArtworkLayer,
 const source = new PublicRecord(ByteValue.public(Uint8Array.of(0,1,2,3,4),
   {namespace:'danceflow',kind:'node-id'}));
 
-test('all four experimental artwork families are deterministic FrameRudiments layers', async () => {
+test('all nine experimental artwork families are deterministic FrameRudiments layers', async () => {
   const seen=new Set();
-  for (const artwork of ['sigil','constellation','heraldry','topography']) {
+  for (const artwork of ['sigil','constellation','heraldry','topography','crystal','mandala','cellular','branching','orbital']) {
     const opts={id:'identity-art',bounds:[0,0,128,128],artwork,palette:'neon',complexity:4};
     const x=await createFrameRudimentsArtworkLayer(source,opts);
     const y=await createFrameRudimentsArtworkLayer(source,opts);
@@ -20,7 +20,7 @@ test('all four experimental artwork families are deterministic FrameRudiments la
     assert.equal(x.type,'rudiment');
     seen.add(JSON.stringify(x.style));
   }
-  assert.equal(seen.size,4);
+  assert.equal(seen.size,9);
 });
 
 test('artwork colours and complexity are presentation choices, not new identity keys', async () => {

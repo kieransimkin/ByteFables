@@ -257,10 +257,12 @@ def register_bytefables_renderers(registry):
     """
     from .fractals import FractalRenderer
     from .artwork import ArtworkRenderer
+    from .public_cards import PublicRecoveryCardRenderer
 
     for key, renderer in (
         ("bytefables-fractal-v1", FractalRenderer),
         ("bytefables-artwork-v1", ArtworkRenderer),
+        ("bytefables-public-card-v1", PublicRecoveryCardRenderer),
         ("bytefables-pixel-v1", PixelRenderer),
         ("bytefables-matrix-v1", MatrixRenderer),
         ("bytefables-scene-v1", VectorSceneRenderer),

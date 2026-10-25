@@ -952,3 +952,30 @@ UI gallery, and installed native FrameRudiments compositor/effect-graph QA.
 has been added by this milestone. Public sample images and short fingerprints
 never authenticate ownership. The exact public typed bytes always remain
 available separately for verification.
+
+
+## Completed public optical recovery and procedural art batch (25 Oct 2026)
+
+- Added restricted BCR-2024-001 `ur:bytes` multipart transport: deterministic
+  fountain generation, bounded streaming Gaussian elimination receiver, official
+  Xoshiro/fragment-selection vectors, and FrameRudiments QR layer handoff.
+- Added an entirely separate **BFQR1** FrameRudiments printed public-record
+  sheet adapter with mandatory pinned font, full fingerprint and exact manual
+  text. PNG exporter validates the saved symbol with OpenCV. It is not a
+  physical, PDF/A or private-key archival qualification.
+- Increased procedural FrameRudiments identity generators from four to nine;
+  maintained old style names/algorithms unchanged, with validation and
+  deterministic output tests. New families: crystal, mandala, cellular,
+  branching and orbital.
+- Extended the public-only capability registry and user-facing CLI; preserved
+  both previous BFQR1 and all legacy mnemonic/story wire formats.
+
+**Still not shipped:** registered production UR application types, actual
+wallet/hardware interoperability, sustained frame-loss device testing, PDF/A,
+printing/engraving and damaged-media restoration, secret/wallet safety review,
+large-sample visual distinctiveness and full native host release qualification.
+
+**Next:** register/validate compatible UR types and test against independently
+released decoders; provide explicit 300dpi/PDF/A manufacturing profiles and
+separate hard-copy scan results; benchmark nine art styles at 16/32/64 px;
+profile physical/optical error rates and extend archive ECC beyond XOR parity.

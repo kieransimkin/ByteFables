@@ -15,6 +15,11 @@ endian and payload bytes) and returns a `type: rudiment` layer with
 | `constellation` | Seeded node positions, nearest-neighbour links | Graph/agent identity |
 | `heraldry` | Shields, bands and nested star geometry | Group/workspace heraldry |
 | `topography` | Radial harmonic contours with layered level lines | Terrain/orb style thumbnails |
+| `crystal` | Filled polygonal facets and light edges | High-contrast identity gem |
+| `mandala` | Radially repeated geometry | Symmetric decorative marks |
+| `cellular` | Bounded seeded Conway grid | Retro/game sprites |
+| `branching` | Seeded binary fractal branching | Organic branching silhouette |
+| `orbital` | Deterministic elliptical systems | Scientific/space identities |
 
 `palette` is `neon`, `pastel` or `mono`; `complexity` is an integer 1..8.
 All are source presentation choices. They do not modify the original public
@@ -45,4 +50,4 @@ Security: reject secret-labelled/unsupported inputs before handing off,
 validate and bound every style property, freeze versioned deterministic seeds,
 and treat host renderer factories as trusted executable Python modules. Export
 and publish only user-approved public identity art. No model weights or remote
-inference are required for these four generators.
+inference are required for these nine generators.

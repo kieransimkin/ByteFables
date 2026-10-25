@@ -8,7 +8,8 @@ import {
   makeVisualBitPlan, choosePromptBits, composeBaselinePrompt, decodePublicTextFormat,
   createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes,
   createPublicQrCard, encodePublicQrSession, decodePublicQrSession,
-  createFrameRudimentsArtworkLayer
+  createFrameRudimentsArtworkLayer, encodeUrBytesMultipartTestOnly,
+  decodeUrBytesMultipartTestOnly, createPublicRecoverySheet
 } from '../dist/index.js';
 import { readFileSync } from 'node:fs';
 
@@ -37,12 +38,16 @@ const help = `ByteFables public-only CLI (no wallet/private-key support)
                [--algorithm ALG] [--network NET] [--endian na|big|little]
                [--format FORMAT] [--experimental]
   bytefables artwork-layer --confirm-public --public-hex HEX --namespace NS --kind KIND
-      [--artwork sigil|constellation|heraldry|topography] [--palette neon|pastel|mono]
+      [--artwork sigil|constellation|heraldry|topography|crystal|mandala|cellular|branching|orbital] [--palette neon|pastel|mono]
       [--complexity 1..8] [--id ID] [--bounds 0,0,128,128]
   bytefables qr-public --confirm-public --public-hex HEX --namespace NS --kind KIND
       [--ecc L|M|Q|H] [--qr-mask 0..7] [--max-version N] [--fragment-bytes N] [--no-parity]
       [--include-layers] [--bounds 0,0,512,512] [--layer-prefix ID]
-  bytefables qr-recover --confirm-public  # reads JSON array of PUBLIC frame texts from stdin
+  bytefables qr-recover --confirm-public  # reads JSON array of PUBLIC BFQR1 frame texts from stdin
+  bytefables ur-test-encode --confirm-public --public-hex HEX [--fragment-bytes 80] [--mixed-frames N]
+  bytefables ur-test-recover --confirm-public  # reads JSON PUBLIC ur:bytes frames from stdin
+  bytefables public-print-sheet --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--fragment-bytes N] [--max-version N] [--page-bounds 0,0,1024,1440]
   bytefables decode-public --confirm-public --public-cbor-hex HEX
   bytefables framerudiments-layer --confirm-public --public-hex HEX --namespace NS --kind KIND
                [--algorithm ALG] [--network NET] [--endian na|big|little]
@@ -380,6 +385,55 @@ async function main(args) {
           warning: 'PUBLIC data ONLY; BFQR1 is NOT URv2, SeedQR, secret archival, or proof of identity' }, null, 2));
       }
       return;
+    }
+    case 'ur-test-encode': {
+      const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--fragment-bytes', '--mixed-frames']);
+      requirePublic(opt);
+      if (opt['--public-hex'] === undefined) throw new TypeError('Missing --public-hex');
+      const number = (name, fallback) => {
+        if (opt[name] === undefined) return fallback;
+        if (!/^\d+$/.test(opt[name])) throw new TypeError('Invalid '+name);
+        return Number(opt[name]);
+      };
+      const sequence = await encodeUrBytesMultipartTestOnly(decodeHex(opt['--public-hex']), {
+        fragmentBytes: number('--fragment-bytes', 80), extraMixedFrames: number('--mixed-frames', 0)
+      });
+      console.log(JSON.stringify(sequence, null, 2)); return;
+    }
+    case 'ur-test-recover': {
+      const opt = parseFlags(rest, ['--confirm-public']);
+      requirePublic(opt);
+      const input = readFileSync(0, 'utf8');
+      if (input.length > 8000000) throw new RangeError('Too much UR test input');
+      let frames;
+      try { const json=JSON.parse(input); frames=Array.isArray(json)?json:json.frames; }
+      catch { throw new TypeError('Expected JSON array of PUBLIC ur:bytes test frames'); }
+      const bytes=await decodeUrBytesMultipartTestOnly(frames);
+      console.log(JSON.stringify({bytesHex:encodeHex(bytes),testOnly:true,
+        warning:'PUBLIC ur:bytes test fixtures only; not a wallet backup'},null,2)); return;
+    }
+    case 'public-print-sheet': {
+      const opt = parseFlags(rest, ['--confirm-public','--public-hex','--namespace','--kind',
+        '--fragment-bytes','--max-version','--page-bounds']);
+      requirePublic(opt);
+      if (opt['--public-hex'] === undefined || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Missing PUBLIC print-sheet identity fields');
+      }
+      const bounds = opt['--page-bounds'] ?? '0,0,1024,1440';
+      if (!/^\d+,\d+,\d+,\d+$/.test(bounds)) throw new TypeError('Invalid print bounds');
+      const num = (key, defaultValue) => {
+        if (opt[key] === undefined) return defaultValue;
+        if (!/^\d+$/.test(opt[key])) throw new TypeError('Invalid '+key);
+        return Number(opt[key]);
+      };
+      const record = new PublicRecord(ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace:opt['--namespace'],kind:opt['--kind']
+      }));
+      const sheet = await createPublicRecoverySheet(record, {
+        fragmentBytes:num('--fragment-bytes',64),maxVersion:num('--max-version',12),
+        pageBounds:bounds.split(',').map(Number)
+      });
+      console.log(JSON.stringify(sheet,null,2)); return;
     }
     case 'qr-recover': {
       const opt = parseFlags(rest, ['--confirm-public']);

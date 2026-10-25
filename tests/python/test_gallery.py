@@ -15,7 +15,7 @@ class GalleryTests(unittest.TestCase):
                 '--output',str(dest)],cwd=ROOT,timeout=60,stdout=subprocess.DEVNULL)
             report=json.loads((dest/'evidence.json').read_text())
             self.assertEqual(report['schema'],'bytefables.public-gallery-evidence.v1')
-            self.assertEqual(len(report['artwork']),16)
+            self.assertEqual(len(report['artwork']),36)
             self.assertGreaterEqual(len(report['qr']),2)
             for q in report['qr']:
                 self.assertTrue(q['text'].startswith('BFQR1:'))

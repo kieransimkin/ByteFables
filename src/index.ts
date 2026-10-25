@@ -99,3 +99,17 @@ export { encodePublicQrSession, decodePublicQrSession } from './symbols/qr-frame
 export type { PublicQrPlanOptions, PublicQrFrame, PublicQrSession } from './symbols/qr-frames.js';
 export { createPublicQrCard } from './engine/public-qr-card.js';
 export type { PublicQrCard, PublicQrCardOptions } from './engine/public-qr-card.js';
+
+// Blockchain Commons BCR-2024-001 UR v2 transport; PUBLIC `ur:bytes` TEST fixtures ONLY.
+export { UrTestXoshiro256, chooseUrTestFragments, parseUrTestPart,
+  encodeUrBytesMultipartTestOnly, decodeUrBytesMultipartTestOnly,
+  UrBytesTestDecoder } from './codecs/ur-multipart-test.js';
+export type { UrTestPart, UrTestEncodeOptions, UrTestSequence } from './codecs/ur-multipart-test.js';
+export { createUrBytesQrTestDeck } from './engine/ur-qr-test.js';
+export type { UrBytesQrTestOptions, UrBytesQrTestDeck } from './engine/ur-qr-test.js';
+
+// Public QR recovery sheets rendered and exported by FrameRudiments.
+export { createFrameRudimentsRecoveryCardLayer } from './engine/framerudiments.js';
+export type { RecoveryCardOptions } from './engine/framerudiments.js';
+export { createPublicRecoverySheet } from './engine/public-recovery-sheet.js';
+export type { PublicRecoverySheet, PublicRecoverySheetOptions } from './engine/public-recovery-sheet.js';

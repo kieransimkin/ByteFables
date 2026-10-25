@@ -19,7 +19,8 @@ from PIL import Image
 from bytefables_framerudiments.artwork import ArtworkRenderer
 from bytefables_framerudiments.renderers import MatrixRenderer
 
-FAMILIES = ("sigil", "constellation", "heraldry", "topography")
+FAMILIES = ("sigil", "constellation", "heraldry", "topography",
+            "crystal", "mandala", "cellular", "branching", "orbital")
 
 
 def cli(*args):

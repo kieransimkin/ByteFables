@@ -237,3 +237,22 @@ non-reversible, deterministic images from full PUBLIC typed-record digests.
 No sprite is an authenticating fingerprint, wallet backup, proof of ownership
 or 256-bit collision-free visual encoding. Appearance controls and registered
 trusted FrameRudiments Python factories are execution boundaries.
+
+
+## Experimental public UR and printed QR cards (2026-10-25)
+
+- `ur:bytes` is an official **test-only** UR type. ByteFables' multipart/fountain
+  support does **not** confer compatibility with crypto-wallet UR application
+  types, nor establish cryptographic authentication or secret-safe recovery.
+- BCR-2024-001 CRC-32 detects accidental corruption and selects fountain
+  fragments; it is not a MAC or signature. Xoshiro256** is non-cryptographic.
+  Receivers remain bounded and reject conflicting frames and noncanonical CBOR.
+- Printed BFQR1 output is limited to explicitly identified PUBLIC records.
+  A public QR may be scanned by anyone. Its SHA-256 digest is unkeyed and is not
+  a proof that the purported owner controlled the source identifier.
+- QR cell geometry and required white quiet zone must remain outside arbitrary
+  FrameRudiments visual effects. Post-export scan receipts apply only to the
+  precise saved PNG, not the physical print, printer spool, font or camera.
+- Files containing any secret must never be passed to the CLI, PNG script,
+  FrameRudiments renderer, inference service, logger, temporary folder or
+  public capability registry. Further external review is required for secrets.

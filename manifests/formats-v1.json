@@ -994,6 +994,77 @@
       "adapter": "makeFrameRudimentsArtworkLayer"
     },
     {
+      "formatId": "archive/public-recovery-sheet-v1",
+      "version": "0.1.0",
+      "category": "archive",
+      "maturity": "experimental",
+      "guarantee": "reversible-typed",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/public-recovery-cards-v1.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/public-recovery-sheet.test.mjs",
+      "decoder": "decodePublicQrSession",
+      "minInputBytes": 0,
+      "maxInputBytes": 4096,
+      "maxOutputBytes": 4000000,
+      "capacity": "symbol-defined",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "application/json"
+      ],
+      "carriers": [
+        "print",
+        "project"
+      ],
+      "integrity": "sha256-unkeyed",
+      "errorCorrection": "format-specific",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "makePublicRecoverySheet"
+    },
+    {
+      "formatId": "codec/ur-bytes-multipart-test-only",
+      "version": "0.1.0",
+      "category": "codec",
+      "maturity": "experimental",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2024-001-multipart-ur.md",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/ur-multipart-v1.json",
+      "decoder": "decodeUrBytesMultipartTestOnly",
+      "minInputBytes": 1,
+      "maxInputBytes": 4096,
+      "maxOutputBytes": 120000,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 9,
+      "mediaTypes": [
+        "application/json"
+      ],
+      "carriers": [
+        "text",
+        "screen",
+        "project"
+      ],
+      "integrity": "crc32-accidental",
+      "errorCorrection": "format-specific",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeUrBytesMultipartTestOnly"
+    },
+    {
       "formatId": "archive/public-qr-session-v1",
       "version": "1.0.0",
       "category": "archive",

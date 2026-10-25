@@ -232,6 +232,32 @@ cryptographic verifier, and expanding it into a 64-bit noise seed does not
 restore information lost by shortening. See
 [the normative format specification](docs/specs/short-public-hashes-v1.md).
 
+## Next optical and avatar batch — public-only
+
+A `ur:bytes` **test-only**, standards-reference-aligned multipart/fountain
+transport is available, including a bounded streaming decoder, harmonic
+fragment selection and QR matrix handoff into FrameRudiments. The `bytes` UR
+type is reserved for interoperability testing, **not production wallet use**.
+For real typed public records, the separately versioned `BFQR1` transport
+remains the native experimental choice.
+
+The registered FrameRudiments artwork generator now supports **nine**
+procedural families: sigil, constellation, heraldry, topography, crystal,
+mandala, cellular automata, branching, and orbital. They are not recoverable
+hash encodings or cryptographic authentication.
+
+The `public-print-sheet` CLI produces a declarative BFQR1 page plan; the
+FrameRudiments `bytefables-public-card-v1` generator renders each page with a
+SHA-256-pinned font, 4-module white QR quiet zone, full public fingerprint and
+complete manual fallback text. `scripts/render-public-cards.py` exports 300dpi
+PNG pages and independently scans each saved PNG when OpenCV is available.
+**No private keys, private wallet backups, PDF/A or physical durability are
+qualified by this experimental feature.**
+
+See [multipart UR test profile](docs/specs/ur-multipart-public-test-v1.md),
+[printable public cards](docs/specs/public-recovery-cards-v1.md), and
+[identity art catalogue](docs/specs/public-identity-art-v1.md).
+
 ## Development
 
 Requires Node.js >=20 and TypeScript 5.8.3. There are no runtime dependencies.

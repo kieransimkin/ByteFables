@@ -14,7 +14,8 @@ import re
 from PIL import Image, ImageDraw
 
 DOMAIN = b"ByteFables:framerudiments:artwork:v1\0"
-PATTERNS = frozenset({"sigil", "constellation", "heraldry", "topography"})
+PATTERNS = frozenset({"sigil", "constellation", "heraldry", "topography",
+                      "crystal", "mandala", "cellular", "branching", "orbital"})
 PALETTES = frozenset({"neon", "pastel", "mono"})
 BRIDGE = "bytefables.framerudiments.layer.v1"
 
@@ -111,7 +112,7 @@ class ArtworkRenderer:
                 rr=r*(0.36 if k%2==0 else 0.16)
                 star.append((cx+rr*math.cos(a),cy+rr*math.sin(a)+r*.24))
             draw.polygon(star,fill=self.colors[3])
-        else:  # topography
+        elif self.family == "topography":
             rings = 3 + self.complexity * 2
             harmonics = [(rng.randint(2,7),rng.random()*math.tau,rng.uniform(0.025,0.11)) for _ in range(3)]
             for j in range(rings,0,-1):
@@ -124,4 +125,96 @@ class ArtworkRenderer:
                     points.append((cx+radius*math.cos(a),cy+radius*math.sin(a)))
                 points.append(points[0]);draw.line(points, fill=self.colors[j%len(self.colors)], width=max(1,u*2))
             draw.ellipse((cx-u*3,cy-u*3,cx+u*3,cy+u*3),fill=self.colors[0])
+        elif self.family == "crystal":
+            # Facet fan anchored on a stable silhouette; pure geometry, no model.
+            vertex_count = 5 + self.seed[2] % 5
+            ring = []
+            for i in range(vertex_count):
+                a = math.tau * i / vertex_count - math.pi / 2
+                dist = r * (0.75 + 0.24 * rng.random())
+                ring.append((cx + dist * math.cos(a), cy + dist * math.sin(a)))
+            draw.polygon(ring, fill=self.colors[2])
+            focus = (cx + (self.seed[5] / 255 - 0.5) * r * 0.35,
+                     cy + (self.seed[6] / 255 - 0.5) * r * 0.35)
+            for i in range(vertex_count):
+                draw.polygon((focus, ring[i], ring[(i+1) % vertex_count]),
+                             fill=self.colors[(i + self.seed[7]) % len(self.colors)])
+            for i in range(vertex_count):
+                draw.line((focus, ring[i]), fill=self.colors[3], width=u)
+            for i in range(self.complexity):
+                ax, ay = ring[i % vertex_count]
+                bx, by = ring[(i+2) % vertex_count]
+                f = 0.2 + i * 0.06
+                draw.line((ax * (1-f) + focus[0] * f, ay * (1-f) + focus[1] * f,
+                           bx * (1-f) + focus[0] * f, by * (1-f) + focus[1] * f),
+                          fill=self.colors[1], width=u)
+        elif self.family == "mandala":
+            petals = 6 + self.seed[6] % 11
+            rings = 1 + self.complexity // 2
+            for layer in range(rings, 0, -1):
+                rr = r * layer / (rings + 1)
+                for i in range(petals):
+                    a = math.tau * i / petals
+                    b = math.tau * (i + 0.46) / petals
+                    c = math.tau * (i + 0.92) / petals
+                    path = [(cx+rr*0.25*math.cos(a), cy+rr*0.25*math.sin(a)),
+                            (cx+rr*1.16*math.cos(b), cy+rr*1.16*math.sin(b)),
+                            (cx+rr*0.25*math.cos(c), cy+rr*0.25*math.sin(c))]
+                    draw.polygon(path, fill=self.colors[(i + layer) % len(self.colors)])
+            draw.ellipse((cx-r*.15,cy-r*.15,cx+r*.15,cy+r*.15), fill=self.colors[0])
+        elif self.family == "cellular":
+            # Hash-seeded Conway cellular automaton. Cell count is bounded.
+            n = 11 + self.complexity * 2
+            cells = [[rng.random() > 0.61 for _ in range(n)] for _ in range(n)]
+            for _ in range(1 + self.complexity // 2):
+                neighbors = lambda x, y: sum(cells[(y+dy)%n][(x+dx)%n]
+                    for dy in (-1, 0, 1) for dx in (-1, 0, 1) if dx or dy)
+                cells = [[neighbors(x, y) == 3 or (cells[y][x] and neighbors(x,y) == 2)
+                          for x in range(n)] for y in range(n)]
+            side = min(w, h) * 0.82
+            pitch = side / n
+            x0, y0 = cx - side / 2, cy - side / 2
+            visible = 0
+            for y in range(n):
+                for x in range(n):
+                    if cells[y][x]:
+                        visible += 1
+                        draw.rectangle((x0+x*pitch,y0+y*pitch,x0+(x+1)*pitch-1,
+                                        y0+(y+1)*pitch-1), fill=self.colors[(x+y)%len(self.colors)])
+            if not visible:
+                draw.rectangle((cx-u*3,cy-u*3,cx+u*3,cy+u*3),fill=self.colors[0])
+        elif self.family == "branching":
+            # Bounded binary branching tree, each branch coloured deterministically.
+            depth = min(8, 3 + self.complexity // 2)
+            angle = math.radians(17 + self.seed[3] % 28)
+            branches = [(cx,cy+r*0.92,-math.pi/2,r*0.47,0)]
+            while branches:
+                x,y,a,length,level = branches.pop()
+                nx = x + length*math.cos(a)
+                ny = y + length*math.sin(a)
+                draw.line((x,y,nx,ny),fill=self.colors[level%len(self.colors)],
+                          width=max(1,int(u*(depth-level+1)/2)))
+                if level < depth:
+                    twist = (self.seed[(level+5)%len(self.seed)]/255-0.5)*0.18
+                    branches.append((nx,ny,a+angle+twist,length*0.73,level+1))
+                    branches.append((nx,ny,a-angle+twist,length*0.73,level+1))
+        elif self.family == "orbital":
+            count=2+self.complexity//2
+            for i in range(count):
+                rx = r*(0.35+i*0.15)
+                ry = rx*(0.65+0.22*rng.random())
+                colour=self.colors[i % len(self.colors)]
+                angle=(self.seed[(i+10)%32]/255-0.5)*1.5
+                orbit=[]
+                for j in range(100):
+                    t=math.tau*j/99
+                    orbit.append((cx+rx*math.cos(t)*math.cos(angle)-ry*math.sin(t)*math.sin(angle),
+                                  cy+rx*math.cos(t)*math.sin(angle)+ry*math.sin(t)*math.cos(angle)))
+                draw.line(orbit,fill=colour,width=max(1,u))
+                theta=math.tau*rng.random()
+                px=cx+rx*math.cos(theta)*math.cos(angle)-ry*math.sin(theta)*math.sin(angle)
+                py=cy+rx*math.cos(theta)*math.sin(angle)+ry*math.sin(theta)*math.cos(angle)
+                radius=max(2,u*(2+i%3))
+                draw.ellipse((px-radius,py-radius,px+radius,py+radius), fill=self.colors[(i+2)%len(self.colors)])
+            draw.ellipse((cx-r*.13,cy-r*.13,cx+r*.13,cy+r*.13),fill=self.colors[0])
         return image

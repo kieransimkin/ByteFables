@@ -1,0 +1,22 @@
+{
+  "schema": "bytefables.ur-test-golden-v1",
+  "sourceHex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f",
+  "fragmentBytes": 16,
+  "extraMixedFrames": 8,
+  "count": 4,
+  "frames": [
+    "ur:bytes/1-4/lpadaacseycyynpldpcwgthddyaeadaoaxaaahamatayasbkrnvoplfw",
+    "ur:bytes/2-4/lpaoaacseycyynpldpcwgtbdbnbtbabsbebybgbwbbbzcmchdlrkfxzc",
+    "ur:bytes/3-4/lpaxaacseycyynpldpcwgtcscfcycwcecackctcxclcpcndkenuywtch",
+    "ur:bytes/4-4/lpaaaacseycyynpldpcwgtdadsdidedtdrdndwdpdmdlaeaersdrltrp",
+    "ur:bytes/5-4/lpahaacseycyynpldpcwgtcscfcycwcecackctcxclcpcndkuybylfjn",
+    "ur:bytes/6-4/lpamaacseycyynpldpcwgthddyaeadaoaxaaahamatayasbksphpenwp",
+    "ur:bytes/7-4/lpataacseycyynpldpcwgtcscfcycwcecackctcxclcpcndkenltgylr",
+    "ur:bytes/8-4/lpayaacseycyynpldpcwgtihbsfseyemeeehenbdayahdrdmtnhnvsrs",
+    "ur:bytes/9-4/lpasaacseycyynpldpcwgtcscfcycwcecackctcxclcpcndkuywkhntp",
+    "ur:bytes/10-4/lpbkaacseycyynpldpcwgtcscfcycwcecackctcxclcpcndkpmbyhkvw",
+    "ur:bytes/11-4/lpbdaacseycyynpldpcwgtfsfhfseoecemeceobtbsbtcndkdpmyfnms",
+    "ur:bytes/12-4/lpbnaacseycyynpldpcwgtdadsdidedtdrdndwdpdmdlaeaersmussmh"
+  ],
+  "notice": "Generated fixed fixture; BCR published RNG/fragment chooser independently asserted in tests"
+}

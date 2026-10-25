@@ -10,9 +10,9 @@ ROOT={'bridge_version':'bytefables.framerudiments.layer.v1',
       'digest_hex':'17'*32,'palette':'neon','style':'sigil','complexity':4}
 
 class ArtworkTests(unittest.TestCase):
-    def test_four_generators_render_distinct_repeatable_pixels(self):
+    def test_nine_generators_render_distinct_repeatable_pixels(self):
         seen=set()
-        for family in ('sigil','constellation','heraldry','topography'):
+        for family in ('sigil','constellation','heraldry','topography','crystal','mandala','cellular','branching','orbital'):
             with self.subTest(family=family):
                 opts={**ROOT,'style':family}
                 a=ArtworkRenderer((128,128),opts).render(None)
@@ -22,7 +22,7 @@ class ArtworkTests(unittest.TestCase):
                 self.assertEqual(a.mode,'RGBA')
                 self.assertIsNotNone(a.getbbox())
                 seen.add(hashlib.sha256(a.tobytes()).hexdigest())
-        self.assertEqual(len(seen),4)
+        self.assertEqual(len(seen),9)
 
     def test_digest_palette_and_complexity_change_artwork(self):
         a=ArtworkRenderer((96,96),ROOT).render(None).tobytes()
@@ -43,6 +43,6 @@ class ArtworkTests(unittest.TestCase):
         with self.assertRaises(ValueError):ArtworkRenderer((4096,4096),ROOT)
 
     def test_small_icons_are_not_blank(self):
-        for family in ('sigil','constellation','heraldry','topography'):
+        for family in ('sigil','constellation','heraldry','topography','crystal','mandala','cellular','branching','orbital'):
             a=ArtworkRenderer((32,32),{**ROOT,'style':family}).render(None)
             self.assertIsNotNone(a.getbbox())

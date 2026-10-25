@@ -13,6 +13,8 @@ import { encodeExperimentalStory } from '../grammar/story.js';
 import { encodeStoryV2 } from '../grammar/story-v2.js';
 import { encodeScheduledStory } from '../grammar/scheduled-story.js';
 import { identityFingerprint } from '../identity/identity.js';
+import { createPublicRecoverySheet } from '../engine/public-recovery-sheet.js';
+import { encodeUrBytesMultipartTestOnly } from '../codecs/ur-multipart-test.js';
 import { deriveShortPublicHash } from '../identity/short-hash.js';
 import { renderPixelAvatar } from '../identity/pixel-avatar.js';
 import { makeVisualBitPlan } from '../identity/visual-bits.js';
@@ -52,6 +54,10 @@ export type PlannedFormat = Readonly<{
 }>;
 
 const adapters: ReadonlyMap<string, (record: PublicRecord) => Promise<string | Uint8Array>> = new Map<string, (record: PublicRecord) => Promise<string | Uint8Array>>([
+  ['makePublicRecoverySheet', async (record: PublicRecord) =>
+    JSON.stringify(await createPublicRecoverySheet(record))],
+  ['encodeUrBytesMultipartTestOnly', async (record: PublicRecord) =>
+    JSON.stringify(await encodeUrBytesMultipartTestOnly(record.toBytes()))],
   ['encodeHex', async (record: PublicRecord) => encodeHex(record.toBytes())],
   ['makeFrameRudimentsArtworkLayer', async record => JSON.stringify(await createFrameRudimentsArtworkLayer(record, {id: 'bytefables-artwork',bounds:[0,0,128,128]}))],
   ['encodeQrRawMatrix', async record => {
