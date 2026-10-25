@@ -6,8 +6,11 @@ import {
   createFrameRudimentsIdentityLayer, planPublicWatermark,
   encodeStoryV2, encodeScheduledStory, inspectStoryV2, createFrameRudimentsStoryPreview,
   makeVisualBitPlan, choosePromptBits, composeBaselinePrompt, decodePublicTextFormat,
-  createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes
+  createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes,
+  createPublicQrCard, encodePublicQrSession, decodePublicQrSession,
+  createFrameRudimentsArtworkLayer
 } from '../dist/index.js';
+import { readFileSync } from 'node:fs';
 
 const help = `ByteFables public-only CLI (no wallet/private-key support)
   bytefables formats [--json]
@@ -33,6 +36,13 @@ const help = `ByteFables public-only CLI (no wallet/private-key support)
   bytefables encode-public --confirm-public --public-hex HEX --namespace NS --kind KIND
                [--algorithm ALG] [--network NET] [--endian na|big|little]
                [--format FORMAT] [--experimental]
+  bytefables artwork-layer --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--artwork sigil|constellation|heraldry|topography] [--palette neon|pastel|mono]
+      [--complexity 1..8] [--id ID] [--bounds 0,0,128,128]
+  bytefables qr-public --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--ecc L|M|Q|H] [--qr-mask 0..7] [--max-version N] [--fragment-bytes N] [--no-parity]
+      [--include-layers] [--bounds 0,0,512,512] [--layer-prefix ID]
+  bytefables qr-recover --confirm-public  # reads JSON array of PUBLIC frame texts from stdin
   bytefables decode-public --confirm-public --public-cbor-hex HEX
   bytefables framerudiments-layer --confirm-public --public-hex HEX --namespace NS --kind KIND
                [--algorithm ALG] [--network NET] [--endian na|big|little]
@@ -49,7 +59,7 @@ function parseFlags(args, allowed) {
     if (!flag.startsWith('--') || !allowed.includes(flag) || flag in opts) {
       throw new TypeError(`Unknown or repeated flag: ${flag}`);
     }
-    if (['--json', '--planned', '--experimental', '--confirm-public', '--generation-controlled', '--stats'].includes(flag)) {
+    if (['--json', '--planned', '--experimental', '--confirm-public', '--generation-controlled', '--stats', '--no-parity', '--include-layers'].includes(flag)) {
       opts[flag] = true;
     } else {
       if (i + 1 >= args.length || args[i + 1].startsWith('--')) {
@@ -310,6 +320,81 @@ async function main(args) {
       const length = opt['--digest-bytes'] === undefined ? 12 : numberFlag('digest-bytes');
       const plan = await planPublicWatermark(record, carrier, { digestBytes: length });
       console.log(JSON.stringify(plan, null, 2)); return;
+    }
+    case 'artwork-layer': {
+      const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace', '--kind',
+        '--artwork', '--palette', '--complexity', '--id', '--bounds']);
+      requirePublic(opt);
+      if (!opt['--public-hex'] || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Missing PUBLIC identity data for artwork layer');
+      }
+      const rawBounds = opt['--bounds'] ?? '0,0,128,128';
+      if (!/^\d+,\d+,\d+,\d+$/.test(rawBounds)) throw new TypeError('Invalid artwork bounds');
+      const complexity = opt['--complexity'] ?? '4';
+      if (!/^[1-8]$/.test(complexity)) throw new TypeError('Artwork complexity must be 1..8');
+      const record = new PublicRecord(ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace: opt['--namespace'], kind: opt['--kind']
+      }));
+      const layer = await createFrameRudimentsArtworkLayer(record, {
+        id: opt['--id'] ?? 'bytefables-artwork', bounds: rawBounds.split(',').map(Number),
+        artwork: opt['--artwork'] ?? 'sigil', palette: opt['--palette'] ?? 'neon',
+        complexity: Number(complexity)
+      });
+      console.log(JSON.stringify({ layer, fullFingerprint: await publicRecordFingerprint(record, 32),
+        caveat: 'This is a deterministic avatar, NOT a reversible key or identity proof.' }, null, 2));
+      return;
+    }
+    case 'qr-public': {
+      const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace', '--kind',
+        '--algorithm', '--network', '--endian', '--ecc', '--max-version', '--fragment-bytes',
+        '--no-parity', '--include-layers', '--qr-mask', '--bounds', '--layer-prefix']);
+      requirePublic(opt);
+      if (opt['--public-hex'] === undefined || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Missing required QR public record fields');
+      }
+      const record = new PublicRecord(ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace: opt['--namespace'], kind: opt['--kind']
+      }), { algorithm: opt['--algorithm'] ?? 'opaque', network: opt['--network'] ?? '',
+        endian: opt['--endian'] ?? 'na' });
+      const integer = (name, fallback) => {
+        if (opt[name] === undefined) return fallback;
+        if (!/^\d+$/.test(opt[name])) throw new TypeError(`Invalid ${name}`);
+        return Number(opt[name]);
+      };
+      const options = {
+        ecc: opt['--ecc'] ?? 'Q', qrMask: integer('--qr-mask', 0), maxVersion: integer('--max-version', 12),
+        fragmentBytes: integer('--fragment-bytes', undefined), parity: !opt['--no-parity']
+      };
+      if (opt['--include-layers']) {
+        const rawBounds = opt['--bounds'] ?? '0,0,512,512';
+        if (!/^\d+,\d+,\d+,\d+$/.test(rawBounds)) throw new TypeError('Invalid QR bounds');
+        const card = await createPublicQrCard(record, { ...options, bounds: rawBounds.split(',').map(Number),
+          layerIdPrefix: opt['--layer-prefix'] ?? 'bytefables-qr' });
+        console.log(JSON.stringify(card, null, 2));
+      } else {
+        const session = await encodePublicQrSession(record, options);
+        console.log(JSON.stringify({ schema: session.schema, sessionId: session.sessionId,
+          qrErrorCorrection: session.qrErrorCorrection, qrMaxVersion: session.qrMaxVersion,
+          fragmentBytes: session.fragmentBytes, dataFrames: session.dataFrames,
+          parityFrames: session.parityFrames, frames: session.frames.map(f => f.text),
+          warning: 'PUBLIC data ONLY; BFQR1 is NOT URv2, SeedQR, secret archival, or proof of identity' }, null, 2));
+      }
+      return;
+    }
+    case 'qr-recover': {
+      const opt = parseFlags(rest, ['--confirm-public']);
+      requirePublic(opt);
+      const input = readFileSync(0, 'utf8');
+      if (input.length > 8000000) throw new RangeError('Too much PUBLIC QR input');
+      let texts;
+      try { const data = JSON.parse(input); texts = Array.isArray(data) ? data : data.frames; }
+      catch { throw new TypeError('Expected JSON array of BFQR1 PUBLIC frame strings on stdin'); }
+      const record = await decodePublicQrSession(texts);
+      console.log(JSON.stringify({ namespace: record.namespace, kind: record.kind,
+        algorithm: record.algorithm, network: record.network, endian: record.endian,
+        schemaVersion: record.schemaVersion, bytesHex: encodeHex(record.toBytes()),
+        fingerprint: await publicRecordFingerprint(record) }, null, 2));
+      return;
     }
     case 'decode-public': {
       const opt = parseFlags(rest, ['--confirm-public', '--public-cbor-hex']);

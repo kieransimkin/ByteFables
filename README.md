@@ -355,3 +355,47 @@ compile-time validate all grammar codebooks, and add golden vectors and
 round-trip tests for every new codec. No secret-processing adapter should be
 advertised before its threat model, test-vector conformance, offline workflow,
 and review requirements have been met. See the staged plan.
+
+## Public QR recovery transport and native identity artwork (next implementation batch)
+
+A **PUBLIC-only** QR Model 2 generator (including public registry adapter) now supports versions 1–40, ECC
+L/M/Q/H, deterministic masking, Reed–Solomon blocks, and the immutable
+`ModuleMatrix` bridge to FrameRudiments' `bytefables-matrix-v1` factory.
+ByteFables BFQR1 wraps its own checksummed, typed public-record CBOR in
+printable sequence frames. Data frames may arrive in any order and optional
+single XOR parity recovers **one missing data frame**. This is **not** URv2,
+SeedQR, a secure backup, or proof of identity. See the complete
+[public QR transport spec](docs/specs/public-qr-transport-v1.md).
+
+```sh
+npm run build
+node bin/bytefables.mjs qr-public --confirm-public \
+  --public-hex 0001020304050607 --namespace danceflow --kind node-id \
+  --ecc Q --max-version 12 --fragment-bytes 48 > public-qr-frames.json
+
+# Generate native FrameRudiments module layers (project must register the adapter).
+node bin/bytefables.mjs qr-public --confirm-public \
+  --public-hex 0001020304050607 --namespace danceflow --kind node-id \
+  --include-layers > public-qr-layers.json
+
+# Public QR session restoration from scanner text, not from PNG pixels.
+node bin/bytefables.mjs qr-recover --confirm-public < public-qr-frames.json
+```
+
+The new **FrameRudiments identity-art source** adds four styles: `sigil`,
+`constellation`, `heraldry`, and `topography`. The new generators share the
+existing native renderer/effects pipeline and accept only a SHA-256-derived
+public identity digest plus validated palette/complexity choices. Read the
+[identity-art contract](docs/specs/public-identity-art-v1.md).
+
+```sh
+node bin/bytefables.mjs artwork-layer --confirm-public \
+  --public-hex 000102ff --namespace danceflow --kind node-id \
+  --artwork sigil --palette neon --complexity 4
+```
+
+Verification includes 56 independent QR-encoder grid comparisons spanning
+versions 1–40 and four ECC levels, plus saved-PNG readback with OpenCV for a
+specific sample rendered by the native FrameRudiments adapter. This does **not**
+certify physical media durability, all scanner/device combinations or any
+private-key backup. These are distinct release gates.

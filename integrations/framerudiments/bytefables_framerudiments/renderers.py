@@ -88,7 +88,7 @@ class PixelRenderer:
 
 
 class MatrixRenderer:
-    """Pixel-perfect module grid for public symbologies (NOT a certified QR)."""
+    """Pixel-perfect public module grid; external scanner must qualify exported QR."""
 
     def __init__(self, size, style):
         self.size = _size(size)
@@ -256,9 +256,11 @@ def register_bytefables_renderers(registry):
     DanceRudiments modulation remain the only effect pipelines.
     """
     from .fractals import FractalRenderer
+    from .artwork import ArtworkRenderer
 
     for key, renderer in (
         ("bytefables-fractal-v1", FractalRenderer),
+        ("bytefables-artwork-v1", ArtworkRenderer),
         ("bytefables-pixel-v1", PixelRenderer),
         ("bytefables-matrix-v1", MatrixRenderer),
         ("bytefables-scene-v1", VectorSceneRenderer),

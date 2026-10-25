@@ -918,3 +918,37 @@ from art is claimed.
   visual collision/ambiguity studies.
 
 Normative details: [short-public-hashes-v1.md](specs/short-public-hashes-v1.md).
+
+---
+
+## October 25, 2026: public optical and artwork implementation checkpoint
+
+This development batch implements the following **public-only** slices of
+waves B/C/E/H while deliberately preserving Stage 7 secret qualification:
+
+- **QR Model 2**: complete version 1–40 byte-mode matrix encoder, ECC L/M/Q/H,
+  standard Reed–Solomon grouping, eight masks, capacity and input validation.
+  Independent encoder comparison: 56 synthetic cases across representative
+  versions, plus an external OpenCV reader of exported FrameRudiments PNGs.
+- **BFQR1**: versioned public-only typed CBOR frames, strict Base64url header,
+  CRC-32 and full SHA-256-derived session ID, deterministic ordered parts,
+  strict out-of-order recovery and optional XOR one-erasure repair. NOT MUR/URv2.
+- **FrameRudiments identity cards**: registered module-matrix layer fragments,
+  protected optical profile guidance, checksum labels and public fingerprint
+  context; no replacement rendering/effects pipeline.
+- **Four native artwork generators**: reusable sigils, constellations, heraldry,
+  topography with deterministic digest seeds, validated styles and tests.
+- **CLI/registry**: public export, stdin scanner-text restore and artwork-layer
+  creation; 37 checked capability entries. QR BFQR1 remains experimental.
+
+**Remaining dependencies for a complete Stage 4/5 release:** independent
+hardware-wallet interoperability, URv2 fountain encoder/decoder, actual print
+and scanner matrix across printers, transformed/cropped/damaged-media tests,
+G-code/metal media workflows, high-density 2D symbologies, Node/browser
+cross-runtime integration, >20 artwork variants, accessible identity cards,
+UI gallery, and installed native FrameRudiments compositor/effect-graph QA.
+
+**Safety gate:** no wallet-seed/private-key encoding or secret archival approval
+has been added by this milestone. Public sample images and short fingerprints
+never authenticate ownership. The exact public typed bytes always remain
+available separately for verification.

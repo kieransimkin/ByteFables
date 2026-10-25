@@ -380,14 +380,38 @@ export const FORMAT_MANIFEST = validateFormatManifest([
     deterministic: true, offlineSafe: true, runtime: ['node', 'browser'], adapter: 'encodeUrBytesTestOnly'
   },
   {
-    formatId: 'symbol/qr-model2', version: '1.0.0', category: 'symbol', maturity: 'planned',
+    formatId: 'symbol/qr-model2', version: '1.0.0', category: 'symbol', maturity: 'foundation',
     guarantee: 'reversible-raw', input: 'public-record', sensitivity: 'public-only',
-    reference: QR, standardStatus: 'published', license: 'TBD-review-encoder',
-    referenceVectors: null, decoder: null, minInputBytes: 0, maxInputBytes: 2953,
+    reference: QR, standardStatus: 'published', license: 'MIT',
+    referenceVectors: 'tests/qr-model2.test.mjs', decoder: 'independent-QR-scanner',
+    minInputBytes: 0, maxInputBytes: 2953,
     maxOutputBytes: 8388608, capacity: 'symbol-defined', estimatedExpansion: null,
-    mediaTypes: ['image/svg+xml', 'image/png'], carriers: ['vector', 'print', 'screen'],
+    mediaTypes: ['application/json'], carriers: ['vector', 'print', 'screen'],
     integrity: 'format-specific', errorCorrection: 'format-specific',
-    deterministic: true, offlineSafe: true, runtime: ['node', 'browser'], adapter: null
+    deterministic: true, offlineSafe: true, runtime: ['node', 'browser'], adapter: 'encodeQrRawMatrix'
+  },
+  {
+    formatId: 'identity/framerudiments-artwork-v1', version: '1.0.0',
+    category: 'identity', maturity: 'experimental', guarantee: 'identity-only',
+    input: 'public-record', sensitivity: 'public-only',
+    reference: 'https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/public-identity-art-v1.md',
+    standardStatus: 'internal', license: 'MIT', referenceVectors: 'tests/artwork.test.mjs',
+    decoder: null, minInputBytes: 0, maxInputBytes: 1048576, maxOutputBytes: 8192,
+    capacity: 'visual-bounded', estimatedExpansion: null,
+    mediaTypes: ['application/json'], carriers: ['project'],
+    integrity: 'none', errorCorrection: 'none', deterministic: true,
+    offlineSafe: true, runtime: ['node', 'browser'], adapter: 'makeFrameRudimentsArtworkLayer'
+  },
+  {
+    formatId: 'archive/public-qr-session-v1', version: '1.0.0', category: 'archive', maturity: 'experimental',
+    guarantee: 'reversible-typed', input: 'public-record', sensitivity: 'public-only',
+    reference: 'https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/public-qr-transport-v1.md',
+    standardStatus: 'internal', license: 'MIT', referenceVectors: 'tests/qr-sessions.test.mjs',
+    decoder: 'decodePublicQrSession', minInputBytes: 0, maxInputBytes: 4096,
+    maxOutputBytes: 1000000, capacity: 'symbol-defined', estimatedExpansion: null,
+    mediaTypes: ['application/json'], carriers: ['text', 'print', 'screen', 'project'],
+    integrity: 'sha256-unkeyed', errorCorrection: 'format-specific',
+    deterministic: true, offlineSafe: true, runtime: ['node', 'browser'], adapter: 'encodePublicQrPlan'
   },
   {
     formatId: 'exporter/framerudiments-layer-v1', version: '1.0.0',

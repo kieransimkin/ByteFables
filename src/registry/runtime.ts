@@ -17,7 +17,9 @@ import { deriveShortPublicHash } from '../identity/short-hash.js';
 import { renderPixelAvatar } from '../identity/pixel-avatar.js';
 import { makeVisualBitPlan } from '../identity/visual-bits.js';
 import { planPublicFractal } from '../identity/fractal-seed.js';
-import { createFrameRudimentsIdentityLayer } from '../engine/framerudiments.js';
+import { createFrameRudimentsIdentityLayer, createFrameRudimentsArtworkLayer } from '../engine/framerudiments.js';
+import { encodePublicQrSession } from '../symbols/qr-frames.js';
+import { encodeQrModel2 } from '../symbols/qr.js';
 import { FORMAT_MANIFEST, getFormatManifest, type FormatManifestEntry, type FormatGuarantee } from './manifest.js';
 
 export type PublicArtifact = Readonly<{
@@ -51,6 +53,20 @@ export type PlannedFormat = Readonly<{
 
 const adapters: ReadonlyMap<string, (record: PublicRecord) => Promise<string | Uint8Array>> = new Map<string, (record: PublicRecord) => Promise<string | Uint8Array>>([
   ['encodeHex', async (record: PublicRecord) => encodeHex(record.toBytes())],
+  ['makeFrameRudimentsArtworkLayer', async record => JSON.stringify(await createFrameRudimentsArtworkLayer(record, {id: 'bytefables-artwork',bounds:[0,0,128,128]}))],
+  ['encodeQrRawMatrix', async record => {
+    const qr = encodeQrModel2(record.toBytes(), { ecc: 'L' });
+    return JSON.stringify({ schema: qr.schema, version: qr.version, ecc: qr.ecc, mask: qr.mask,
+      dataBytes: qr.dataBytes, quietZone: qr.matrix.quietZone, width: qr.matrix.width,
+      height: qr.matrix.height, modules: [...qr.matrix.toModules()].join('') });
+  }],
+  ['encodePublicQrPlan', async record => {
+    const session = await encodePublicQrSession(record);
+    return JSON.stringify({ schema: session.schema, sessionId: session.sessionId,
+      dataFrames: session.dataFrames, parityFrames: session.parityFrames,
+      qrErrorCorrection: session.qrErrorCorrection, qrMaxVersion: session.qrMaxVersion,
+      frames: session.frames.map(f => f.text) });
+  }],
   ['encodeBase45', async record => encodeBase45(record.toBytes())],
   ['encodeBase64', async record => encodeBase64(record.toBytes())],
   ['encodeBase64Url', async record => encodeBase64(record.toBytes(), true)],

@@ -16,8 +16,8 @@ test('immutable manifest snapshot and public-only metadata contract', async () =
   const file = JSON.parse(await readFile(new URL('../manifests/formats-v1.json', import.meta.url)));
   assert.equal(file.schema, 'bytefables-format-manifest-1');
   assert.deepEqual(file.formats, FORMAT_MANIFEST);
-  assert.equal(getFormatManifest('symbol/qr-model2').maturity, 'planned');
-  assert.equal(listFormatManifests({ maturity: 'planned' }).length, 7);
+  assert.equal(getFormatManifest('symbol/qr-model2').maturity, 'foundation');
+  assert.equal(listFormatManifests({ maturity: 'planned' }).length, 6);
   for (const f of FORMAT_MANIFEST) {
     assert.ok(Object.isFrozen(f));
     assert.ok(Object.isFrozen(f.mediaTypes));
@@ -55,7 +55,7 @@ test('capacity planner filters by goal, input size, maturity and media type', ()
   assert.ok(names.some(x => x.formatId === 'identity/pixel-avatar-v1'));
   assert.ok(!names.some(x => x.formatId === 'symbol/qr-model2'));
   const planned = planPublicFormats({ byteLength: 32, includePlanned: true });
-  assert.equal(planned.find(x => x.formatId === 'symbol/qr-model2').executable, false);
+  assert.equal(planned.find(x => x.formatId === 'symbol/qr-model2').executable, true);
   assert.ok(planned.some(x => x.formatId === 'wallet/bip39'));
   const huge = planPublicFormats({ byteLength: 1048576 });
   assert.ok(!huge.some(x => x.formatId === 'codec/story-prototype-13'));
@@ -76,7 +76,8 @@ test('dispatcher runs installed public adapters and refuses planned, secret and 
   assert.ok((await executePublicFormat('identity/pixel-avatar-v1', record)).data.startsWith('<svg'));
   assert.match((await executePublicFormat('identity/record-fingerprint-v1', record)).data, /^bfrec1-/);
   await assert.rejects(() => executePublicFormat('wallet/bip39', record));
-  await assert.rejects(() => executePublicFormat('symbol/qr-model2', record));
+  const qr=await executePublicFormat('symbol/qr-model2',record);
+  assert.equal(JSON.parse(qr.data).schema,'bytefables.qr-model2-byte.v1');
   await assert.rejects(() => executePublicFormat('codec/story-prototype-13', record));
   await assert.rejects(() => executePublicFormat('bad-format', record));
   await assert.rejects(() => executePublicFormat('codec/hex', ByteValue.secret(decodeHex('00'), {

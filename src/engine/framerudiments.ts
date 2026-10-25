@@ -24,7 +24,7 @@ export interface IdentityLayerOptions extends LayerPlacement {
 export type FrameRudimentsLayer = Readonly<{
   readonly id: string;
   readonly type: 'rudiment';
-  readonly renderer: 'bytefables-pixel-v1' | 'bytefables-matrix-v1' | 'bytefables-scene-v1' | 'bytefables-fractal-v1';
+  readonly renderer: 'bytefables-pixel-v1' | 'bytefables-matrix-v1' | 'bytefables-scene-v1' | 'bytefables-fractal-v1' | 'bytefables-artwork-v1';
   readonly bounds: readonly [number, number, number, number];
   readonly motion: Readonly<{ kind: 'named'; pattern: 'circle' }>;
   readonly axes: readonly [number];
@@ -197,4 +197,34 @@ export async function createFrameRudimentsFractalLayer(
 export function frameRudimentsEffectTarget(layer: FrameRudimentsLayer): string {
   if (!layer || !LAYER_ID.test(layer.id)) throw new TypeError('Invalid layer');
   return `layer:${layer.id}`;
+}
+
+export type IdentityArtworkStyle = 'sigil' | 'constellation' | 'heraldry' | 'topography';
+export interface IdentityArtworkOptions extends LayerPlacement {
+  readonly artwork?: IdentityArtworkStyle;
+  readonly palette?: IdentityPalette;
+  readonly complexity?: number;
+}
+/**
+ * PUBLIC identity bytes become a deterministic source generator in FrameRudiments.
+ * Native FrameRudiments owns actual pixels, colours, timelines and effects.
+ * No generated image can be used as an authenticated identifier or backup.
+ */
+export async function createFrameRudimentsArtworkLayer(
+  record: PublicRecord, opts: IdentityArtworkOptions
+): Promise<FrameRudimentsLayer> {
+  if (!(record instanceof PublicRecord)) throw new TypeError('PublicRecord required');
+  const artwork = opts.artwork ?? 'sigil';
+  const palette = opts.palette ?? 'neon';
+  const complexity = opts.complexity ?? 4;
+  if (!['sigil', 'constellation', 'heraldry', 'topography'].includes(artwork) ||
+      !['neon', 'mono', 'pastel'].includes(palette) ||
+      !Number.isSafeInteger(complexity) || complexity < 1 || complexity > 8) {
+    throw new RangeError('Invalid identity artwork family, palette or complexity');
+  }
+  return base(opts, 'bytefables-artwork-v1', {
+    bridge_version: FRAMERUDIMENTS_BRIDGE_VERSION,
+    digest_hex: encodeHex(await publicRecordDigest(record)),
+    style: artwork, palette, complexity
+  });
 }

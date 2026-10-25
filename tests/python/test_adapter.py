@@ -28,7 +28,7 @@ class TestByteFablesFrameRudiments(unittest.TestCase):
         registry = register_bytefables_renderers(FakeRegistry())
         self.assertEqual(set(registry.factories), {
             'bytefables-pixel-v1', 'bytefables-matrix-v1', 'bytefables-scene-v1',
-            'bytefables-fractal-v1'
+            'bytefables-fractal-v1', 'bytefables-artwork-v1'
         })
         self.assertRaises(ValueError, register_bytefables_renderers, registry)
         options = { 'bridge_version': BRIDGE_VERSION, 'palette': 'neon',

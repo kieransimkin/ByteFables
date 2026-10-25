@@ -37,7 +37,7 @@ export type { SpatialSceneDraft, TemporalSceneDraft, AcousticPacketStreamDraft,
 export { FRAMERUDIMENTS_BRIDGE_VERSION, createFrameRudimentsIdentityLayer,
   createFrameRudimentsMatrixLayer, createFrameRudimentsSceneLayer,
   createFrameRudimentsFractalLayer,
-  frameRudimentsEffectTarget } from './engine/framerudiments.js';
+  frameRudimentsEffectTarget, createFrameRudimentsArtworkLayer } from './engine/framerudiments.js';
 export type { FrameRudimentsLayer, LayerPlacement, IdentityLayerOptions,
   IdentityPalette, FractalLayerOptions } from './engine/framerudiments.js';
 
@@ -91,3 +91,11 @@ export { encodeUrBytesTestOnly, decodeUrBytesTestOnly } from './codecs/ur-bytes-
 export { decodePublicTextFormat } from './registry/decode.js';
 export { encodeMultibase, decodeMultibase } from './codecs/multibase.js';
 export type { MultibasePrefix } from './codecs/multibase.js';
+
+// QR Model 2 PUBLIC recovery: exact byte-mode codewords and FrameRudiments carriers.
+export { encodeQrModel2, qrByteCapacity } from './symbols/qr.js';
+export type { QrResult, QrOptions, QrEcc } from './symbols/qr.js';
+export { encodePublicQrSession, decodePublicQrSession } from './symbols/qr-frames.js';
+export type { PublicQrPlanOptions, PublicQrFrame, PublicQrSession } from './symbols/qr-frames.js';
+export { createPublicQrCard } from './engine/public-qr-card.js';
+export type { PublicQrCard, PublicQrCardOptions } from './engine/public-qr-card.js';

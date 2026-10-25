@@ -205,3 +205,35 @@ correctly checksummed address can still be unauthorised, wrong-network, burned,
 or unrelated to the user's private keys. The standalone binary codecs do **not**
 preserve network, provenance, key type, account policy or authentication.
 See [Stage 3 standards profile](docs/specs/standard-codecs-v1.md).
+
+## Public QR BFQR1 / FrameRudiments artwork (next implementation batch)
+
+`symbol/qr-model2` is an actual public-only byte-mode QR encoder with standard
+module-level Reed–Solomon ECC. `archive/public-qr-session-v1` is a **separate
+experimental** ByteFables public-record transport, not URv2, not wallet
+interoperable, not encrypted, and not suitable for offline recovery of private
+keys. Its SHA-256 and CRC checks are **unkeyed**, so they provide integrity
+checks against accidental corruption but cannot authenticate the producer.
+
+One optional XOR parity frame can recover one **missing entire frame**, not
+multiple missing frames, individual bit errors beyond a scanner's ECC
+capability, malicious edits, cropped-away data, lost derivation metadata or
+private keys never present in the original payload. No secret-bearing QR is
+accepted as a supported workflow. `ByteValue<'secret'>` is not a secure-memory
+boundary; caller provenance still requires enforcement at the host.
+
+Optical recovery must use a **protected QR layer** with a four-module quiet
+zone and whole-number modules. Never post-process the QR modules with
+FrameRudiments effects or resize them with interpolation. User-facing
+animation, glows, fractals and sprites must be *outside* the protected grid.
+The native host currently permits effect configuration, so `createPublicQrCard`
+provides declarative safe data **but does not enforce the full downstream host
+policy**. Verify the final exported image with an independent scanner; do not
+claim general durability based on a PNG unit test. New QR/fountain/secret
+exporters need independently reviewed threat models before production use.
+
+Art renderers (`sigil`, `constellation`, `heraldry`, `topography`) produce
+non-reversible, deterministic images from full PUBLIC typed-record digests.
+No sprite is an authenticating fingerprint, wallet backup, proof of ownership
+or 256-bit collision-free visual encoding. Appearance controls and registered
+trusted FrameRudiments Python factories are execution boundaries.
