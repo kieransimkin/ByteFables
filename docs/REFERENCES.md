@@ -101,3 +101,15 @@ catalogued as planned, with no production robustness or undetectability claim.
   and canonical sample stories for both independent formats.
 - These ByteFables codecs are **original formats**, not implementations of
   [BIP-450/Formosa](https://github.com/bitcoin/bips/blob/master/bip-0450.mediawiki).
+
+## Stage 3 public codec references (implemented subset)
+
+The implementation, conformance examples, canonical BIP-39 English wordlist
+revision and incomplete wallet-safety gates are now described in
+[standard-codecs-v1.md](specs/standard-codecs-v1.md). Additional primary
+sources: [RFC 9285](https://www.rfc-editor.org/rfc/rfc9285.html),
+[Crockford Base32](https://www.crockford.com/base32),
+[BIP-173](https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki),
+[BIP-350](https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki),
+[Multibase](https://github.com/multiformats/multibase), and
+[UR single-part rules](https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2020-005-ur.md).

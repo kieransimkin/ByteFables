@@ -5,7 +5,7 @@ import {
   executePublicFormat, decodePublicRecord, publicRecordFingerprint,
   createFrameRudimentsIdentityLayer, planPublicWatermark,
   encodeStoryV2, encodeScheduledStory, inspectStoryV2, createFrameRudimentsStoryPreview,
-  makeVisualBitPlan, choosePromptBits, composeBaselinePrompt,
+  makeVisualBitPlan, choosePromptBits, composeBaselinePrompt, decodePublicTextFormat,
   createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes
 } from '../dist/index.js';
 
@@ -13,6 +13,7 @@ const help = `ByteFables public-only CLI (no wallet/private-key support)
   bytefables formats [--json]
   bytefables plan --bytes N [--goal recover-typed|recover-any|identify|all] [--planned] [--experimental]
   bytefables demo
+  bytefables decode-public-text --confirm-public --format FORMAT --text PUBLIC_TEXT [--experimental]
   bytefables story-encode --confirm-public --public-hex HEX --namespace NS --kind KIND
       [--theme nature|technology|music|fantasy|science|humour] [--profile prefix|scheduled] [--stats]
   bytefables story-preview --confirm-public --public-hex HEX --namespace NS --kind KIND
@@ -90,6 +91,19 @@ async function main(args) {
         goal: opt['--goal'] ?? 'all', includePlanned: !!opt['--planned'],
         includeExperimental: !!opt['--experimental'] });
       console.log(JSON.stringify(results, null, 2)); return;
+    }
+    case 'decode-public-text': {
+      const opt = parseFlags(rest, ['--confirm-public', '--format', '--text', '--experimental']);
+      requirePublic(opt);
+      if (!opt['--format'] || opt['--text'] === undefined) {
+        throw new TypeError('Requires --format and --text for PUBLIC fixtures only');
+      }
+      const data = await decodePublicTextFormat(opt['--format'], opt['--text'],
+        { allowExperimental: !!opt['--experimental'] });
+      console.log(JSON.stringify({ formatId: opt['--format'], bytesHex: encodeHex(data),
+        byteLength: data.length, contextRecovered: false,
+        warning: 'Raw bytes only; no network, owner, wallet or key type is recovered.' }, null, 2));
+      return;
     }
     case 'demo': {
       if (rest.length) throw new TypeError('demo takes no arguments');

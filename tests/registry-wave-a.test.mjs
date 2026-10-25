@@ -17,7 +17,7 @@ test('immutable manifest snapshot and public-only metadata contract', async () =
   assert.equal(file.schema, 'bytefables-format-manifest-1');
   assert.deepEqual(file.formats, FORMAT_MANIFEST);
   assert.equal(getFormatManifest('symbol/qr-model2').maturity, 'planned');
-  assert.equal(listFormatManifests({ maturity: 'planned' }).length, 8);
+  assert.equal(listFormatManifests({ maturity: 'planned' }).length, 7);
   for (const f of FORMAT_MANIFEST) {
     assert.ok(Object.isFrozen(f));
     assert.ok(Object.isFrozen(f.mediaTypes));

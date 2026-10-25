@@ -24,8 +24,13 @@ independently tested archival recovery formats. The first implementation is a
   DP-scheduled story profile, conditional grammar, explicit verb-agreement
   dictionaries, mixed-radix coding, and unkeyed SHA-256-128 integrity.
   These are **public raw-byte** codecs only, not wallet backups or BIP-450.
-- `planned`: BIP-39, Bytewords/UR, QR/SeedQR, SLIP-39, ECC, archival
-  recovery templates, and more FrameRudiments-hosted visual renderers.
+- `Stage 3 public standard codecs`: RFC 9285 Base45, RFC 4648 Base64/Base64url,
+  Crockford Base32+check, Base58Check with mandatory version, Bech32/Bech32m,
+  Multibase, and full/URI/minimal Bytewords with CRC-32. Experimental PUBLIC
+  BIP-39 English entropy fixtures and `ur:bytes` single-part testing only;
+  **no production wallet mnemonic or key recovery API**.
+- `planned`: SLIP-39, real wallet-qualified BIP-39/SeedQR, registered multipart
+  UR/fountain workflows, QR symbol generation/ECC and archival templates.
 
 Neither generated text nor a visual icon proves ownership, authorisation,
 non-repudiation or exact identity. Use original public keys/full hashes and
@@ -35,6 +40,7 @@ See [the design](docs/DESIGN.md), [the staged roadmap](docs/IMPLEMENTATION_PLAN.
 [the public CBOR specification](docs/specs/bytefables-public-record-v1.md),
 [FrameRudiments integration](docs/specs/frame-bridge-v1.md),
 [reversible story v2 specification](docs/specs/story-v2.md),
+[Stage 3 interoperable public codecs](docs/specs/standard-codecs-v1.md),
 [output-format atlas](docs/OUTPUT_FORMAT_ATLAS.md),
 [composable rendering/export pipeline](docs/OUTPUT_PIPELINE.md),
 [October 2026 research survey](docs/RESEARCH_SURVEY_2026-10.md),
@@ -44,6 +50,29 @@ The expanded roadmap now covers lossless text, key standards, QR/industrial
 barcodes, animation, public 2D/3D avatars, WebGL/Unity sprites, print/metal,
 audio/LED/NFC, accessibility and speculative storage media. **Those formats are
 planned/researched, not implemented** by the first TypeScript foundation.
+
+## Stage 3 — standards interoperability (public-only)
+
+The canonical codec registry now exposes reversible Base45, Base64,
+Base64url, checked Crockford Base32, Multibase and Bytewords normal/URI/minimal.
+Base58Check and Bech32(m)/SegWit are provided as separate typed APIs because
+network/address context must be explicit. The frozen official BIP-39 English
+wordlist supports **PUBLIC TEST entropy only**, gated as experimental in the
+format manifest. One single-part `ur:bytes` fixture codec is also test-only;
+UR multiplexing and registered UR types have not shipped.
+
+```sh
+npm run check
+node bin/bytefables.mjs encode-public --confirm-public \
+  --public-hex 000102ff --namespace danceflow --kind node-id \
+  --format codec/bytewords-minimal
+node bin/bytefables.mjs decode-public-text --confirm-public \
+  --format codec/base45 --text BB8
+```
+
+Read the [Stage 3 specification](docs/specs/standard-codecs-v1.md) before using
+any of these. **Never input a real wallet mnemonic, private key, seed, or
+passphrase.** A checksum detects some corruption but is never authorization.
 
 ## Stage 2 — structured sentence encodings (public-only)
 

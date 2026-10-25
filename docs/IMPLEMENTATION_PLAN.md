@@ -105,7 +105,17 @@ spoken transcription trials, formal proof documents beyond compiler invariants,
 cross-language decoder vectors and long-lived archival/wallet suitability.
 These are not implied by a passing Node test suite.
 
-## Stage 3 — interoperable standard encodings
+## Stage 3 — interoperable standard encodings **[public codec subset implemented; wallet qualification pending]**
+
+**Implemented in this increment:** Base45, Base64/Base64url, checked
+Crockford Base32, checked network-explicit Base58, Bech32/Bech32m with
+SegWit validation, Multibase, Bytewords standard/URI/minimal, official BIP-39
+public fixture entropy mapping, and reserved single-part UR `bytes` tests.
+These have vectors and strict decoders but are **not** production wallet
+recovery or private-key backup features. See
+[the Stage 3 codec specification](specs/standard-codecs-v1.md).
+The overall Stage 3 gate is still **open** for SLIP-39, typed/multipart UR,
+wallet recovery tests, seed derivation/metadata and independent reviews.
 
 **Priority A:**
 1. RFC 4648 (foundation); broaden to checked Crockford Base32/Base45 where

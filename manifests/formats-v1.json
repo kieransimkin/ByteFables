@@ -550,29 +550,130 @@
       "adapter": null
     },
     {
-      "formatId": "codec/bytewords",
+      "formatId": "codec/base45",
       "version": "1.0.0",
       "category": "codec",
-      "maturity": "planned",
+      "maturity": "foundation",
       "guarantee": "reversible-raw",
       "input": "public-record",
       "sensitivity": "public-only",
-      "reference": "https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2020-012-bytewords.md",
+      "reference": "https://www.rfc-editor.org/rfc/rfc9285.html",
       "standardStatus": "published",
-      "license": "TBD-review-upstream",
-      "referenceVectors": null,
-      "decoder": null,
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeBase45",
       "minInputBytes": 0,
       "maxInputBytes": 1048576,
-      "maxOutputBytes": 4194304,
+      "maxOutputBytes": 1572864,
       "capacity": "byte-exact",
-      "estimatedExpansion": 2,
+      "estimatedExpansion": 1.5,
       "mediaTypes": [
         "text/plain"
       ],
       "carriers": [
-        "text",
-        "print"
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBase45"
+    },
+    {
+      "formatId": "codec/base64-padded",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://www.rfc-editor.org/rfc/rfc4648.html",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeBase64",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 1398104,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 1.34,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBase64"
+    },
+    {
+      "formatId": "codec/base64url-nopad",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://www.rfc-editor.org/rfc/rfc4648.html",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeBase64 urlSafe",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 1398102,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 1.34,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBase64Url"
+    },
+    {
+      "formatId": "codec/crockford32-check",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://www.crockford.com/base32",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeCrockford32 checked",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 1677723,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 1.61,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
       ],
       "integrity": "format-specific",
       "errorCorrection": "none",
@@ -582,7 +683,245 @@
         "node",
         "browser"
       ],
-      "adapter": null
+      "adapter": "encodeCrockfordChecked"
+    },
+    {
+      "formatId": "codec/bytewords",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2020-012-bytewords.md",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeBytewords standard",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 5242900,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 5,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "crc32-accidental",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBytewords"
+    },
+    {
+      "formatId": "codec/bytewords-uri",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2020-012-bytewords.md",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeBytewords uri",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 5242900,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 5,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "crc32-accidental",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBytewordsUri"
+    },
+    {
+      "formatId": "codec/bytewords-minimal",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2020-012-bytewords.md",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeBytewords minimal",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 2097160,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 2.1,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "crc32-accidental",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBytewordsMinimal"
+    },
+    {
+      "formatId": "codec/bip39-public-fixture",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "experimental",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeBip39PublicMnemonic",
+      "minInputBytes": 16,
+      "maxInputBytes": 32,
+      "maxOutputBytes": 256,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 8,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBip39PublicEntropy"
+    },
+    {
+      "formatId": "codec/multibase-base32",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/multiformats/multibase",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeMultibase b",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 1677723,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 1.61,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeMultibase32"
+    },
+    {
+      "formatId": "codec/multibase-base64url",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/multiformats/multibase",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeMultibase u",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 1398103,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 1.35,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeMultibase64Url"
+    },
+    {
+      "formatId": "codec/ur-bytes-test-only",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "experimental",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2020-005-ur.md",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/interop-codecs.test.mjs",
+      "decoder": "decodeUrBytesTestOnly",
+      "minInputBytes": 0,
+      "maxInputBytes": 4096,
+      "maxOutputBytes": 10000,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 2.1,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "crc32-accidental",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeUrBytesTestOnly"
     },
     {
       "formatId": "symbol/qr-model2",

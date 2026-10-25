@@ -42,8 +42,9 @@ responsibility. Never use these demonstration functions to handle live funds.
 ## What is not implemented
 
 - Private-key import/export, encryption, passphrase/seed derivation.
-- BIP-39, SLIP-39 or Formosa compatibility.
-- Threshold sharing, QR, SeedQR, Bytewords/UR, RS/BCH codes, PDF/metal templates.
+- Production BIP-39 wallet backup/import, SLIP-39 or Formosa compatibility.
+- Threshold sharing, QR, SeedQR, UR multipart/fountain, RS/BCH codes, PDF/metal templates.
+- BIP-39 mnemonic-to-seed derivation, wallet account restoration or private mnemonic processing.
 - Wallet descriptor or address derivation.
 - Secure memory, secure deletion or offline-only operational enforcement.
 - Automated repair of erroneous key material.
@@ -182,3 +183,25 @@ alias in place of an original node ID, address, full digest, signature or MAC;
 collisions are expected at scales described in `docs/specs/short-public-hashes-v1.md`.
 Only publicly classified inputs are admitted, and misclassification by callers
 remains a security boundary that TypeScript alone cannot enforce.
+
+## Stage 3 public standards codec qualification (experimental where noted)
+
+Common public binary text codecs are implemented with strict canonical decoders,
+no global model downloads and official published reference vectors. BIP-39 now
+exists **only for publicly disclosed dummy entropy**; its `wallet/bip39`
+manifest entry deliberately remains `planned`, while
+`codec/bip39-public-fixture` requires experimental opt-in. Its 2048-word list is
+SHA-256 pinned and matched byte-for-byte against the Bitcoin BIPs Git object.
+The decoder cannot determine whether its input is a live wallet seed phrase, so
+the caller must keep secrets out: never paste a mnemonic into the public CLI,
+Python or frontend flows. The raw CLI text and process argument lists may be
+logged, and browser pages may preserve input history.
+
+`ur:bytes` is a one-part test type reserved for implementation validation, not
+an interoperable wallet UR export. True multipart/typed UR and hardened wallet
+recovery remain unimplemented. Base58Check requires explicit version bytes and
+Bech32 witness functions enforce witness-version and checksum pairing. A
+correctly checksummed address can still be unauthorised, wrong-network, burned,
+or unrelated to the user's private keys. The standalone binary codecs do **not**
+preserve network, provenance, key type, account policy or authentication.
+See [Stage 3 standards profile](docs/specs/standard-codecs-v1.md).

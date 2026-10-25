@@ -75,3 +75,19 @@ export type { VisualBitChoice, VisualBitPlan, BaselinePromptStyle } from './iden
 // Research-stage public-only fractal identity plans. No reversible key encoding.
 export { FRACTAL_SEED_VERSION, FRACTAL_FAMILIES, FRACTAL_BINARY_AXES, planPublicFractal } from './identity/fractal-seed.js';
 export type { FractalFamily, FractalPalette, FractalSeedPlan } from './identity/fractal-seed.js';
+
+// Stage 3 — strict standard codecs; wallet-specific recovery remains separately gated.
+export { encodeBase64, decodeBase64 } from './codecs/base64.js';
+export { encodeBase45, decodeBase45 } from './codecs/base45.js';
+export { encodeCrockford32, decodeCrockford32 } from './codecs/crockford32.js';
+export { encodeBase58, decodeBase58, encodeBase58Check, decodeBase58Check, decodeBase58CheckForVersion } from './codecs/base58check.js';
+export { encodeBech32, decodeBech32, encodeBech32Bytes, decodeBech32Bytes,
+  encodeSegwitAddress, decodeSegwitAddress, convertBits } from './codecs/bech32.js';
+export type { Bech32Variant } from './codecs/bech32.js';
+export { encodeBytewords, decodeBytewords, BYTEWORDS_WORDLIST } from './codecs/bytewords.js';
+export type { BytewordsStyle } from './codecs/bytewords.js';
+export { encodeBip39PublicEntropy, decodeBip39PublicMnemonic, BIP39_ENGLISH } from './codecs/bip39.js';
+export { encodeUrBytesTestOnly, decodeUrBytesTestOnly } from './codecs/ur-bytes-test.js';
+export { decodePublicTextFormat } from './registry/decode.js';
+export { encodeMultibase, decodeMultibase } from './codecs/multibase.js';
+export type { MultibasePrefix } from './codecs/multibase.js';

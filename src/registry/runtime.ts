@@ -2,6 +2,13 @@
 import { PublicRecord, encodePublicRecord, publicRecordFingerprint } from '../framing/public-record.js';
 import { encodeHex } from '../codecs/hex.js';
 import { encodeBase32 } from '../codecs/base32.js';
+import { encodeBase45 } from '../codecs/base45.js';
+import { encodeBase64 } from '../codecs/base64.js';
+import { encodeCrockford32 } from '../codecs/crockford32.js';
+import { encodeBytewords } from '../codecs/bytewords.js';
+import { encodeBip39PublicEntropy } from '../codecs/bip39.js';
+import { encodeUrBytesTestOnly } from '../codecs/ur-bytes-test.js';
+import { encodeMultibase } from '../codecs/multibase.js';
 import { encodeExperimentalStory } from '../grammar/story.js';
 import { encodeStoryV2 } from '../grammar/story-v2.js';
 import { encodeScheduledStory } from '../grammar/scheduled-story.js';
@@ -44,6 +51,17 @@ export type PlannedFormat = Readonly<{
 
 const adapters: ReadonlyMap<string, (record: PublicRecord) => Promise<string | Uint8Array>> = new Map<string, (record: PublicRecord) => Promise<string | Uint8Array>>([
   ['encodeHex', async (record: PublicRecord) => encodeHex(record.toBytes())],
+  ['encodeBase45', async record => encodeBase45(record.toBytes())],
+  ['encodeBase64', async record => encodeBase64(record.toBytes())],
+  ['encodeBase64Url', async record => encodeBase64(record.toBytes(), true)],
+  ['encodeCrockfordChecked', async record => encodeCrockford32(record.toBytes(), true)],
+  ['encodeBytewords', async record => encodeBytewords(record.toBytes())],
+  ['encodeBytewordsUri', async record => encodeBytewords(record.toBytes(), 'uri')],
+  ['encodeBytewordsMinimal', async record => encodeBytewords(record.toBytes(), 'minimal')],
+  ['encodeBip39PublicEntropy', async record => encodeBip39PublicEntropy(record.value)],
+  ['encodeUrBytesTestOnly', async record => encodeUrBytesTestOnly(record.toBytes())],
+  ['encodeMultibase32', async record => encodeMultibase(record.toBytes(), 'b')],
+  ['encodeMultibase64Url', async record => encodeMultibase(record.toBytes(), 'u')],
   ['encodeBase32', async (record: PublicRecord) => encodeBase32(record.toBytes())],
   ['encodePublicRecord', async (record: PublicRecord) => encodePublicRecord(record)],
   ['encodeExperimentalStory', async (record: PublicRecord) => encodeExperimentalStory(record.value)],
