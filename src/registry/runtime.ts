@@ -1,0 +1,120 @@
+/** Public-only format execution and capability planning. No secrets or planned handlers. */
+import { PublicRecord, encodePublicRecord, publicRecordFingerprint } from '../framing/public-record.js';
+import { encodeHex } from '../codecs/hex.js';
+import { encodeBase32 } from '../codecs/base32.js';
+import { encodeExperimentalStory } from '../grammar/story.js';
+import { encodeStoryV2 } from '../grammar/story-v2.js';
+import { encodeScheduledStory } from '../grammar/scheduled-story.js';
+import { identityFingerprint } from '../identity/identity.js';
+import { renderPixelAvatar } from '../identity/pixel-avatar.js';
+import { makeVisualBitPlan } from '../identity/visual-bits.js';
+import { createFrameRudimentsIdentityLayer } from '../engine/framerudiments.js';
+import { FORMAT_MANIFEST, getFormatManifest, type FormatManifestEntry, type FormatGuarantee } from './manifest.js';
+
+export type PublicArtifact = Readonly<{
+  formatId: string;
+  version: string;
+  guarantee: FormatGuarantee;
+  mediaType: string;
+  /** Text and SVG representations are strings; application/cbor is bytes. */
+  data: string | Uint8Array;
+}>;
+
+export interface PublicPlanRequest {
+  readonly byteLength: number;
+  readonly goal?: 'recover-typed' | 'recover-any' | 'identify' | 'all';
+  readonly mediaType?: string;
+  /** Experimental formats require explicit inclusion and opt-in execution. */
+  readonly includeExperimental?: boolean;
+  /** Planned descriptions are not executable and stay excluded by default. */
+  readonly includePlanned?: boolean;
+}
+
+export type PlannedFormat = Readonly<{
+  formatId: string;
+  version: string;
+  guarantee: FormatGuarantee;
+  maturity: FormatManifestEntry['maturity'];
+  mediaTypes: readonly string[];
+  estimatedExpansion: number | null;
+  executable: boolean;
+}>;
+
+const adapters: ReadonlyMap<string, (record: PublicRecord) => Promise<string | Uint8Array>> = new Map<string, (record: PublicRecord) => Promise<string | Uint8Array>>([
+  ['encodeHex', async (record: PublicRecord) => encodeHex(record.toBytes())],
+  ['encodeBase32', async (record: PublicRecord) => encodeBase32(record.toBytes())],
+  ['encodePublicRecord', async (record: PublicRecord) => encodePublicRecord(record)],
+  ['encodeExperimentalStory', async (record: PublicRecord) => encodeExperimentalStory(record.value)],
+  ['encodeStoryV2', async (record: PublicRecord) => encodeStoryV2(record.value)],
+  ['encodeScheduledStory', async (record: PublicRecord) => encodeScheduledStory(record.value)],
+  ['identityFingerprint', async (record: PublicRecord) => identityFingerprint(record.value)],
+  ['publicRecordFingerprint', async (record: PublicRecord) => publicRecordFingerprint(record)],
+  ['renderPixelAvatar', async (record: PublicRecord) => renderPixelAvatar(record.value)],
+  ['makeVisualBitPlan', async (record: PublicRecord) => JSON.stringify(await makeVisualBitPlan(record.value))],
+  ['makeFrameRudimentsIdentityLayer', async (record: PublicRecord) =>
+    JSON.stringify(await createFrameRudimentsIdentityLayer(record, { id: 'bytefables-identity', bounds: [0, 0, 128, 128] }))]
+]);
+
+function runnable(entry: FormatManifestEntry): boolean {
+  return entry.input === 'public-record' && entry.maturity !== 'planned' &&
+    entry.adapter !== null && adapters.has(entry.adapter);
+}
+
+/** Registered planned and intermediate-output formats are descriptive, NOT handlers. */
+export function planPublicFormats(request: PublicPlanRequest): readonly PlannedFormat[] {
+  if (!Number.isSafeInteger(request.byteLength) || request.byteLength < 0 ||
+      request.byteLength > 1048576) {
+    throw new RangeError('Invalid planned public byte length');
+  }
+  const goal = request.goal ?? 'all';
+  if (!['recover-typed', 'recover-any', 'identify', 'all'].includes(goal)) {
+    throw new TypeError('Invalid format planning goal');
+  }
+  return FORMAT_MANIFEST.filter(entry => {
+    if (entry.input !== 'public-record' || request.byteLength < entry.minInputBytes ||
+        request.byteLength > entry.maxInputBytes) return false;
+    if (entry.maturity === 'planned' && !request.includePlanned) return false;
+    if (entry.maturity === 'experimental' && !request.includeExperimental) return false;
+    if (request.mediaType && !entry.mediaTypes.includes(request.mediaType)) return false;
+    if (goal === 'recover-typed' && entry.guarantee !== 'reversible-typed') return false;
+    if (goal === 'recover-any' && !entry.guarantee.startsWith('reversible-')) return false;
+    if (goal === 'identify' && entry.guarantee !== 'identity-only') return false;
+    return true;
+  }).map(entry => Object.freeze({ formatId: entry.formatId, version: entry.version,
+    guarantee: entry.guarantee, maturity: entry.maturity,
+    mediaTypes: entry.mediaTypes, estimatedExpansion: entry.estimatedExpansion,
+    executable: runnable(entry)
+  }));
+}
+
+/** Executes ONLY concrete built-in public adapters; never executes planned capabilities. */
+export async function executePublicFormat(
+  formatId: string, record: PublicRecord, options: { readonly allowExperimental?: boolean } = {}
+): Promise<PublicArtifact> {
+  if (!(record instanceof PublicRecord)) throw new TypeError('PublicRecord required');
+  const entry = getFormatManifest(formatId);
+  if (!entry) throw new RangeError('Unknown format');
+  if (entry.maturity === 'planned' || !runnable(entry)) {
+    throw new RangeError('Format is not implemented for public records');
+  }
+  if (entry.maturity === 'experimental' && options.allowExperimental !== true) {
+    throw new RangeError('Experimental format requires explicit opt-in');
+  }
+  if (record.byteLength < entry.minInputBytes || record.byteLength > entry.maxInputBytes) {
+    throw new RangeError('Input exceeds format capacity');
+  }
+  const encoded = await adapters.get(entry.adapter!)!(record);
+  const encodedSize = typeof encoded === 'string' ? new TextEncoder().encode(encoded).length : encoded.length;
+  if (encodedSize > entry.maxOutputBytes) throw new RangeError('Format exceeded output budget');
+  return Object.freeze({ formatId: entry.formatId, version: entry.version,
+    guarantee: entry.guarantee, mediaType: entry.mediaTypes[0]!, data: encoded });
+}
+
+/** CI guard: every declared built-in public-record handler must exist. */
+export function verifyBuiltinRegistry(): void {
+  for (const entry of FORMAT_MANIFEST) {
+    if (entry.adapter && !runnable(entry)) {
+      throw new TypeError(`Unbound format adapter: ${entry.formatId}`);
+    }
+  }
+}

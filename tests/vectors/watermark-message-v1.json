@@ -1,0 +1,18 @@
+{
+  "schema": "bytefables.watermark-vectors.v1",
+  "publicRecord": {
+    "namespace": "danceflow",
+    "kind": "node-id",
+    "algorithm": "sha256",
+    "network": "testnet",
+    "endian": "big",
+    "schemaVersion": 1,
+    "bytesHex": "000102ff"
+  },
+  "publicRecordDigestHex": "4ed08dc611e7412cebca47b8758a634e1cdecf7ed131bb8bb28c172f09b6169c",
+  "messages": {
+    "96": "4246574d010c4ed08dc611e7412cebca47b8791c96aa",
+    "128": "4246574d01104ed08dc611e7412cebca47b8758a634ed81c1ddd",
+    "256": "4246574d01204ed08dc611e7412cebca47b8758a634e1cdecf7ed131bb8bb28c172f09b6169c1ca3ed40"
+  }
+}

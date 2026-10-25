@@ -1,6 +1,6 @@
 # ByteFables
 
-**Deterministic representations for unique bytes.**
+**Deterministic representations for unique bytes, rendered through FrameRudiments.**
 
 ByteFables is a planned DanceFlow ecosystem tool for reversible, human-readable
 binary encodings, deterministic public identity visuals, and eventually
@@ -16,14 +16,25 @@ independently tested archival recovery formats. The first implementation is a
   sentence codec** using a typed grammar pack and CRC-32 for accidental errors.
   It refuses ByteFables values marked secret. It is **not BIP-39**, is not
   wallet interoperable, and is not recommended for private key archival.
-- `planned`: BIP-39, Bytewords/UR, QR/SeedQR, SLIP-39, advanced grammars, ECC,
-  archival templates, and more avatar renderers. These are NOT implemented.
+- `foundation Wave A`: canonical public CBOR records, validated format registry,
+  binary matrix and vector scene IR, a public CLI, and a declarative integration
+  with the existing FrameRudiments renderer/effect pipeline.
+- `experimental Stage 2`: six immutable thematic vocabularies, exact
+  **33–35-bit** prefix-coded sentences, a separate **24/32/40-bit**
+  DP-scheduled story profile, conditional grammar, explicit verb-agreement
+  dictionaries, mixed-radix coding, and unkeyed SHA-256-128 integrity.
+  These are **public raw-byte** codecs only, not wallet backups or BIP-450.
+- `planned`: BIP-39, Bytewords/UR, QR/SeedQR, SLIP-39, ECC, archival
+  recovery templates, and more FrameRudiments-hosted visual renderers.
 
 Neither generated text nor a visual icon proves ownership, authorisation,
 non-repudiation or exact identity. Use original public keys/full hashes and
 cryptographic verification for those decisions.
 
 See [the design](docs/DESIGN.md), [the staged roadmap](docs/IMPLEMENTATION_PLAN.md),
+[the public CBOR specification](docs/specs/bytefables-public-record-v1.md),
+[FrameRudiments integration](docs/specs/frame-bridge-v1.md),
+[reversible story v2 specification](docs/specs/story-v2.md),
 [output-format atlas](docs/OUTPUT_FORMAT_ATLAS.md),
 [composable rendering/export pipeline](docs/OUTPUT_PIPELINE.md),
 [October 2026 research survey](docs/RESEARCH_SURVEY_2026-10.md),
@@ -33,6 +44,118 @@ The expanded roadmap now covers lossless text, key standards, QR/industrial
 barcodes, animation, public 2D/3D avatars, WebGL/Unity sprites, print/metal,
 audio/LED/NFC, accessibility and speculative storage media. **Those formats are
 planned/researched, not implemented** by the first TypeScript foundation.
+
+## Stage 2 — structured sentence encodings (public-only)
+
+There are now **two independently versioned, experimental** story encodings:
+
+- `BYTEFABLES-STORY-V2`: four grammar variants carrying 33/34/35/35 bits
+  per sentence (four 256-entry lexical choices plus actual prefix data bits).
+- `BYTEFABLES-SCHEDULED-STORY-1`: explicitly marked 24/32/40-bit variants,
+  selected using a bounded, deterministic DP schedule. Grammar selection is
+  visible overhead, **not free data capacity**.
+
+Six themed packs (`nature`, `technology`, `music`, `fantasy`, `science`,
+`humour`) encode/decode exact arbitrary PUBLIC bytes up to 4,096 bytes. Both
+formats use a different framed envelope and unkeyed SHA-256 integrity check;
+no secret inputs, encrypted-wallet import, BIP-39 or BIP-450 interoperability.
+They preserve raw bytes but not original node namespace/type metadata.
+
+```js
+const publicNode = ByteValue.public(Uint8Array.of(0, 1, 2, 255), {
+  namespace: 'danceflow', kind: 'node-id'
+});
+const story = await encodeStoryV2(publicNode, 'nature');
+const restored = await decodeStoryV2(story); // restored.bytes equals original bytes
+const other = await encodeScheduledStory(publicNode, 'music');
+const preview = await createFrameRudimentsStoryPreview(publicNode, 'music', {
+  box: [0, 0, 640, 120], fontSize: 18, maxSentences: 2
+});
+// preview.identities is a fragment for FrameRudiments project.identity;
+// caller must provide a SHA-256-pinned project font. Preview is NOT reversible.
+```
+
+CLI for **public identifiers only**:
+
+```sh
+node bin/bytefables.mjs story-encode --confirm-public --public-hex 000102ff \
+  --namespace danceflow --kind node-id --theme nature --profile prefix --stats
+node bin/bytefables.mjs story-preview --confirm-public --public-hex 000102ff \
+  --namespace danceflow --kind node-id --max-sentences 2
+node scripts/story-vectors.mjs --check
+```
+
+ByteFables owns the reversible language codec, while **FrameRudiments remains
+sole owner of text rasterisation, styled captions, compositor and effects**.
+The optional preview helper never attempts to draw pixels or produce a rival
+renderer. Complete stories must be saved separately from truncated previews.
+
+## Wave A extension: robust watermark operation (planning only)
+
+ByteFables now also models a **fourth operation family, watermarking**: applying
+an optional, human-imperceptible *public* hash reference to a separate carrier.
+Image, audio, video and generator-controlled text targets have distinct planned
+embedding and extraction profiles. This is **not** a working invisible watermark
+engine: none of the four embedder/detector adapters has shipped, and no
+robustness, undetectability, recovery rate or authenticity is claimed.
+
+The shipped Wave A API can create and decode an exact `BFWM` message (version,
+96/128/256-bit prefix of a typed public record digest, IEEE CRC-32). The
+message is not itself a watermark, and the checksum is not authentication.
+It can also produce conservative carrier feasibility *research plans*, with
+expected bit budget, distortion test classes and a public-only host binding:
+
+```ts
+const message = await encodePublicWatermarkMessage(record, 12);
+const restoredMessage = decodePublicWatermarkMessage(message);
+const candidateMatches = await matchesPublicWatermarkMessage(message, record);
+const candidate = await planPublicWatermark(record, {
+  kind: 'image', mimeType: 'image/jpeg', width: 1920, height: 1080
+});
+// candidate.status === 'planning-only'; embedderAvailable === false
+```
+
+Or use the metadata-only CLI:
+
+```sh
+bytefables watermark-plan --confirm-public --public-hex 000102ff \
+  --namespace danceflow --kind node-id --carrier image \
+  --mime-type image/jpeg --width 1920 --height 1080
+```
+
+The public record must already exist in the code sample above. No private
+keys, secrets or wallet backups may enter the shared renderer. Actual embedder
+and extractor effects are to be developed in **FrameRudiments**, reusing its
+native effect graph and video/audio timebase; ByteFables owns only typed message
+framing and capability planning. For threat assumptions, carrier-specific
+limits and independent testing see [watermark protocol and staged tests](docs/specs/watermark-v1.md).
+
+## Experimental hash-to-image model profiler
+
+Each **PUBLIC** hash bit maps to a fixed binary visual feature choice: e.g.
+spiky/smooth, dark/bright, muted/saturated. A compact local LLM receives the
+selected choices **without the raw hash** and writes image prompts. Compare
+small prompt writers against locally installed tiny image diffusion models,
+controlled noise seeds, counterfactual single-bit flips, feature budgets,
+prompt coverage and independently measured visual attribute agreement.
+
+- `bytefables visual-features ...` emits the complete frozen bit-feature ledger
+  and a baseline prompt for public bytes.
+- `python -m tools.hash_image_bench prepare ...` saves baseline candidates and
+  paired bit-flip experiments.
+- `write-prompts` calls only an explicitly supplied loopback OpenAI-compatible
+  LLM server and persists raw replies and prompts.
+- `render` uses existing local Diffusers checkpoint directories (no auto-
+  downloads) and requires explicit `--execute` for inference; missing weights
+  or GPU are reported, not simulated.
+- `score-clip` is an **optional proxy**, `report` supports imported independent
+  blinded binary evaluations, and `host-assets` writes checksum-pinned
+  FrameRudiments sprite layer fragments without a competing render engine.
+
+All output is **identity-only, NOT reversible binary art or a wallet backup**.
+See [experimental specification](docs/specs/hash-image-benchmark-v1.md),
+[compact-model research](docs/IMAGE_MODEL_RESEARCH.md) and
+[example local checkpoint configs](experiments/tiny-image-models.example.json).
 
 ## Development
 
@@ -51,6 +174,33 @@ tsc -p tsconfig.json
 node --test tests/*.test.mjs
 ```
 
+FrameRudiments is ByteFables' **only production graphics and effects engine**.
+The historical `renderPixelAvatar` API remains for backward compatibility, and
+new scene/matrix formats produce validated data for the native host. New reusable generators are registered
+into FrameRudiments' existing renderer registry; post-processing, visualisers,
+shader effects, time sampling and export live in FrameRudiments, not ByteFables.
+
+An optional native FrameRudiments adapter is available under
+`integrations/framerudiments/`, with a public-only fragment generator:
+
+```sh
+npm run build
+node bin/bytefables.mjs framerudiments-layer --confirm-public \
+  --public-hex 000102ff --namespace danceflow --kind node-id \
+  --id avatar-one --bounds 0,0,128,128 --palette neon
+```
+
+See the [bridge instructions](docs/specs/frame-bridge-v1.md) to register the
+Python factories with the FrameRudiments host. The bridge has synthetic tests;
+full installed-host FFmpeg/effect acceptance is a subsequent integration gate.
+It does not render wallet secrets or provide a production image export API.
+
+The Python generator contract can be checked separately with:
+
+```sh
+python -m unittest discover -s tests/python -v
+```
+
 The current package has `"private": true` to prevent accidental publishing of
 an experimental format. Published packages and their codebooks will require
 versioned stability and independent test vectors first.
@@ -59,8 +209,8 @@ versioned stability and independent test vectors first.
 
 ```ts
 import {
-  ByteValue, identityFingerprint, renderPixelAvatar,
-  encodeBase32, decodeBase32,
+  ByteValue, PublicRecord, identityFingerprint,
+  createFrameRudimentsIdentityLayer, encodeBase32, decodeBase32,
   encodeExperimentalStory, decodeExperimentalStory
 } from 'bytefables';
 
@@ -71,7 +221,9 @@ const node = ByteValue.public(Uint8Array.of(0, 1, 2, 255), {
 });
 
 const fingerprint = await identityFingerprint(node); // bf1-... (96 bits)
-const svg = await renderPixelAvatar(node, { size: 128 });
+const frameLayer = await createFrameRudimentsIdentityLayer(
+  new PublicRecord(node), { id: 'node-identity', bounds: [0, 0, 128, 128] }
+); // Add to a FrameRudiments project with registered factories.
 const text = encodeBase32(node.toBytes());
 const recovered = decodeBase32(text);
 
@@ -100,7 +252,11 @@ imply format compatibility.
 src/
   value.ts                 typed byte container, public/secret boundary
   codecs/                  basic lossless text representations
-  identity/                public fingerprints and SVG avatar renderer
+  identity/                public fingerprints and legacy-compatible SVG avatar
+  engine/framerudiments.ts  typed public-only native renderer layer instructions
+  framing/                 deterministic public CBOR envelopes
+  registry/                versioned capability metadata and planner
+  ir/                      binary module matrices and public vector scene data
   grammar/                 compiling grammar packs, sentence and story demo
   utils/                   strict binary helpers and CRC32
   catalogue.ts             explicit maturity and safety inventory
@@ -110,7 +266,9 @@ docs/
   IMPLEMENTATION_PLAN.md  milestones, dependencies, exit criteria
   REFERENCES.md           standards and source references
 SECURITY.md                threat model and security support policy
-tests/                    native Node test runner
+integrations/framerudiments/  optional FrameRudiments Python renderer factories
+manifests/                immutable checked format catalogue snapshot
+tests/                    native Node and Python generator tests
 examples/                 public-input-only sample
 .github/workflows/ci.yml  build/typecheck/tests, Node 20 and 22
 ```

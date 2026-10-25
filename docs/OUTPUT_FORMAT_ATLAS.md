@@ -206,3 +206,37 @@ A fixed output file type is a **renderer/exporter**, not proof that the embedded
 - **Never silently offer:** proprietary/unsupported key conversion, unverified secret-bearing art, weak checksum described as authentication, remote image/QR APIs for private material, lossy compression as a guaranteed binary backup.
 
 The long tail is valuable for discovery. Each new technique must have a `reference`, `licence`, `decode path`, `fidelity contract`, `threat note` and `test fixture` before being promoted out of research status.
+
+
+## H. Robust/hidden watermark operations (a fourth family)
+
+This family embeds **an identifier into a different carrier**, not a reversible
+rendering of the original bytes. It is a candidate operation on each published
+artistic output *only if* the output can tolerate changes and has an independent
+recovery method; it is inappropriate for raw signed/checksummed files and the
+encoded modules of a scanner-readable archival symbol. The initial `BFWM` v1
+message framing and planner are implemented, **not** the mark embedder/extractor.
+
+| Planned operation | Media | Candidate method and evidence | Key limitations |
+|---|---|---|---|
+| `watermark/image-spatial` | photos, raster art, graphics | DWT/DCT, perceptual residual, repetition, cropping sync; StegaStamp, WAM | crop %, image entropy, recompression, geometry, detectability |
+| `watermark/audio-spectral` | speech/music/audio output | STFT/psychoacoustic bands, spread spectrum, repeat; AudioSeal | short/silent segments, gain, downmix, codecs, sample-rate changes |
+| `watermark/video-temporal` | motion/video | repeated spatial mark + temporal pilots/FEC; VideoSeal, RivaGAN | frame drops, transcode, scene cuts, clip length, overlays |
+| `watermark/text-semantic` | generator-owned, editable prose | constrained grammar or token probabilities; SynthID Text | cannot preserve arbitrary fixed wording; paraphrase/translation |
+| `watermark/image-physical` | printed/photographed imagery | StegaStamp-like physical capture model | lighting, distortion, lens/screen/printer |
+| `watermark/rendered-3d` | rendered surfaces/textures | image-based mark in texture/geometry plus camera sync | novel angles/material/mesh decimation |
+| `watermark/combined` | multistream media | independently identified image + audio + metadata marks | stream removal, conflicting versions and false matches |
+
+**Not recommended as robust:** naive image/audio least-significant-bit toggles,
+Unicode zero-width characters, relying only on EXIF/ID3/XMP/PDF metadata,
+lossy media after arbitrary destructive edits, or adding hidden data to
+protected barcode modules. Some may be imperceptible at first, but they are
+fragile or fundamentally not hidden in the signal.
+
+Every algorithm's measurable dimensions: net extractable message bits after
+ECC, false-negative and false-positive rate, confidence calibration, retained
+crop/clip %, resampling factors, codec matrix, imperceptibility studies, signal
+budget, algorithm/version/model hash, decode after final media export, license
+and public/secret routing. "Undetectable" and "guaranteed recovery" are not
+release claims. For references, threat examples and v1 message format see
+[watermark protocol](specs/watermark-v1.md).

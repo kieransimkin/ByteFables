@@ -1,0 +1,10 @@
+{
+  "$comment": "LOCAL PATHS REQUIRED. Example only: download and review checkpoint licences manually. No weights are included or downloaded by ByteFables.",
+  "models": [
+    {"id":"bk-sdm-tiny","family":"stable-diffusion","localPath":"/absolute/model-store/BK-SDM-Tiny","revision":"pin-sha-here","steps":25,"guidance":7.5,"width":512,"height":512,"device":"cuda","dtype":"float16","negativePrompt":true},
+    {"id":"pixart-alpha-06b","family":"pixart","localPath":"/absolute/model-store/PixArt-alpha-512","revision":"pin-sha-here","steps":20,"guidance":4.5,"width":512,"height":512,"device":"cuda","dtype":"float16","negativePrompt":true},
+    {"id":"sana-06b","family":"sana","localPath":"/absolute/model-store/Sana-600M","revision":"pin-sha-here","steps":20,"guidance":4.5,"width":512,"height":512,"device":"cuda","dtype":"float16","negativePrompt":false},
+    {"id":"ssd-1b","family":"stable-diffusion-xl","localPath":"/absolute/model-store/SSD-1B","revision":"pin-sha-here","steps":30,"guidance":6.0,"width":1024,"height":1024,"device":"cuda","dtype":"float16","negativePrompt":true},
+    {"id":"flux2-klein-4b","family":"flux2","localPath":"/absolute/model-store/FLUX2-klein-4B","revision":"pin-sha-here","steps":4,"guidance":1.0,"width":1024,"height":1024,"device":"cuda","dtype":"bfloat16","negativePrompt":false}
+  ]
+}

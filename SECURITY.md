@@ -73,3 +73,82 @@ Use GitHub private vulnerability reporting if enabled for this repository.
 Otherwise contact the maintainers privately before disclosing exploitable
 secret-handling issues in public. The initial prototype does not warrant a
 security-bounty or cryptographic assurance claim.
+
+## FrameRudiments bridge boundary (experimental, public-only)
+
+FrameRudiments is the only intended production renderer for ByteFables imagery.
+A native project may log renderer configuration, source code hashes, content and
+media traces; therefore it MUST NEVER receive sensitive source records. Only
+already-public 256-bit record digests or explicitly public matrix/vector input
+may cross into a renderer. The TypeScript public label is a defensive API hint,
+not a proof that caller-supplied data is safe to publish. Do not use render
+service endpoints to generate private-key, wallet-seed or password material.
+
+`bytefables-matrix-v1` converts already encoded *public* module bits to host
+layers; it adds NO check code, QR standard compatibility, ECC or authentication.
+Native visual effects, resampling, lossy video, user compositing and physical
+printing can destroy machine readability. Independent readback from final
+output is required before calling a symbol a recoverable archive.
+
+The FrameRudiments Python adapter is trusted code, not an importable project
+script. Install explicitly into a vetted FrameRudiments environment; its
+factories validate bounded, versioned public-only style data and never accept
+network, filesystem, arbitrary Python or executable SVG specifications.
+
+## Invisible/robust watermark capability (Wave A planning only)
+
+**No concealed signal is currently written.** `encodePublicWatermarkMessage`
+creates a typed public record's SHA-256 prefix plus a CRC-32 accidental-error
+check; it does not produce a steganographic image/sound/video/text mark.
+`planPublicWatermark` is a descriptive planning API with **no embedder or
+extractor**. These are public-only operations, not encryption, forensic proof,
+DRM, confidentiality, digital signatures or a way to secure private keys.
+
+Invisible ≠ statistically undetectable. A motivated party can potentially
+locate, counterfeit, remove or disrupt a hidden mark, including by cropping,
+resampling, paraphrasing or re-generating media. Text watermarking is especially
+sensitive to edits, translation, and the number of unconstrained token choices.
+CRC-32 can be replaced; 96-bit prefixes can collide with enough trials;
+confidence in a detector requires false-positive testing on *unmarked* data.
+
+Only opt-in, owned/licensed output should be modified. Avoid secret payloads,
+recipient-specific covert tracking, unreleased private correspondence and any
+undisclosed outbound watermarking service. Production adapters require blind
+extraction from final encoded media, independently reviewed algorithms and
+measured distortion/false-negative/false-positive limits. Exact optical codes
+and signed/hash-committed files must not be damaged in order to add a watermark.
+See [the public watermark protocol](docs/specs/watermark-v1.md).
+
+## Stage 2 public mnemonic stories — experimental only
+
+Two new versioned text formats reconstruct PUBLIC bytes with unkeyed truncated
+SHA-256 checksums. Their word choices and template markers are NOT a security
+mechanism, ownership proof, seed-derivation algorithm or entropy generator.
+The decoder preserves the byte sequence, but does not preserve the original
+context/namespace and is not compatible with BIP-39 or BIP-450/Formosa.
+
+The 33–35-bit prefix grammar and the 24/32/40-bit scheduled format are
+distinct wire formats; the scheduled template ID never counts toward data
+capacity. Parser limits, strict canonical re-encoding, codebook digest vectors,
+UTF-8/whitespace rejection and public-only runtime gates are in place. A malicious
+actor can always manufacture a new story with its own valid SHA-256 checksum.
+No third-party language or security qualification is claimed.
+
+FrameRudiments previews display a bounded subset of sentences and are not
+recoverable copies of the full public story. Effects and language transformations
+may destroy recoverability; the renderer must not claim an archival guarantee.
+
+## Experimental LLM -> image hash identity profiler (public only)
+
+The `visual-features` API and `tools.hash_image_bench` process only explicitly
+confirmed PUBLIC byte values. A hash-derived image cannot act as a private-key
+backup, proof of signature ownership, or cryptographic authenticity check.
+The raw public hex is visible in CLI arguments and manifests; keep secret
+identifiers out of this tool. The local prompt writer receives only selected
+semantic decisions, not the original hash. Its endpoint accepts only an explicit
+HTTP loopback address; hosted generation and remote model downloads are not
+provided. Native Diffusers model weights and tokenizers should be pinned,
+audited and executed in an operator-controlled sandbox with resource limits.
+FrameRudiments owns all production rendering and effects; ByteFables holds
+raw source render receipts strictly as benchmark evidence. Auto-evaluation
+with CLIP is a fallible proxy, not proof of recoverable hash bits.

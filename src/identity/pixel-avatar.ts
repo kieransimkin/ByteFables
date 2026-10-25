@@ -10,7 +10,11 @@ export interface PixelAvatarOptions {
   readonly size?: number;
 }
 
-/** 5x5 mirrored SVG identicon with 15 independent binary cells. Public inputs only. */
+/**
+ * @deprecated Compatibility output for public legacy vectors only. New production
+ * identity imagery MUST use FrameRudiments via the declarative generator bridge.
+ * This function remains stable and does not gain effects, animation or new styles.
+ */
 export async function renderPixelAvatar(value: PublicByteValue, opts: PixelAvatarOptions = {}): Promise<string> {
   assertPublicValue(value);
   const size = opts.size ?? 128;

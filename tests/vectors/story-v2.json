@@ -1,0 +1,54 @@
+{
+  "schema": "bytefables-story-v2-vectors-1",
+  "status": "experimental-public-data-only",
+  "vectors": [
+    {
+      "theme": "nature",
+      "payloadHex": "000102030405feff",
+      "canonicalPackSha256": "3cdb56c59b8a67e9dc831432c5aaecc21f78f41ed713174f25316a6071ecb93f",
+      "scheduledPackSha256": "a21416d1693a2fed0120ceed5a97251ec0744426f23e18b3d7e53d61c937c7ba",
+      "prefixStory": "BYTEFABLES-STORY-V2 nature/1\nAt the misty forest, the jade radiant meadow eagle hops eagerly.\nAt the ancient island, the amber brave alpine badger ambles boldly.\nAt the ancient brook, the crimson brave alpine badger ambles openly.\nAt the crystal brook, the coral brave desert badger hums wisely.\nWhen the ivory wise jungle beaver sings calmly, the silent valley glimmers.\nWhen the ivory curious jungle wolf wanders patiently, the shaded coast glimmers.\nAt the moonlit river, the amber brave mountain eagle drifts quietly.\nAt the misty woodland, the silver radiant winter fox hums wisely.\nAt the silent brook, the amber brave alpine badger ambles boldly.",
+      "scheduledStory": "BYTEFABLES-SCHEDULED-STORY-1 nature/1\nBy moonlight, the crimson cheerful desert eagle hums dreamily.\nBy moonlight, the golden gentle alpine beaver ambles boldly.\nAcross the ancient brook, the amber brave alpine badger ambles openly.\nAcross the ancient brook, the amber calm alpine butterfly ambles dreamily.\nAcross the ancient forest, the amber elegant winter sparrow wanders wisely.\nAcross the distant garden, the amber sleepy coastal badger drifts swiftly.\nAcross the bright coast, the golden dapper forest deer listens warmly.\nAcross the bright meadow, the azure nimble prairie hare ambles dreamily.\nAcross the leafy garden, the bronze calm alpine hedgehog naps openly."
+    },
+    {
+      "theme": "technology",
+      "payloadHex": "000102030405feff",
+      "canonicalPackSha256": "6a058c72769fde9949c2d31efea625de4e8a69d4560006b861858ff3b59823ec",
+      "scheduledPackSha256": "80ba425b0bba49e94629aeb04075325b0840a41dd9a126d8fc65be68acf6ad3f",
+      "prefixStory": "BYTEFABLES-STORY-V2 technology/1\nAt the magnetic console, the glass resilient laser gateway decodes evenly.\nAt the atomic grid, the amber dynamic autonomous antenna adapts boldly.\nAt the atomic archive, the crystal adaptive autonomous antenna adapts neatly.\nAt the central archive, the copper adaptive cyber antenna connects wisely.\nWhen the emerald tiny future server decodes lightly, the secure laboratory glimmers.\nSometimes the silver precise electric drone pulses cleanly beside the atomic grid.\nSometimes the digital luminous autonomous probe signals cleanly beside the bright chamber.\nAt the bright datacenter, the carbon adaptive silent scanner signals softly.\nSometimes the neon adaptive autonomous antenna adapts boldly beside the atomic archive.",
+      "scheduledStory": "BYTEFABLES-SCHEDULED-STORY-1 technology/1\nBy moonlight, the crystal compact cyber gateway connects closely.\nBy moonlight, the digital elegant autonomous beacon adapts calmly.\nAcross the atomic archive, the amber adaptive autonomous antenna adapts neatly.\nAcross the atomic archive, the amber agile autonomous circuit adapts closely.\nAcross the atomic console, the amber efficient silent sensor transmits wisely.\nAcross the secure hub, the iron tiny cosmic module connects boldly.\nAcross the remote hub, the electric modular cloud probe blinks swiftly.\nAcross the magnetic array, the carbon precise hybrid module computes openly.\nAcross the hidden cluster, the crystal tiny local drone syncs swiftly."
+    },
+    {
+      "theme": "music",
+      "payloadHex": "000102030405feff",
+      "canonicalPackSha256": "45bf74ed4a611e287486d473b3279a3afca2b049397c1f85c1b21da04fb4b0d7",
+      "scheduledPackSha256": "2beb9bc1eb9020bb49fe5ecb06ccaae0c72afbc2e8cf90cee02ddc2888ae5b6f",
+      "prefixStory": "BYTEFABLES-STORY-V2 music/1\nAt the moonlit club, the jade rhythmic lunar guitarist hums freely.\nAt the acoustic orchestra, the amber lively acoustic bassist bows boldly.\nAt the acoustic amphitheatre, the crimson bright acoustic bassist bows loudly.\nAt the crowded amphitheatre, the bronze bright cosmic bassist harmonises warmly.\nWhen the ivory wild soul composer drums warmly, the crowded theatre glimmers.\nAt the distant amphitheatre, the lilac rhythmic classical flautist marches warmly.\nAt the retro arena, the jade lively cosmic trumpeter raps swiftly.\nSometimes the ivory wild midnight saxophonist grooves warmly beside the acoustic club.\nWhen the amber bright acoustic bassist bows boldly, the acoustic amphitheatre glimmers.",
+      "scheduledStory": "BYTEFABLES-SCHEDULED-STORY-1 music/1\nBy moonlight, the crimson dreamy cosmic guitarist harmonises dreamily.\nBy moonlight, the golden groovy acoustic cellist bows calmly.\nAcross the acoustic amphitheatre, the amber bright acoustic bassist bows loudly.\nAcross the acoustic amphitheatre, the amber cheerful acoustic composer bows dreamily.\nAcross the acoustic club, the amber gentle zen trumpeter sways warmly.\nAcross the acoustic stage, the golden lively funky drummer strums boldly.\nAcross the electric club, the indigo cheerful soul dancer dances loudly.\nAcross the open stage, the blue lively vintage guitarist marches calmly.\nAcross the electric stage, the jade lively jazz saxophonist sings boldly."
+    },
+    {
+      "theme": "fantasy",
+      "payloadHex": "000102030405feff",
+      "canonicalPackSha256": "bf8f58c68c3def8bd820f99e1096b0888d971fa6ab8b3a7922860abaf1dcf0b0",
+      "scheduledPackSha256": "5bd68494f013a33ae195e00e6fa846c33bf4cf5d793615522d62fc51498c88a0",
+      "prefixStory": "BYTEFABLES-STORY-V2 fantasy/1\nAt the hidden courtyard, the ivory royal hidden goblin guards gently.\nAt the ancient grove, the ancient royal ancient centaur appears boldly.\nAt the ancient archway, the crystal brave ancient centaur appears openly.\nAt the crystal archway, the bronze brave celestial centaur glides wisely.\nWhen the golden wise shadow giant glimmers merrily, the golden gateway glimmers.\nAt the enchanted valley, the crystal hidden crystal giant sings merrily.\nAt the golden citadel, the crimson merry hidden dragon listens gently.\nAt the hidden citadel, the violet curious mountain oracle dreams warmly.\nSometimes the crimson brave ancient centaur appears boldly beside the ancient archway.",
+      "scheduledStory": "BYTEFABLES-SCHEDULED-STORY-1 fantasy/1\nBy moonlight, the crystal enchanted celestial goblin glides dreamily.\nBy moonlight, the crimson hidden ancient dragon appears dreamily.\nAcross the ancient archway, the ancient brave ancient centaur appears openly.\nAcross the ancient archway, the ancient curious ancient dryad appears dreamily.\nAcross the ancient courtyard, the ancient glorious winter troll watches wisely.\nAcross the azure courtyard, the violet brave hidden knight wanders openly.\nAcross the distant castle, the amber gentle enchanted giant guards gladly.\nAcross the hidden valley, the ivory curious arctic troll listens openly.\nAcross the ancient courtyard, the violet luminous autumn centaur dances softly."
+    },
+    {
+      "theme": "science",
+      "payloadHex": "000102030405feff",
+      "canonicalPackSha256": "f50219659a98c14894fc64e720a0bf4a6738d0ea8b423f0a993a2aff9ad7274a",
+      "scheduledPackSha256": "b52495b14e1aef6c839f9449b02f21651d543ddf47203f3f1e4bda210114ed9b",
+      "prefixStory": "BYTEFABLES-STORY-V2 science/1\nAt the magnetic field, the electric quiet microscopic ion collides freely.\nAt the atomic network, the azure active atomic atom accelerates boldly.\nAt the atomic array, the carbon active atomic atom accelerates neatly.\nAt the distant array, the bright active crystal atom circulates swiftly.\nWhen the digital tiny orbital galaxy appears openly, the magnetic observatory glimmers.\nAt the magnetic reactor, the bright active molecular vector bends softly.\nWhen the electric bright quantum neutron drifts calmly, the electric chamber glimmers.\nAt the distant laboratory, the silver bright electric laser circulates quietly.\nAt the frozen array, the atomic active atomic atom accelerates boldly.",
+      "scheduledStory": "BYTEFABLES-SCHEDULED-STORY-1 science/1\nBy moonlight, the carbon bright crystal ion circulates evenly.\nBy moonlight, the cosmic elegant atomic cell accelerates freely.\nAcross the atomic array, the atomic active atomic atom accelerates neatly.\nAcross the atomic array, the atomic agile atomic comet accelerates evenly.\nAcross the atomic field, the atomic electric thermal proton vibrates swiftly.\nAcross the hidden cluster, the crystal bright crystal cell vibrates evenly.\nAcross the luminous chamber, the ultraviolet elegant electric isotope decays freely.\nAcross the inner array, the digital fast microscopic planet bends boldly.\nAcross the hidden cluster, the atomic gentle fractal magnet aligns smoothly."
+    },
+    {
+      "theme": "humour",
+      "payloadHex": "000102030405feff",
+      "canonicalPackSha256": "4ffa32df00490ade401df8de0d129c5e28fef6aba3abb07cab426a2138d47a62",
+      "scheduledPackSha256": "9f4fbfe912e66123a9b894836b4dee5c1eb2395feb589de5f41a575b44abf8d1",
+      "prefixStory": "BYTEFABLES-STORY-V2 humour/1\nAt the jellybean carnival, the glittery playful lunar ferret hops dreamily.\nAt the bouncy garden, the azure curious acrobatic aardvark bounces awkwardly.\nAt the bouncy attic, the cheesy baffled acrobatic aardvark bounces merrily.\nAt the crooked attic, the bubblegum baffled electric aardvark hiccups wildly.\nWhen the fuzzy wobbly tiny panda snores merrily, the purple cupboard glimmers.\nWhen the noodle dapper rubber otter grins wildly, the lemon corridor glimmers.\nAt the purple corridor, the purple baffled banana llama naps oddly.\nAt the hidden office, the golden cheeky tiny hamster glides merrily.\nAt the golden attic, the amber baffled acrobatic aardvark bounces awkwardly.",
+      "scheduledStory": "BYTEFABLES-SCHEDULED-STORY-1 humour/1\nBy moonlight, the cheesy cheeky electric ferret hiccups clumsily.\nBy moonlight, the cosmic dizzy acrobatic badger bounces gently.\nAcross the bouncy attic, the amber baffled acrobatic aardvark bounces merrily.\nAcross the bouncy attic, the amber bubbly acrobatic banana bounces clumsily.\nAcross the bouncy carnival, the amber dapper tiny penguin wiggles wildly.\nAcross the hidden bookshelf, the golden goofy mini flamingo naps boldly.\nAcross the jellybean wardrobe, the pink playful fancy panda spins sleepily.\nAcross the purple kitchen, the azure jolly mini aardvark laughs rapidly.\nAcross the fluffy corridor, the fizzy clumsy garden duck hiccups merrily."
+    }
+  ]
+}

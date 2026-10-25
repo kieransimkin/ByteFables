@@ -1,0 +1,96 @@
+{
+  "schema": "bytefables-framerudiments-vector-1",
+  "publicOnly": true,
+  "identity": {
+    "id": "avatar-one",
+    "type": "rudiment",
+    "renderer": "bytefables-pixel-v1",
+    "bounds": [
+      10,
+      20,
+      138,
+      148
+    ],
+    "motion": {
+      "kind": "named",
+      "pattern": "circle"
+    },
+    "axes": [
+      0
+    ],
+    "history_frames": 1,
+    "style": {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "678d883f0aa80922fe31a0ecb657fe96ff54ee284ddecbb14473804f7eab391e",
+      "palette": "neon"
+    }
+  },
+  "matrix": {
+    "id": "symbol",
+    "type": "rudiment",
+    "renderer": "bytefables-matrix-v1",
+    "bounds": [
+      0,
+      0,
+      70,
+      60
+    ],
+    "motion": {
+      "kind": "named",
+      "pattern": "circle"
+    },
+    "axes": [
+      0
+    ],
+    "history_frames": 1,
+    "style": {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "format_id": "test/matrix",
+      "width": 3,
+      "height": 2,
+      "quiet_zone": 2,
+      "modules": "101010"
+    }
+  },
+  "scene": {
+    "id": "scene",
+    "type": "rudiment",
+    "renderer": "bytefables-scene-v1",
+    "bounds": [
+      0,
+      0,
+      100,
+      100
+    ],
+    "motion": {
+      "kind": "named",
+      "pattern": "circle"
+    },
+    "axes": [
+      0
+    ],
+    "history_frames": 1,
+    "style": {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "scene": {
+        "width": 100,
+        "height": 100,
+        "primitives": [
+          {
+            "kind": "rect",
+            "x": 0,
+            "y": 0,
+            "width": 10,
+            "height": 10,
+            "fill": "#ff0000"
+          },
+          {
+            "kind": "path",
+            "d": "M20 20L30 20L30 30L20 30Z",
+            "fill": "#abcdef"
+          }
+        ]
+      }
+    }
+  }
+}

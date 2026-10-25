@@ -1,0 +1,735 @@
+{
+  "schema": "bytefables-format-manifest-1",
+  "formats": [
+    {
+      "formatId": "codec/hex",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://www.rfc-editor.org/rfc/rfc4648.html",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/v1.json",
+      "decoder": "decodeHex",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 2097152,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 2,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeHex"
+    },
+    {
+      "formatId": "codec/rfc4648-base32-nopad",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "foundation",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://www.rfc-editor.org/rfc/rfc4648.html",
+      "standardStatus": "published",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/v1.json",
+      "decoder": "decodeBase32",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 1677722,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 1.6,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeBase32"
+    },
+    {
+      "formatId": "archive/public-cbor-v1",
+      "version": "1.0.0",
+      "category": "archive",
+      "maturity": "foundation",
+      "guarantee": "reversible-typed",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://www.rfc-editor.org/rfc/rfc8949.html",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/public-cbor-v1.json",
+      "decoder": "decodePublicRecord",
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 1050624,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 1.01,
+      "mediaTypes": [
+        "application/cbor"
+      ],
+      "carriers": [
+        "binary",
+        "file"
+      ],
+      "integrity": "sha256-unkeyed",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodePublicRecord"
+    },
+    {
+      "formatId": "codec/story-prototype-13",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "experimental",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/DESIGN.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/v1.json",
+      "decoder": "decodeExperimentalStory",
+      "minInputBytes": 0,
+      "maxInputBytes": 4096,
+      "maxOutputBytes": 270000,
+      "capacity": "story-13",
+      "estimatedExpansion": 65,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "crc32-accidental",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeExperimentalStory"
+    },
+    {
+      "formatId": "codec/story-v2-prefix",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "experimental",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/story-v2.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/story-v2.json",
+      "decoder": "decodeStoryV2",
+      "minInputBytes": 0,
+      "maxInputBytes": 4096,
+      "maxOutputBytes": 440000,
+      "capacity": "story-variable",
+      "estimatedExpansion": 35,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "sha256-unkeyed",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeStoryV2"
+    },
+    {
+      "formatId": "codec/story-v2-scheduled",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "experimental",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/story-v2.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/story-v2.json",
+      "decoder": "decodeScheduledStory",
+      "minInputBytes": 0,
+      "maxInputBytes": 4096,
+      "maxOutputBytes": 440000,
+      "capacity": "story-variable",
+      "estimatedExpansion": 35,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "sha256-unkeyed",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeScheduledStory"
+    },
+    {
+      "formatId": "identity/fingerprint-sha256-v1",
+      "version": "1.0.0",
+      "category": "identity",
+      "maturity": "foundation",
+      "guarantee": "identity-only",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/DESIGN.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/v1.json",
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 68,
+      "capacity": "digest-prefix",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "identityFingerprint"
+    },
+    {
+      "formatId": "identity/record-fingerprint-v1",
+      "version": "1.0.0",
+      "category": "identity",
+      "maturity": "foundation",
+      "guarantee": "identity-only",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/bytefables-public-record-v1.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/public-cbor-v1.json",
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 71,
+      "capacity": "digest-prefix",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "publicRecordFingerprint"
+    },
+    {
+      "formatId": "identity/pixel-avatar-v1",
+      "version": "1.0.0",
+      "category": "identity",
+      "maturity": "foundation",
+      "guarantee": "identity-only",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/DESIGN.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/v1.json",
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 20000,
+      "capacity": "visual-bounded",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "image/svg+xml"
+      ],
+      "carriers": [
+        "vector",
+        "screen"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "renderPixelAvatar"
+    },
+    {
+      "formatId": "identity/visual-bit-contract-v1",
+      "version": "1.0.0",
+      "category": "identity",
+      "maturity": "experimental",
+      "guarantee": "identity-only",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/hash-image-benchmark-v1.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/visual-bits-v1.json",
+      "decoder": null,
+      "minInputBytes": 1,
+      "maxInputBytes": 512,
+      "maxOutputBytes": 2097152,
+      "capacity": "visual-bounded",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "application/json"
+      ],
+      "carriers": [
+        "file",
+        "text"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "makeVisualBitPlan"
+    },
+    {
+      "formatId": "symbol/module-matrix-ir-v1",
+      "version": "1.0.0",
+      "category": "symbol",
+      "maturity": "foundation",
+      "guarantee": "presentation-only",
+      "input": "module-matrix",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/frame-bridge-v1.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/framerudiments-v1.json",
+      "decoder": null,
+      "minInputBytes": 1,
+      "maxInputBytes": 65536,
+      "maxOutputBytes": 131072,
+      "capacity": "symbol-defined",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "application/json"
+      ],
+      "carriers": [
+        "project"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "scene/vector-scene-ir-v1",
+      "version": "1.0.0",
+      "category": "scene",
+      "maturity": "foundation",
+      "guarantee": "presentation-only",
+      "input": "vector-scene",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/frame-bridge-v1.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/framerudiments-v1.json",
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 10000,
+      "maxOutputBytes": 4194304,
+      "capacity": "visual-bounded",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "application/json"
+      ],
+      "carriers": [
+        "project"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "codec/bytewords",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "planned",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/BlockchainCommons/Research/blob/master/papers/bcr-2020-012-bytewords.md",
+      "standardStatus": "published",
+      "license": "TBD-review-upstream",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 4194304,
+      "capacity": "byte-exact",
+      "estimatedExpansion": 2,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text",
+        "print"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "symbol/qr-model2",
+      "version": "1.0.0",
+      "category": "symbol",
+      "maturity": "planned",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://www.iso.org/standard/83389.html",
+      "standardStatus": "published",
+      "license": "TBD-review-encoder",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 2953,
+      "maxOutputBytes": 8388608,
+      "capacity": "symbol-defined",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "image/svg+xml",
+        "image/png"
+      ],
+      "carriers": [
+        "vector",
+        "print",
+        "screen"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "format-specific",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "exporter/framerudiments-layer-v1",
+      "version": "1.0.0",
+      "category": "exporter",
+      "maturity": "experimental",
+      "guarantee": "presentation-only",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/FrameRudiments/blob/main/docs/rudiment-renderers.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/framerudiments-v1.json",
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 8192,
+      "capacity": "visual-bounded",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "application/json"
+      ],
+      "carriers": [
+        "project"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "makeFrameRudimentsIdentityLayer"
+    },
+    {
+      "formatId": "wallet/bip39",
+      "version": "1.0.0",
+      "category": "archive",
+      "maturity": "planned",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki",
+      "standardStatus": "published",
+      "license": "TBD-review-upstream",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 16,
+      "maxInputBytes": 32,
+      "maxOutputBytes": 1024,
+      "capacity": "byte-exact",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text",
+        "print"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "identity/lifehash",
+      "version": "1.0.0",
+      "category": "identity",
+      "maturity": "planned",
+      "guarantee": "identity-only",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://developer.blockchaincommons.com/lifehash/",
+      "standardStatus": "published",
+      "license": "TBD-review-upstream",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 500000,
+      "capacity": "visual-bounded",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "image/svg+xml",
+        "image/png"
+      ],
+      "carriers": [
+        "screen",
+        "vector"
+      ],
+      "integrity": "none",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "watermark/image-spatial",
+      "version": "1.0.0",
+      "category": "watermark",
+      "maturity": "planned",
+      "guarantee": "probabilistic-recovery",
+      "input": "public-record-and-carrier",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/tancik/StegaStamp",
+      "standardStatus": "research",
+      "license": "TBD-review-upstream",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 0,
+      "capacity": "carrier-dependent",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+      ],
+      "carriers": [
+        "project"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "format-specific",
+      "deterministic": false,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "watermark/audio-spectral",
+      "version": "1.0.0",
+      "category": "watermark",
+      "maturity": "planned",
+      "guarantee": "probabilistic-recovery",
+      "input": "public-record-and-carrier",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/facebookresearch/audioseal",
+      "standardStatus": "research",
+      "license": "TBD-review-upstream",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 0,
+      "capacity": "carrier-dependent",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "audio/wav",
+        "audio/flac",
+        "audio/mpeg"
+      ],
+      "carriers": [
+        "project"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "format-specific",
+      "deterministic": false,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "watermark/video-temporal",
+      "version": "1.0.0",
+      "category": "watermark",
+      "maturity": "planned",
+      "guarantee": "probabilistic-recovery",
+      "input": "public-record-and-carrier",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/facebookresearch/videoseal",
+      "standardStatus": "research",
+      "license": "TBD-review-upstream",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 0,
+      "capacity": "carrier-dependent",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "video/mp4",
+        "video/webm"
+      ],
+      "carriers": [
+        "project"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "format-specific",
+      "deterministic": false,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    },
+    {
+      "formatId": "watermark/text-semantic",
+      "version": "1.0.0",
+      "category": "watermark",
+      "maturity": "planned",
+      "guarantee": "probabilistic-recovery",
+      "input": "public-record-and-carrier",
+      "sensitivity": "public-only",
+      "reference": "https://ai.google.dev/responsible/docs/safeguards/synthid",
+      "standardStatus": "research",
+      "license": "TBD-review-upstream",
+      "referenceVectors": null,
+      "decoder": null,
+      "minInputBytes": 0,
+      "maxInputBytes": 1048576,
+      "maxOutputBytes": 0,
+      "capacity": "carrier-dependent",
+      "estimatedExpansion": null,
+      "mediaTypes": [
+        "text/plain",
+        "text/markdown"
+      ],
+      "carriers": [
+        "project"
+      ],
+      "integrity": "format-specific",
+      "errorCorrection": "format-specific",
+      "deterministic": false,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": null
+    }
+  ]
+}

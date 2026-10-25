@@ -17,3 +17,18 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm run check
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s tests/python -p 'test_hash_image_bench.py' -v
+  framerudiments-generator-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install --disable-pip-version-check -e ./integrations/framerudiments "jsonschema>=4.20,<5"
+      - run: python -m unittest discover -s tests/python -v
+      - run: python scripts/check_manifest_schema.py
+      - run: python -m compileall -q integrations/framerudiments/bytefables_framerudiments

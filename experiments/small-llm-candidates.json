@@ -1,0 +1,15 @@
+{
+  "schema": "bytefables.llm-shortlist.v1",
+  "note": "Candidate writer models, NOT evaluation results; pin actual model revisions, quantization, prompt formatting and licenses before running.",
+  "models": [
+    {"id":"SmolLM2-360M-Instruct","parameters":"360M","licenseNote":"Apache-2.0; verify exact weight file","homepage":"https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct"},
+    {"id":"SmolLM2-1.7B-Instruct","parameters":"1.7B","licenseNote":"Apache-2.0; verify exact weight file","homepage":"https://huggingface.co/HuggingFaceTB/SmolLM2-1.7B-Instruct"},
+    {"id":"Qwen3-0.6B","parameters":"0.6B","licenseNote":"Apache-2.0; verify exact weight file","homepage":"https://huggingface.co/Qwen/Qwen3-0.6B"},
+    {"id":"Qwen3-1.7B","parameters":"1.7B","licenseNote":"Apache-2.0; verify exact weight file","homepage":"https://huggingface.co/Qwen/Qwen3-1.7B"},
+    {"id":"Qwen3.5-0.8B","parameters":"0.8B","licenseNote":"Apache-2.0; multimodal model may need a supported backend","homepage":"https://huggingface.co/Qwen/Qwen3.5-0.8B"},
+    {"id":"Qwen3.5-2B","parameters":"2B","licenseNote":"Check model card / backend support","homepage":"https://huggingface.co/Qwen/Qwen3.5-2B"},
+    {"id":"gemma-3-270m-it","parameters":"270M","licenseNote":"Gemma usage terms, not Apache; verify checkpoint terms","homepage":"https://huggingface.co/google/gemma-3-270m-it"},
+    {"id":"gemma-3-1b-it","parameters":"1B","licenseNote":"Gemma usage terms","homepage":"https://huggingface.co/google/gemma-3-1b-it"},
+    {"id":"SmolLM3-3B","parameters":"3B","licenseNote":"Apache-2.0; verify actual release","homepage":"https://huggingface.co/HuggingFaceTB/SmolLM3-3B"}
+  ]
+}

@@ -59,14 +59,24 @@ strategy, vector icon fidelity tests, Node vs browser verification.
 semantic context difference alters the digest; public/secret separation has
 explicit runtime and type tests; UX doesn't rely on icon uniqueness.
 
-## Stage 2 — reversible grammar engine **[13-bit proof of concept included]**
+## Stage 2 — reversible grammar engine **[implemented experimentally, review gates remain]**
 
 **Included prototype:** grammar compiler, two equal-capacity sentence templates,
 13 bits per sentence, magic/version/size/CRC32 prototype format, exhaustive
 8,192-codeword bijection test, corruption/truncation/size tests. It is not an
 interoperable backup format.
 
-**Next work:**
+**Completed in the Stage 2 patch:** six 256-entry compound-lexeme theme packs,
+  four prefix-coded 33–35-bit templates per pack, three explicitly marked
+  24/32/40-bit scheduled templates per pack, versioned raw-byte framing,
+  SHA-256-128 unkeyed integrity, strict canonical round trips, enumerative
+  coding of unequal radices, conditional dictionaries and explicit verb
+  agreement, bounded scheduling, warning-only lexical audit, immutable pack
+  digest vectors, CLI and FrameRudiments text preview handoff.
+  The legacy 13-bit wire format remains unchanged. See
+  [story-v2.md](specs/story-v2.md).
+
+**Next research/qualification work:**
 - Expand lexical categories (adverb, adjective, noun, animal, verb, place,
   action, object, conjunction, temporal and technical categories).
 - Curate multiple immutable **33-bit** themed templates and verify capacity;
@@ -83,12 +93,17 @@ interoperable backup format.
 - Add exhaustive or formal proofs of decode uniqueness, homophone/confusable
   audits, mutation fuzzing, cross-runtime golden vectors.
 
-**Exit:** random byte arrays (including 128–512-bit fixtures) round-trip with
+**Experimental exit achieved:** random byte arrays (including 128–512-bit fixtures) round-trip with
 strict bit-accounting and no ambiguous parse across every allowed template.
 Advertised sentence capacities match independent measurements.
 
 **Follow-on:** Formosa-compatible theme adapter only after official test-vector
 and wallet compatibility checks, not merely because both use 33-bit blocks.
+
+**Remaining qualification:** independent linguistic/homophone reviews,
+spoken transcription trials, formal proof documents beyond compiler invariants,
+cross-language decoder vectors and long-lived archival/wallet suitability.
+These are not implied by a passing Node test suite.
 
 ## Stage 3 — interoperable standard encodings
 
@@ -250,6 +265,32 @@ prototype's wire format or treating a candidate as shipped. Read the
 [output pipeline](OUTPUT_PIPELINE.md) first. These documents enumerate the
 candidate universe; this section assigns dependencies and release gates.
 
+## Wave A implementation — core transport spine and FrameRudiments boundary
+
+The first implementation batch consists of deterministic public CBOR records,
+strict framing and a CDDL contract, immutable capability manifest and selection
+API, public-only reference CLI, typed module/scene IR, and an optional native
+FrameRudiments renderer plugin. **FrameRudiments is now the sole production
+visual host** for subsequent generators and effects. ByteFables provides
+validated native layer fragments; no separate animation, shader, frame loop,
+image-processing or video encoder is to be built in ByteFables. The original
+three-word and pixel-avatar output APIs remain stable compatibility adapters.
+
+Native adapter generators include a public deterministic pixel identity,
+pixel-perfect binary `ModuleMatrix`, and a bounded vector scene. They attach to
+FrameRudiments' native per-element/post-frame `post_effects` and `effect_graph`.
+They do not implement their own postprocessing or bypass the native project
+asset/clock provenance. See [bridge](specs/frame-bridge-v1.md).
+
+**Wave A acceptance gates:** byte-level CBOR fixtures, forbidden/ambiguous input
+rejection, canonical public context, manifest snapshots, planner/dispatcher
+negative tests, TypeScript and Python fragment vectors, plugin factory tests,
+strict secret exclusion, and native contract documentation. Integration against
+an installed FrameRudiments project plus real FFmpeg/effect-readback evidence is
+a *separate native host acceptance gate*, not a claim conferred by unit tests.
+Before announcing Wave B, validate the upstream FrameRudiments version and
+publish an actual multi-layer preview and output receipt.
+
 ## Programme model and definition of done
 
 Every new format follows:
@@ -294,7 +335,7 @@ limitations and retain the canonical full public identifier.
 
 | Wave | Dependencies | User-visible deliverable | Evidence gate |
 |---|---|---|---|
-| **A. Core transport spine** | Existing Stage 0, Stage 1 | Immutable manifest + registry, canonical CBOR envelopes, typed `ModuleMatrix`/`VectorScene`, reference CLI | Negative vectors, compatibility snapshots, no secret API |
+| **A. Core transport spine** | Existing Stage 0, Stage 1 | Immutable manifest + registry, canonical CBOR envelopes, typed `ModuleMatrix`/`VectorScene`, reference CLI and FrameRudiments generator bridge | Negative vectors, compatibility snapshots, no secret API |
 | **B. Public identity and graphics** | A | 12+ stable avatar styles, SVG/PNG/WebP/ICO, cards, atlas and Next.js gallery | 16px/32px recognition, renderer consistency, 1k-node load |
 | **C. Common recovery carriers** | A | Hex/Base32/Base45/Bytewords, QR + PDF/SVG/PNG public recovery sheets | Independent scanners/decoders, offline public demonstration |
 | **D. Grammar and wallet compatibility** | A | 33-bit and variable story codecs; BIP-39/SeedQR/UR read/write of **public fixtures only** | Proof of unique parse, official vectors, no real key workflows |
@@ -679,3 +720,131 @@ A format without a decoder must be catalogued as **non-reversible**.
 - Publish a verified **coverage dashboard** with `implemented/compatible/
   experimentally demonstrated/researched`, scanner and device matrix,
   performance measurements, and security badges based only on actual reviews.
+
+
+---
+
+## Wave J / BF-W15 — robust invisible watermark research and media adapters
+
+**New fourth operation category** (`watermark`), dependent on Wave A typed
+public records and native FrameRudiments effect-graph extension. Its *purpose*
+is a public identity reference embedded perceptually unobtrusively in another
+carrier, statistically extractable after a bounded, measured set of edits. Do
+not equate a watermarked carrier with original key recovery or authenticity.
+The [full protocol and attack matrix](specs/watermark-v1.md) defines version 1.
+
+**Wave A delivered in this patch:**
+- Frozen `BFWM` watermark message v1 with 12/16/32-byte public-record SHA-256
+  prefix, version, size, CRC32. Decoder and candidate binding check, vectors.
+- `planPublicWatermark` for image/audio/video/text, including message-bit budgets,
+  conservative media research eligibility and distortion test targets.
+- Registry entries for all four as strictly **planned/non-executable**;
+  `probabilistic-recovery` guarantee and second carrier input type introduced.
+- Public-only CLI `watermark-plan`, negative tests, documentation and security
+  limits. **No** watermark is currently embedded or detected in any medium.
+
+**Next shared native FrameRudiments work (prerequisites):**
+1. [P0] Add an explicitly registered, trusted, versioned effect plugin contract
+   to FrameRudiments effect graph. Keep all media effects in its host, using
+   existing render/effect clocks, reports, assets, CPU/GPU backends and
+   provenance. Do not copy host rendering into ByteFables.
+2. [P0] Specify exact insertion stages: image final raster before delivery
+   encoding; video after visual effects, temporally spread; derived audio
+   mix/export after canonical master (the master remains byte-identical);
+   text only through generator-time constrained selection.
+3. [P0] Add a stable extraction API, explicit signed/unsigned soft-binding
+   schema and benchmark harness. Distinguish blind detection from comparison
+   with supplied unmarked original.
+4. [P0] Choose ECC/interleaver and synchronisation profile; count coding bits
+   **after** `BFWM` envelope and CRC. Establish honest capacity estimates for
+   96, 128, 256-bit identifiers and evaluate shorter external lookup handles.
+5. [P0] Create a synthetic, nonsecret distortion corpus with controls and
+   reproducible codec/resize/crop/rotation/removal parameters, plus metrics
+   for bit error, false positive, failure, confidence, and visual/audio quality.
+
+**Carrier implementations (separately qualification-gated):**
+6. [P1/image] Multiscale perceptual residual/transform-domain image watermark,
+   sync markers, spatial tile repetition and crop recovery; StegaStamp/modern
+   reference comparison; independent PNG/JPEG/WebP output and scanner tests.
+7. [P1/audio] Time/frequency spread-spectrum and/or reviewed learned audio
+   watermark adapter; speech/music/silence subsets, MP3/AAC/Opus, resampling,
+   channel conversion and time cropping. Respect FrameRudiments' **unchanged
+   master** and publish a separately marked derived audio stream.
+8. [P1/video] Temporal/spatial repetition with scene/clock-aware symbol
+   alignment, frame drop, transcoding, FPS and partial-clip tests;
+   VideoSeal/RivaGAN benchmark comparisons.
+9. [P1/text] Generator-controlled probabilistic/syntactic watermarking on
+   semantically interchangeable text. Quantify excerpt, rewriting and
+   translation limitations. Refuse rewriting arbitrary fixed text, quotes,
+   program code or signed documents. No fragile Unicode trick promoted as
+   robust format.
+10. [P1] Measurable embedding budget and `strength` quality profile per carrier,
+    with opt-in and clear no-watermark fallbacks; preserve existing identity
+    digests, grammars and image-only generators without byte changes.
+11. [P1] C2PA manifest soft binding and optional signing/full original hash
+    verification. Do not treat unkeyed CRC or a recovered 96-bit prefix as
+    attribution, proof of ownership, or authenticated provenance.
+12. [P1] Native FrameRudiments evidence/exports and independent detector at
+    delivery boundary; build optional integration in ByteFables but do not
+    duplicate the host effect graph or any generator.
+13. [P2] Mixed-media redundancy, texture/3D watermark lab, optical physical
+    photo/screen capture and neural resynthesis attack evaluations.
+14. [P2] Cross-platform performance, GPU/model licence review, adversarial
+    removal and watermark forgery assessment; explicit per-profile claims.
+
+**Release gate:** for each independently supported carrier/profile, publish
+unmarked controls, ≥1,000 representative nonsecret positive samples, error
+rates and confidence intervals, blind decoder independent from embedder,
+full final-export artifact readback, named bounded distortion profiles,
+measured perceptual quality and false-positive thresholds. A clean "watermark
+found" output alone is not enough. Successful detection never replaces
+cryptographic signature/public-key verification, and **no secret payload**
+shares this public renderer pipeline. All four adapters remain `planned`
+until evidence qualifies the *specific* profile.
+
+
+---
+
+## Experimental Wave J — bit-conditioned generative identity art (started)
+
+**Purpose:** compare small local prompt writers and tiny image generators
+against a frozen, one-bit-to-one-opposing-feature semantic contract. See
+[BF-EXPERIMENT-IMAGE-001](specs/hash-image-benchmark-v1.md) and
+[compact model research](IMAGE_MODEL_RESEARCH.md). This operation remains
+**public identity art**, never a lossless hash/key backup.
+
+**Implemented foundational items:**
+- Frozen MSB-first bit-feature choices, source length 1..512 PUBLIC bytes,
+  32 global opposing visual attributes and 16 repeatable local feature types
+  bound to separately numbered micro-motifs. The full manifest retains every bit.
+- `visual-features` CLI; baseline prompts; six local research prompt styles;
+  single-bit-flip dataset and deterministic identity/paired noise seed policies.
+- Loopback-only OpenAI-compatible small-LLM prompt authoring with raw replies,
+  exact feature IDs and lexical coverage diagnostics. No source hash to LLM.
+- Local-only Diffusers cross-product with explicit GPU opt-in, checkpoint
+  revision claims, PNG source receipts, elapsed time, optional peak GPU memory,
+  tokenizer truncation indicators and source artifact hashes.
+- Optional locally pinned CLIP pairwise caption scorer, blind observer import,
+  paired-bit/low-cost image diagnostics, aggregate JSON/HTML report.
+- Pinned raw image asset handoff to native FrameRudiments sprite/effect pipeline;
+  no new ByteFables effects or visual compositor.
+
+**Remaining evidence and implementation gates:**
+1. Run *real* small LLM and image checkpoints on identified GPU hardware.
+   The initial testing environment has no CUDA device or model weights.
+2. Implement a native FrameRudiments prompt-conditioned source generator that
+   reads approved and SHA-pinned image assets without launching model downloads.
+3. Calibrate independent VQA scoring and human binary judgments on balanced
+   one-bit-flip sets; establish per-feature confusion and confidence intervals.
+4. Add big-image and 16/32px nearest-neighbour identity retrieval, perceptual
+   distance/LPIPS/DINOv2 and validated alt-text accessibility.
+5. Improve prompt compression/hierarchical groups, test attribute count
+   4..256, tokenizer truncation, negative-prompt support and prompt weighting.
+6. Optimise generator model/prompt writer Pareto frontier under operator GPU
+   VRAM, time, cache/storage budgets; publish a controlled, nonsecret gallery.
+7. Qualify model copyrights/licenses, pinned revisions, resource containment,
+   standalone offline reproducibility and independent external replication.
+
+**Exit:** no model ranking without actual inference; no "256-bit image" claim
+without an independent error-controlled exact decoder; no usable private key
+workflow in this module.

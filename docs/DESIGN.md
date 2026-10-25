@@ -114,6 +114,26 @@ Current `ByteValue<'secret'>` is reserved and MUST NOT be taken to mean
 “production-ready private key container”. The JS runtime does not guarantee
 memory lock, zeroisation, enclave execution, or safe clipboard handling.
 
+## Native renderer authority — FrameRudiments
+
+FrameRudiments is the required production render host for every new visual
+ByteFables format. It already supplies renderer registration, scene composition,
+scoped post-effects, shader feedback, modulation, render clocks, FFmpeg delivery
+and QA. ByteFables maintains typed data, reversible encodings and public identity
+seed derivation only. `ModuleMatrix` and `VectorScene` remain renderer-neutral
+**data**, not competing graphics engines. The historical public SVG avatar and
+renderer-neutral scene/matrix converters are data-only helpers, not a path for new
+effects or production image exporters. See
+[`specs/frame-bridge-v1.md`](specs/frame-bridge-v1.md).
+
+The optional plugin registers ByteFables-specific generators into the native
+FrameRudiments `RendererRegistry` and deliberately delegates effects and
+rendering. Future general-purpose generators and effects should be implemented
+in FrameRudiments proper with reusable parameter/effect graph interfaces.
+Secret archival is explicitly **not** routed through the common render host.
+A future safely qualified offline secret-printing tool would have an independent
+reviewed input boundary and require final-media re-import evidence.
+
 ## 3. Architecture
 
 ```text
@@ -579,3 +599,31 @@ Before the first interoperable archival release, settle:
 
 The initial deliverable is intentionally small enough that a future format
 review can change the archival design without breaking published wallets.
+
+
+## Fourth operation family: robust watermarking (Wave A extension)
+
+The new `watermark` family applies an optionally imperceptible public record
+identifier **to a second carrier**: image, audio, video or controlled text.
+Unlike a lossless codec, it is not expected to preserve the original input
+bytes and is only probabilistically extractable within *tested* distortion
+bounds. C2PA hard cryptographic bindings, C2PA soft watermark bindings,
+content fingerprints and watermark detection must remain separate.
+
+In Wave A only exact `BFWM` message framing (96/128/256-bit public SHA-256
+prefix + v1 header + CRC-32, no FEC), independent message parsing/matching
+and carrier suitability research planning are implemented. All four actual
+embed/extract adapters are catalogued as `planned`, with **no decoder or
+runtime binding**. The new `probabilistic-recovery` manifest guarantee applies
+to that future purpose only, not to current code capability. FrameRudiments,
+not a second ByteFables media stack, will own these effects and validation on
+finished export artifacts. The message is not secret or authenticated.
+
+A watermark never provides reliable recovery after arbitrary destruction,
+confidentiality, a guarantee of statistical undetectability, or cryptographic
+proof of source. Human-perceptual invisibility must be measured; deterministic
+hash prefixes and unkeyed CRC can be forged. Text needs generator-controlled
+content and cannot promise a hidden 96/256-bit payload in fixed arbitrary
+source prose. Protected barcodes, exact files and signed exports must not be
+silently modified. The full release gates appear in
+[specs/watermark-v1.md](specs/watermark-v1.md).

@@ -1,0 +1,24 @@
+; ByteFables public record v1 — experimental public-only implementation contract.
+; RFC 8610 CDDL describing a bounded RFC 8949 core-deterministic CBOR subset.
+; The *actual* wire format is governed by this file AND docs/specs/bytefables-public-record-v1.md.
+; This is NOT a cryptocurrency secret-backup standard, not encrypted and not authenticated.
+;
+; Integer CBOR map keys are ascending and encoded in preferred form; text is valid
+; UTF-8 without Unicode normalization. Decoder rejects extension keys.
+;
+public-record = {
+  0: "BF-PUBLIC",
+  1: 1,
+  2: public-context,
+  3: uint,            ; exact byte length, must equal .size of member 4
+  4: bstr,            ; exact public bytes, 0..1,048,576 octets
+  5: bstr .size 32    ; SHA-256 domain commitment (not a signature)
+}
+public-context = {
+  0: tstr,           ; namespace
+  1: tstr,           ; kind
+  2: tstr,           ; algorithm (default "opaque")
+  3: tstr,           ; network (empty string means none)
+  4: "na" / "big" / "little",
+  5: 1..65535        ; interpretation schema version
+}

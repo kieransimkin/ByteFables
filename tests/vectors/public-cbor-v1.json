@@ -1,0 +1,15 @@
+{
+  "schema": "BF-PUBLIC-CBOR-1",
+  "testPublicRecord": {
+    "inputHex": "000102ff",
+    "namespace": "danceflow",
+    "kind": "node-id",
+    "algorithm": "opaque",
+    "network": "",
+    "endian": "na",
+    "schemaVersion": 1,
+    "envelopeHex": "a6006942462d5055424c4943010102a6006964616e6365666c6f7701676e6f64652d696402666f7061717565036004626e61050103040444000102ff055820b95d11188c94bfeca6508ca50aaac9d8d8b32749ddd9239fb2588ed366077de8",
+    "fullDigestHex": "b95d11188c94bfeca6508ca50aaac9d8d8b32749ddd9239fb2588ed366077de8",
+    "fingerprint": "bfrec1-b95d11188c94bfeca6508ca5"
+  }
+}

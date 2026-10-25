@@ -70,3 +70,34 @@ Additional especially actionable primary references:
 New/draft/proprietary specifications must be checked again for current status
 and licensed access at implementation time. No raw-key import features are
 implemented merely because a specification is cited.
+
+## Native rendering ownership
+
+- [FrameRudiments](https://github.com/kieransimkin/FrameRudiments) — the
+  canonical DanceFlow rendering engine; its [native Rudiment renderer registry](https://github.com/kieransimkin/FrameRudiments/blob/main/docs/rudiment-renderers.md),
+  [scoped effects](https://github.com/kieransimkin/FrameRudiments/blob/main/docs/scoped-post-effects.md)
+  and [effect DAG](https://github.com/kieransimkin/FrameRudiments/blob/main/docs/effect-graph-design.md)
+  are reusable instead of starting new graphics/effects engines in ByteFables.
+
+
+## Robust watermark and provenance references
+
+- [C2PA 2.5 — hard/soft bindings](https://spec.c2pa.org/specifications/specifications/2.5/specs/ContentCredentials.html): signed provenance, exact hash binding and invisible watermark/fingerprint soft lookup are distinct.
+- [StegaStamp](https://github.com/tancik/StegaStamp): neural watermark for photographed physical images; published capacity/model limitations apply.
+- [AudioSeal](https://github.com/facebookresearch/audioseal): localised audio watermark research, detector and limited optional message encoding; 16-bit public payload is NOT a generic 96/256-bit codec.
+- [VideoSeal](https://github.com/facebookresearch/videoseal) and [OmniSealBench](https://github.com/facebookresearch/omnisealbench): video watermarking and cross-media evaluation.
+- [Google SynthID](https://deepmind.google/models/synthid/) and [SynthID Text documentation](https://ai.google.dev/responsible/docs/safeguards/synthid): media/text marks; rewriting/translation degrades text-detection confidence.
+- [FrameRudiments effects pipeline](https://github.com/kieransimkin/FrameRudiments/blob/main/docs/effect-graph-design.md): native home for reusable media transforms and benchmark evidence.
+
+[ByteFables watermark v1 protocol](specs/watermark-v1.md) keeps message framing
+independent from the carrier/effect; the four public-watermark capabilities are
+catalogued as planned, with no production robustness or undetectability claim.
+
+## Stage 2 local references
+
+- [Story V2 wire specification](specs/story-v2.md): immutable public-only grammar
+  and scheduled profiles, byte framing, radix mathematics and parser limits.
+- [Story V2 vectors](../tests/vectors/story-v2.json): six theme pack digests
+  and canonical sample stories for both independent formats.
+- These ByteFables codecs are **original formats**, not implementations of
+  [BIP-450/Formosa](https://github.com/bitcoin/bips/blob/master/bip-0450.mediawiki).

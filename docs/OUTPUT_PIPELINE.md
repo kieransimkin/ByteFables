@@ -2,7 +2,8 @@
 
 **Document:** BF-PIPE-001 • working design proposal • 2026-10-25
 **Scope:** all current and foreseeable output forms, with explicit contracts for any future adapter.
-**Normative baseline:** [DESIGN.md](DESIGN.md), [SECURITY.md](../SECURITY.md). **Research inventory:** [OUTPUT_FORMAT_ATLAS.md](OUTPUT_FORMAT_ATLAS.md).
+**Normative baseline:** [DESIGN.md](DESIGN.md), [SECURITY.md](../SECURITY.md).
+**Rendering authority:** [FrameRudiments bridge v1](specs/frame-bridge-v1.md). **Research inventory:** [OUTPUT_FORMAT_ATLAS.md](OUTPUT_FORMAT_ATLAS.md).
 
 ## 1. Conceptual model
 
@@ -26,6 +27,37 @@ FUTURE PROTECTED INPUT: secret + wallet metadata (separate package/process)
 ```
 
 A “pipeline” is a **typed, directed acyclic graph (DAG)**; every edge declares data sensitivity and whether it is exact bytes, encoded text, symbol matrix, raster pixels, vertex geometry or time series. Arbitrary untyped concatenations are not allowed. Export profile = named, immutable renderer chain and its configuration.
+
+
+### FrameRudiments is the sole production rendering host (Wave A decision)
+
+**All reusable visual generators and post effects belong inside the
+FrameRudiments render pipeline**, not a parallel ByteFables implementation.
+ByteFables core is responsible for typed source bytes, cryptographic identity,
+reversible codecs, grammar, integrity/framing, capability selection and validated
+public `ModuleMatrix`/`VectorScene` instructions. It does *not* independently
+run image, video, animation, particle, shader or post-effect loops.
+
+FrameRudiments owns the registered generator factories, composition and alpha,
+DanceRudiments modulation, scoped post-effects, effect graphs, render quality,
+frame histories, Butterchurn/projectM, FFmpeg encoding and quality evidence.
+The initial optional Python plugin registers three reusable generators as
+FrameRudiments `RudimentRenderer`s. Its factory sources are hashed by the
+host's existing registry; project JSON never imports code. A generator new to
+ByteFables must first establish whether it can be a native FrameRudiments
+renderer/effect-graph source or belongs in its generic generator catalogue.
+
+The present FrameRudiments project API is video/audio-oriented, requiring an
+audio/clock project even for a static generator. Static still-image, atlas,
+PDF/CAD and 3D exporters remain **future native FrameRudiments improvements**;
+ByteFables should produce typed IR consumed by those interfaces rather than
+implementing substitute rasterizers. Basic SVG serializers retained for
+legacy compatibility and IR diagnostics are not new production engines.
+
+For QR-like matrix artifacts, a FrameRudiments pipeline with effects or lossy
+encoded output cannot claim recoverability. A separately validated, optically
+safe export/readback route is required, and standard ECC belongs to the
+symbol codec. No secret keys are accepted into the general render host.
 
 ### 1.1 Distinct guarantees
 
@@ -138,11 +170,11 @@ For fixed style and options, include all font, palette, shader and model version
 | `fec` | RS, BCH, erasure and fountain wrappers | Configured recovery budgets, no false repair claims |
 | `symbols` | QR family, Data Matrix, Aztec, paper grids, audio framing | Abstract `ModuleMatrix` or `SymbolFrames` |
 | `scene` | Canonical 2D vector graph, 3D scene, timeline, sound/tactile sequence | Renderer-independent scene representations |
-| `render2d` | SVG/Canvas/Skia/rasterisation, QR quiet zone | SVG/PNG/WebP etc. |
-| `render3d` | Mesh, voxel, material, laser relief/surface projection | GLB/STL/3MF/DXF |
-| `render-time` | SVG/CSS/Lottie/video/audio/MIDI/haptics | Repeatable timeline exports |
-| `layout` | Paper templates, booklet/plate planning, font embedding | PDF/A, SVG/print and CAD layouts |
-| `exporters` | Target-file serialization, media-specific metadata | MIME, file bytes, manifest |
+| `FrameRudiments: render2d` | Registered generators, native SVG/raster/scene pipeline | Graphics output (host-owned) |
+| `FrameRudiments: render3d` | Native spatial meshes/materials and future relief sources | 3D exports (planned in host) |
+| `FrameRudiments: render-time` | Native clock, temporal effects, particles and video | Repeatable encoded timeline exports |
+| `layout` | Typed archival page/document instructions; render via host extensions | PDF/print/CAD (planned) |
+| `exporters` | Byte-exact text/CBOR serializers; FrameRudiments owns visual exports | MIME, files and host receipts |
 | `readback` | Optical, acoustic, file and physical tests; evidence | Decoded bytes / confidence & failure reason |
 | `gallery` | Public demo, style selection, capability badges, export preview | React/Next.js app and CLI |
 | `danceflow-adapter` | MCP/discovery, graph fallback, sprite registry | Namespaced provider methods |
@@ -265,3 +297,67 @@ Any new format proposal must provide:
 9. Staged implementation owner, dependency and quantitative release gate.
 
 Non-interoperable experiments never silently claim to be established standards. Future output types can be registered without revising the core cryptographic identity contract.
+
+
+## Cross-carrier robust watermark operation — Wave A contract
+
+The fourth top-level operation is `watermark`: it associates a typed **public**
+record digest with another editable media carrier using a future imperceptible
+signal transform, ideally recoverable from a *measured* subset of distortions.
+Unlike `codec/`, `identity/` and `archive/` adapters, it requires two inputs:
+(a) public identity **message**, (b) a mutable carrier plus declared media
+parameters. Its independent extractor is probabilistic. A CRC/checksum and
+match against full typed identity are required but do not prove authenticity.
+
+```
+PublicRecord -> BFWM v1 bytes -> ECC + synchroniser (future)
+          second input: target image/audio/video/text carrier
+                    -> FrameRudiments native effect (future)
+                    -> final encoded media
+                    -> blind decoder + confidence + CRC + full-record lookup
+```
+
+The common `src/watermark/` Wave A message and planning APIs work now;
+`watermark/image-spatial`, `watermark/audio-spectral`,
+`watermark/video-temporal`, `watermark/text-semantic` are **planned only**.
+Actual media transforms belong upstream in FrameRudiments' renderer/effect
+pipeline, not in a new ByteFables renderer. The host currently has a fixed
+set of effect node kinds; it will need a reviewed native plugin or named effect
+extension point. Watermarked audio must be explicitly requested as a derived
+export; FrameRudiments' original soundtrack remains unmodified.
+
+Not every output format tolerates an invisible watermark. Exact binary files,
+QR matrices, signed documents and lossless/transcribed recovery media must be
+preserved; where appropriate, watermark decorative areas or separate rendered
+presentation, retain a clean opt-out and independently decode the final
+archived artifact. A metadata-only C2PA assertion/manifest can be a provenance
+companion, but is not equivalent to an imperceptible embedded signal.
+
+The visual/audio/transcription attack corpus must compare original and final
+export artifacts. Assert only *measured* bounded crop/resize, audio resampling,
+video frame-drop and text editing behaviour; false positives and human
+perception limits are independent gates. See the
+[watermark specification](specs/watermark-v1.md).
+
+## Stage 2 grammar handoff to FrameRudiments
+
+The experimental `codec/story-v2-prefix` and `codec/story-v2-scheduled` run
+BEFORE presentation. They return complete lossless public text records.
+`createFrameRudimentsStoryPreview` separately creates up to four normal
+`project.identity` text blocks with exact effect targets `identity:N`;
+FrameRudiments owns font metrics, effects, masks, compositing and pixel outputs.
+A truncated preview never asserts that it preserves the original bytes; there
+is no alternate ByteFables text rasteriser. Pinned fonts are required by the
+FrameRudiments host. See [wire specification](specs/story-v2.md).
+
+
+### Wave J: external generative source assets
+
+ByteFables maps PUBLIC hash bits into binary scene features and compares prompt
+writing plus local text-to-image models using raw PNG outputs as unprocessed
+benchmark evidence. It emits SHA-256-pinned FrameRudiments sprite sources via
+`tools.hash_image_bench host-assets`; the native FrameRudiments pipeline owns
+all production effects, layer compositing, quality, animation and exports.
+Generated artwork is an *identity-only* source and is never treated as
+bit-recoverable or authenticated. See [hash-image experiment specification]
+(specs/hash-image-benchmark-v1.md).
