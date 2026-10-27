@@ -113,3 +113,7 @@ export { createFrameRudimentsRecoveryCardLayer } from './engine/framerudiments.j
 export type { RecoveryCardOptions } from './engine/framerudiments.js';
 export { createPublicRecoverySheet } from './engine/public-recovery-sheet.js';
 export type { PublicRecoverySheet, PublicRecoverySheetOptions } from './engine/public-recovery-sheet.js';
+
+// Declarative public video looks — existing FrameRudiments filters own rendering.
+export { PUBLIC_VIDEO_LOOK_VERSION, VIDEO_LOOK_PRESETS, planPublicVideoLook } from './effects/video-looks.js';
+export type { VideoLookId, PublicVideoLookOptions, PublicVideoLookPlan } from './effects/video-looks.js';

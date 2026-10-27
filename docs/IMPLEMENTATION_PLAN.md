@@ -979,3 +979,25 @@ large-sample visual distinctiveness and full native host release qualification.
 released decoders; provide explicit 300dpi/PDF/A manufacturing profiles and
 separate hard-copy scan results; benchmark nine art styles at 16/32/64 px;
 profile physical/optical error rates and extend archive ECC beyond XOR parity.
+
+---
+
+## Video effects research and implementation programme (25 Oct 2026)
+
+The [video effects implementation roadmap](VIDEO_EFFECTS_IMPLEMENTATION_PLAN.md)
+adds host-owned effect expansion milestones **VE0–VE9** and 25 engineering
+issues **FX-001–FX-025**, with an explicit distinction between a demonstrated
+FrameRudiments control, a composable preset, and a future shader/effect node.
+The [143-effect research catalogue](../manifests/video-effects-v1.json) has
+11 implementation families; 35 entries map to an existing host route (some
+only as an explicitly labelled visual approximation), while the remainder
+require FrameRudiments work or specialist research.
+
+**VE0 implemented in this ByteFables patch:** frozen research catalogue,
+validation, 16 deterministic public video-look recipes, scope/intensity
+validation, public-only CLI and tests. **Nothing new renders inside
+ByteFables.** FrameRudiments retains all source animation, post effects,
+colour conversion, GPU, compositing, rendering and video encoding; the
+optical QR protection rule remains hard. New effect algorithms await changes
+in the FrameRudiments repository under its own graph roadmap. No GPU
+performance or perceptual image-quality claim is made by this document.

@@ -361,3 +361,15 @@ all production effects, layer compositing, quality, animation and exports.
 Generated artwork is an *identity-only* source and is never treated as
 bit-recoverable or authenticated. See [hash-image experiment specification]
 (specs/hash-image-benchmark-v1.md).
+
+
+## Public video effect discovery and style recipes
+
+See the [143-effect research inventory](research/video-effects-methods-2026-10.md),
+[video effects implementation roadmap](VIDEO_EFFECTS_IMPLEMENTATION_PLAN.md)
+and [declarative public look API](specs/public-video-looks-v1.md). All effect
+execution and output remain in **FrameRudiments**; ByteFables generates only
+validated `post_effects` fragments from a typed public identity. Public
+machine-readable/archival symbol regions must bypass artistic effects and
+pass independent post-export scanner tests. Ordinary public video may opt into frame-wide transforms only with an
+explicit `public-video` purpose; protected QR paths never do.

@@ -258,6 +258,36 @@ See [multipart UR test profile](docs/specs/ur-multipart-public-test-v1.md),
 [printable public cards](docs/specs/public-recovery-cards-v1.md), and
 [identity art catalogue](docs/specs/public-identity-art-v1.md).
 
+## Public video effects and hash-selected looks (FrameRudiments only)
+
+The new [video-effect research atlas](docs/research/video-effects-methods-2026-10.md)
+tracks **143** named techniques across 11 categories, with explicit
+implemented-vs-research maturity. The accompanying
+[effect implementation plan](docs/VIDEO_EFFECTS_IMPLEMENTATION_PLAN.md)
+prioritises additions to the **FrameRudiments host** instead of copying any
+compositor or shader into ByteFables. The validated
+[`video-effects-v1` inventory](manifests/video-effects-v1.json) is discovery
+metadata, not 143 executable shaders.
+
+ByteFables can select one of **16 public-only, deterministic VisualStyle recipes**
+from a typed public-record digest and emit native `post_effects` fragments:
+
+```sh
+node bin/bytefables.mjs video-effects --family transitions --json
+node bin/bytefables.mjs video-look --confirm-public \
+  --public-hex 000102ff --namespace danceflow --kind node-id \
+  --look neon-bloom --intensity 0.8 --target layer:public-avatar
+```
+
+Integrators merge the returned stage array into an already validated
+FrameRudiments project. `--target frame` is for ordinary decoration **only**;
+apply effects to `layer:public-avatar` instead of entire frames when QR or
+other machine-readable recovery areas are present. See the
+[versioned API contract](docs/specs/public-video-looks-v1.md) for exact
+selection, security boundaries, and limits. A style is not a reversible
+identity or proof of ownership. Actual new rendering algorithms belong in
+FrameRudiments, not this tool.
+
 ## Development
 
 Requires Node.js >=20 and TypeScript 5.8.3. There are no runtime dependencies.

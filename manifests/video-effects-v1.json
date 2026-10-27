@@ -1,0 +1,2125 @@
+{
+  "schema": "bytefables.video-effect-research.v1",
+  "renderAuthority": "FrameRudiments",
+  "inputSensitivity": "public-only",
+  "interpretation": "RESEARCH/OPTION DISCOVERY, not evidence of native implementation except explicitly marked entries",
+  "entries": [
+    {
+      "id": "additive-blend",
+      "family": "compositing",
+      "algorithm": "Sum premultiplied light contributions with declared gamut/clamping policy",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.composite.add",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "alpha-drop-shadow",
+      "family": "compositing",
+      "algorithm": "Blur and offset the source alpha silhouette beneath the original",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "alpha-matte",
+      "family": "compositing",
+      "algorithm": "Multiply source alpha by an independent matte sampled in aligned coordinates",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.matte",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "bevel-relight",
+      "family": "compositing",
+      "algorithm": "Estimate normal vectors from matte gradients and shade with simulated light",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "chroma-key",
+      "family": "compositing",
+      "algorithm": "Estimate foreground alpha from distance to specified screen colour, with softness",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.chroma_key",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "inner-shadow",
+      "family": "compositing",
+      "algorithm": "Subtract shifted/blurred matte from original interior coverage",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "luma-matte",
+      "family": "compositing",
+      "algorithm": "Derive coverage from the luminance of a second input and combine with source alpha",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.matte(luminance)",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "matte-morphology",
+      "family": "compositing",
+      "algorithm": "Erode, dilate, feather and clean narrow matte edges",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "multiply-blend",
+      "family": "compositing",
+      "algorithm": "Blend in a documented colour space using the product of backdrop and source",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "overlay-blend",
+      "family": "compositing",
+      "algorithm": "Use multiply for dark background values and screen for bright ones",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "rotoscope",
+      "family": "compositing",
+      "algorithm": "Rasterize animated editable vector boundaries and feather them",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "screen-blend",
+      "family": "compositing",
+      "algorithm": "Blend using complement-multiply-complement channel arithmetic",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "segmentation-matte",
+      "family": "compositing",
+      "algorithm": "Derive object/person alpha using model or guided colour segmentation",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "soft-light-blend",
+      "family": "compositing",
+      "algorithm": "Mix using W3C piecewise soft-light curve",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "source-over",
+      "family": "compositing",
+      "algorithm": "Porter-Duff premultiplied alpha composition",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.composite",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "spill-suppression",
+      "family": "compositing",
+      "algorithm": "Reduce unwanted chroma contamination around keyed boundaries",
+      "inputs": [
+        "rgba",
+        "mask"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "channel-mixer",
+      "family": "grading",
+      "algorithm": "Multiply linear RGB by an authored 3x3 matrix and optional offsets",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "colour-curves",
+      "family": "grading",
+      "algorithm": "Evaluate smooth per-channel or luminance spline transfer functions",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "colour-space-convert",
+      "family": "grading",
+      "algorithm": "Use a pinned OCIO transform with explicit input/output colour spaces",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "contrast",
+      "family": "grading",
+      "algorithm": "Transform lightness around a pivot with bounded slope or curve",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.contrast",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "exposure",
+      "family": "grading",
+      "algorithm": "Multiply scene-linear light by two to the power of photographic exposure stops",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "film-emulation",
+      "family": "grading",
+      "algorithm": "Compose characteristic tone curve, grain, halation, chroma and gate artifacts",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "hdr-tone-mapping",
+      "family": "grading",
+      "algorithm": "Map HDR scene luminance into a declared SDR/HDR display range",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "hue-rotation",
+      "family": "grading",
+      "algorithm": "Rotate hue in a specified colour space; preserve luminance as required",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.hue_shift",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "lift-gamma-gain",
+      "family": "grading",
+      "algorithm": "Apply channel-wise offset, power curve, and gain with documented colour-space transforms",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "local-tone-mapping",
+      "family": "grading",
+      "algorithm": "Adapt exposure/contrast to low-frequency local luminance with halo control",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "lut-3d",
+      "family": "grading",
+      "algorithm": "Sample a three-dimensional LUT with trilinear/tetrahedral interpolation",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "monochrome",
+      "family": "grading",
+      "algorithm": "Convert to luminance and optionally apply a colour tint",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.saturation",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "posterization",
+      "family": "grading",
+      "algorithm": "Quantize luminance or colour channels to a limited number of levels",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.posterize",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "saturation",
+      "family": "grading",
+      "algorithm": "Interpolate chroma away from or toward neutral lightness",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.saturation",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "selective-colour",
+      "family": "grading",
+      "algorithm": "Mask a bounded hue/chroma range then apply channel corrections",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "solarization",
+      "family": "grading",
+      "algorithm": "Conditionally invert bright or dark values after thresholding",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.solarize",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "split-toning",
+      "family": "grading",
+      "algorithm": "Blend two authored colour shifts by shadow/highlight weighting",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "white-balance",
+      "family": "grading",
+      "algorithm": "Apply chromatic adaptation from source white point to target white point",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "anamorphic-streak",
+      "family": "optics",
+      "algorithm": "Directional convolution of clipped highlights with long horizontal kernel",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "bloom",
+      "family": "optics",
+      "algorithm": "Threshold highlights, downsample and blur a multi-resolution pyramid, then add in linear light",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.glow",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "bokeh-depth-of-field",
+      "family": "optics",
+      "algorithm": "Blur as a function of circle-of-confusion radius computed from depth/focus",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "chromatic-aberration",
+      "family": "optics",
+      "algorithm": "Sample red, green, blue or spectral bands at displaced lens-space coordinates",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.chromatic_shift",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "film-halation",
+      "family": "optics",
+      "algorithm": "Blur a red-weighted highlight matte around high-intensity pixels",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "fisheye",
+      "family": "optics",
+      "algorithm": "Use angle-dependent radial mapping and inverse resampling",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "god-rays",
+      "family": "optics",
+      "algorithm": "Radially integrate source luminance or depth occlusion toward a specified light source",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "heat-haze",
+      "family": "optics",
+      "algorithm": "Displace source pixels with a low-frequency varying flow/noise field",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "lens-dirt",
+      "family": "optics",
+      "algorithm": "Multiply or composite masked highlights with a pinned dirt texture",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "lens-distortion",
+      "family": "optics",
+      "algorithm": "Inverse-sample a Brown-Conrady or calibrated radial/tangential distortion map",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "lens-flare",
+      "family": "optics",
+      "algorithm": "Render ghost/reflection patterns from bright-point detection and lens geometry",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "light-leak",
+      "family": "optics",
+      "algorithm": "Composite an additive animated coloured mask in camera coordinates",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "vignette",
+      "family": "optics",
+      "algorithm": "Multiply brightness by a smooth radial or elliptical edge-falloff mask",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.vignette",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "feedback-kaleidoscope",
+      "family": "procedural",
+      "algorithm": "Warp a retained prior texture with mirrored polar transforms and composite",
+      "inputs": [
+        "seed",
+        "timeline"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effects.butterchurn/projectm",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "fire-and-ice",
+      "family": "procedural",
+      "algorithm": "Compose measured flame footage, particles, procedural fluids or 3D volume depending on mode",
+      "inputs": [
+        "seed",
+        "timeline"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "natural_materials.FireRenderer+NaturalMaterial",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "flow-particles",
+      "family": "procedural",
+      "algorithm": "Integrate particle velocities through seeded vector field and draw trails",
+      "inputs": [
+        "seed",
+        "timeline"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "particle_engine.ParticleEmitter",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "fluid-advection",
+      "family": "procedural",
+      "algorithm": "Advect density/velocity fields with controlled timestep and projection",
+      "inputs": [
+        "seed",
+        "timeline"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "fractal-flame",
+      "family": "procedural",
+      "algorithm": "Iterate affine/nonlinear maps with seeded weights and tone-map accumulated density",
+      "inputs": [
+        "seed",
+        "timeline"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "julia-set",
+      "family": "procedural",
+      "algorithm": "Iterate complex polynomial and colour by escape time/distance",
+      "inputs": [
+        "seed",
+        "timeline"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visualisers.julia",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "reaction-diffusion",
+      "family": "procedural",
+      "algorithm": "Iterate discretized reaction and diffusion equations on a bounded grid",
+      "inputs": [
+        "seed",
+        "timeline"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "analog-noise",
+      "family": "retro",
+      "algorithm": "Add spatial/temporal correlated luma and chroma noise",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "codec-artifacts",
+      "family": "retro",
+      "algorithm": "Simulate ringing, quantisation and blocking; never impersonate true bitstream recovery",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "crt-curvature",
+      "family": "retro",
+      "algorithm": "Warp and shade pixels by a radial CRT surface profile",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "crt-mask",
+      "family": "retro",
+      "algorithm": "Apply display-emitter subpixel mask and phosphor diffusion",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "crt-scanlines",
+      "family": "retro",
+      "algorithm": "Modulate luminance by line number and pixel-space subscanline phase",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.scanlines",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "film-dust",
+      "family": "retro",
+      "algorithm": "Composite short-lived spots and dirt specks with pinned particle seeds",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "film-gate-weave",
+      "family": "retro",
+      "algorithm": "Apply slow random frame translation and small rotation",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "film-grain",
+      "family": "retro",
+      "algorithm": "Add seeded spatially correlated luma/chroma grain with frame-stable coordinates",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.grain",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "film-scratches",
+      "family": "retro",
+      "algorithm": "Draw spatially sparse streaks, optionally persistent across frames",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "glitch-blocks",
+      "family": "retro",
+      "algorithm": "Replace or shift seeded macroblocks across lines or tiles",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.glitch",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "night-vision",
+      "family": "retro",
+      "algorithm": "Convert luminance to green phosphor colour and add noise/scanlines",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "pixel-sort",
+      "family": "retro",
+      "algorithm": "Within a fixed segment, sort selected pixels by luminance or channel",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "rgb-split",
+      "family": "retro",
+      "algorithm": "Offset RGB source samples or channel masks independently",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.chromatic_shift",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "thermal-palette",
+      "family": "retro",
+      "algorithm": "Map input scalar/luminance to a non-physical heat-map palette",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "vhs-bleed",
+      "family": "retro",
+      "algorithm": "Apply low bandwidth chroma blur plus timebase instability",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "vhs-tracking",
+      "family": "retro",
+      "algorithm": "Shift/tear line intervals based on deterministic line jitter",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "ambient-occlusion",
+      "family": "scene-depth",
+      "algorithm": "Estimate local obscurance from depth and normals",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "depth-fog",
+      "family": "scene-depth",
+      "algorithm": "Blend pixel colour toward atmospheric scattering model as function of depth",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "depth-graded-bokeh",
+      "family": "scene-depth",
+      "algorithm": "Use depth map to bin variable-radius lens blur, with occlusion handling",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "normal-relight",
+      "family": "scene-depth",
+      "algorithm": "Recalculate shading from surface normals and explicit light positions",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "parallax-layering",
+      "family": "scene-depth",
+      "algorithm": "Project layers with different depth-dependent camera offsets",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "screen-space-reflection",
+      "family": "scene-depth",
+      "algorithm": "Trace/refine projected reflection rays using scene depth",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "shadow-catcher",
+      "family": "scene-depth",
+      "algorithm": "Apply cast-shadow visibility from scene/depth buffers or trusted shadow AOV",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "volumetric-light",
+      "family": "scene-depth",
+      "algorithm": "Ray-march participating media density and light along each pixel ray",
+      "inputs": [
+        "rgba",
+        "depth",
+        "normals"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "bilateral-blur",
+      "family": "spatial",
+      "algorithm": "Combine spatial distance with pixel-value similarity to preserve strong edges",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "box-blur",
+      "family": "spatial",
+      "algorithm": "Convolve using uniform weights and separable/integral-image optimisation",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "edge-extraction",
+      "family": "spatial",
+      "algorithm": "Evaluate Sobel/Scharr spatial derivatives and magnitude",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.edge_mix",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "emboss",
+      "family": "spatial",
+      "algorithm": "Convolve directional derivative and add a mid-tone bias",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "error-diffusion-dither",
+      "family": "spatial",
+      "algorithm": "Propagate quantization error through neighbouring unprocessed pixels",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "gaussian-blur",
+      "family": "spatial",
+      "algorithm": "Convolve with a normalized Gaussian kernel, usually as separate X and Y passes",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.blur",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "guided-filter",
+      "family": "spatial",
+      "algorithm": "Regress a local linear model against a guide image for edge-preserving smoothing",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "halftone",
+      "family": "spatial",
+      "algorithm": "Sample rotating screening cells and map local tone to dot/raster coverage",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.halftone",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "high-pass",
+      "family": "spatial",
+      "algorithm": "Subtract low-pass image to isolate high-spatial-frequency components",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "kaleidoscope",
+      "family": "spatial",
+      "algorithm": "Transform polar coordinates and fold the angle into repeating mirror wedges",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effects.butterchurn/projectm",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "median-filter",
+      "family": "spatial",
+      "algorithm": "Replace a pixel with its neighbourhood median to suppress isolated defects",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "mosaic",
+      "family": "spatial",
+      "algorithm": "Replace each segment or Voronoi region with a sampled representative value",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "ordered-dither",
+      "family": "spatial",
+      "algorithm": "Quantize pixels using a fixed Bayer or blue-noise threshold map",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.dither",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "outline",
+      "family": "spatial",
+      "algorithm": "Find alpha or luminance boundaries via morphological dilation/erosion or SDF",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "pixelation",
+      "family": "spatial",
+      "algorithm": "Downsample to grid then upscale using nearest-neighbour filtering",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.pixel_size",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "sdf-extrusion",
+      "family": "spatial",
+      "algorithm": "Measure signed distance from an alpha matte, shade contours and offsets",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "unsharp-mask",
+      "family": "spatial",
+      "algorithm": "Add a scaled original-minus-blurred high-frequency signal with clipping",
+      "inputs": [
+        "rgba"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.sharpen",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "afterimage",
+      "family": "temporal",
+      "algorithm": "Accumulate and decay a declared previous-frame history surface",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "datamosh-simulation",
+      "family": "temporal",
+      "algorithm": "Displace block regions using motion-vector fields without corrupting video bitstream",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "frame-crossfade",
+      "family": "temporal",
+      "algorithm": "Premultiplied interpolation between two frames at explicit progress",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.transition(dissolve)",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "frame-echo",
+      "family": "temporal",
+      "algorithm": "Compose past observed frames at decreasing opacities",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "post_effects.temporal",
+      "fidelity": "stylised",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "frame-hold",
+      "family": "temporal",
+      "algorithm": "Select a previous frame according to a quantized clock",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "frame-interpolation",
+      "family": "temporal",
+      "algorithm": "Motion-compensate two neighbouring frames and estimate intermediate pixels",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "motion-blur-subsample",
+      "family": "temporal",
+      "algorithm": "Integrate multiple source-time renders across shutter interval",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "render_quality.temporal_samples",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "motion-smear",
+      "family": "temporal",
+      "algorithm": "Combine neighbouring frames using motion fields and confidence masks",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "motion-vector-blur",
+      "family": "temporal",
+      "algorithm": "Accumulate velocity-guided samples along per-pixel displacement",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "ping-pong-loop",
+      "family": "temporal",
+      "algorithm": "Reflect source-time position at loop endpoints",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "reverse-playback",
+      "family": "temporal",
+      "algorithm": "Map a finite output time range backward across source frames",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "rolling-feedback",
+      "family": "temporal",
+      "algorithm": "Apply a warp/grade to retained prior output and composite new input",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "slit-scan",
+      "family": "temporal",
+      "algorithm": "Fill spatial strips with pixels drawn from distinct source timestamps",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "speed-ramp",
+      "family": "temporal",
+      "algorithm": "Map output timeline into source timeline with variable rate",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "time-remap",
+      "family": "temporal",
+      "algorithm": "Sample source at a continuous nonlinear function of output time",
+      "inputs": [
+        "rgba",
+        "timeline",
+        "history"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "background-removal",
+      "family": "tracking-ai",
+      "algorithm": "Estimate person/object alpha by segmentation and alpha matting",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "feature-stabilization",
+      "family": "tracking-ai",
+      "algorithm": "Track corners, estimate robust camera transform by RANSAC, smooth path, then crop",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "inpainting",
+      "family": "tracking-ai",
+      "algorithm": "Fill masked region from neighbouring pixels or temporal correspondences",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "neural-frame-interpolation",
+      "family": "tracking-ai",
+      "algorithm": "Predict intermediate frames using learned motion/occlusion models",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "neural-style-transfer",
+      "family": "tracking-ai",
+      "algorithm": "Optimise or infer a stylization transformation with pinned neural weights",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "neural-upscale",
+      "family": "tracking-ai",
+      "algorithm": "Upsample with learned conditional high-frequency prediction",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "research-only",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "object-tracking",
+      "family": "tracking-ai",
+      "algorithm": "Associate detections across frames with bounded motion predictors",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "optical-flow",
+      "family": "tracking-ai",
+      "algorithm": "Estimate dense or sparse per-pixel motion vectors between frames",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "planar-tracking",
+      "family": "tracking-ai",
+      "algorithm": "Track image-plane homography across frames using matched feature descriptors",
+      "inputs": [
+        "rgba",
+        "sequence"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "affine-transform",
+      "family": "transform",
+      "algorithm": "Inverse-sample a translation-rotation-scale-shear matrix",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "visual.rotation+scale+offset",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "mesh-warp",
+      "family": "transform",
+      "algorithm": "Use a piecewise mesh/triangulation to interpolate a non-rigid deformation",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "noise-displacement",
+      "family": "transform",
+      "algorithm": "Inverse-sample using two channels of a smooth noise/texture vector field",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "perspective-warp",
+      "family": "transform",
+      "algorithm": "Apply homogeneous 3x3 projective mapping with pixel-centre conventions",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "pinch-bulge",
+      "family": "transform",
+      "algorithm": "Distort radius as monotonic nonlinear function around focus",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "polar-coordinates",
+      "family": "transform",
+      "algorithm": "Transform between Cartesian and radius/angle sample domains",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "ripple",
+      "family": "transform",
+      "algorithm": "Perturb UV coordinates by sinusoids of radius/angle/time",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "rolling-shutter",
+      "family": "transform",
+      "algorithm": "Offset sampling time per scanline and reproject scene motion",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "swirl",
+      "family": "transform",
+      "algorithm": "Rotate UV around a centre by radius-dependent angle",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "twirl",
+      "family": "transform",
+      "algorithm": "Apply angular displacement with smooth spatial attenuation",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "wave-warp",
+      "family": "transform",
+      "algorithm": "Displace each row/column according to a phase-controlled periodic function",
+      "inputs": [
+        "rgba",
+        "coordinates"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": false
+    },
+    {
+      "id": "clock-wipe",
+      "family": "transitions",
+      "algorithm": "Reveal using polar angle and animated angular threshold",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "displacement-transition",
+      "family": "transitions",
+      "algorithm": "Displace one/both sources using an animated vector texture",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "dissolve",
+      "family": "transitions",
+      "algorithm": "Crossfade premultiplied pixels under time-varying scalar progress",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "door-split",
+      "family": "transitions",
+      "algorithm": "Shift two halves of frame apart to expose next input",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "linear-wipe",
+      "family": "transitions",
+      "algorithm": "Reveal next image using smoothstep of projected XY coordinate",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.transition(wipe)",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "luma-wipe",
+      "family": "transitions",
+      "algorithm": "Compare source/texture luminance with moving threshold",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "mask-reveal",
+      "family": "transitions",
+      "algorithm": "Evaluate an independently time-addressed alpha mask as mix weight",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "motion-morph",
+      "family": "transitions",
+      "algorithm": "Warp both inputs using estimated flow and confidence before blending",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "pixel-dissolve",
+      "family": "transitions",
+      "algorithm": "Reveal pseudorandom deterministic per-block threshold ranks",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "push-slide",
+      "family": "transitions",
+      "algorithm": "Translate outgoing and incoming images in opposite directions",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "radial-reveal",
+      "family": "transitions",
+      "algorithm": "Reveal next image based on radial distance from a centre",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "existing-frame-rudiments",
+      "nativeContract": "effect_graph.transition(radial)",
+      "fidelity": "native-approximation",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "spin-transition",
+      "family": "transitions",
+      "algorithm": "Rotate images around centre with progress-conditioned sampling",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    },
+    {
+      "id": "zoom-transition",
+      "family": "transitions",
+      "algorithm": "Animate scale and sample both scenes while crossfading",
+      "inputs": [
+        "from-rgba",
+        "to-rgba",
+        "progress"
+      ],
+      "implementation": "new-frame-rudiments-work",
+      "nativeContract": null,
+      "fidelity": "reference-needed",
+      "protectedOpticalSafe": false,
+      "identityOnly": true,
+      "temporal": true
+    }
+  ]
+}

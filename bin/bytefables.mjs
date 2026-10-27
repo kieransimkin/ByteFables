@@ -8,7 +8,7 @@ import {
   makeVisualBitPlan, choosePromptBits, composeBaselinePrompt, decodePublicTextFormat,
   createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes,
   createPublicQrCard, encodePublicQrSession, decodePublicQrSession,
-  createFrameRudimentsArtworkLayer, encodeUrBytesMultipartTestOnly,
+  createFrameRudimentsArtworkLayer, planPublicVideoLook, encodeUrBytesMultipartTestOnly,
   decodeUrBytesMultipartTestOnly, createPublicRecoverySheet
 } from '../dist/index.js';
 import { readFileSync } from 'node:fs';
@@ -17,6 +17,11 @@ const help = `ByteFables public-only CLI (no wallet/private-key support)
   bytefables formats [--json]
   bytefables plan --bytes N [--goal recover-typed|recover-any|identify|all] [--planned] [--experimental]
   bytefables demo
+  bytefables video-effects [--family grading|spatial|optics|compositing|transform|temporal|transitions|retro|scene-depth|tracking-ai|procedural] [--json]
+  bytefables video-look --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--look auto|PRESET_ID] [--intensity 0..1] [--target layer:ID]
+      [--purpose public-art|public-video] # frame-wide effects only with public-video purpose
+      # FrameRudiments post_effects fragment; public art only; never QR/recovery surface
   bytefables decode-public-text --confirm-public --format FORMAT --text PUBLIC_TEXT [--experimental]
   bytefables story-encode --confirm-public --public-hex HEX --namespace NS --kind KIND
       [--theme nature|technology|music|fantasy|science|humour] [--profile prefix|scheduled] [--stats]
@@ -119,6 +124,39 @@ async function main(args) {
         byteLength: data.length, contextRecovered: false,
         warning: 'Raw bytes only; no network, owner, wallet or key type is recovered.' }, null, 2));
       return;
+    }
+    case 'video-effects': {
+      const opt = parseFlags(rest, ['--family', '--json']);
+      const url = new URL('../manifests/video-effects-v1.json', import.meta.url);
+      const catalogue = JSON.parse(readFileSync(url, 'utf8'));
+      const allowedFamilies = new Set(catalogue.entries.map(e => e.family));
+      if (opt['--family'] && !allowedFamilies.has(opt['--family'])) throw new TypeError('Unknown video effect family');
+      const entries = catalogue.entries.filter(e => !opt['--family'] || e.family === opt['--family']);
+      if (opt['--json']) console.log(JSON.stringify({ ...catalogue, entries }, null, 2));
+      else for (const entry of entries) {
+        console.log(`${entry.id} [${entry.family}] ${entry.implementation}: ${entry.algorithm}`);
+      }
+      return;
+    }
+    case 'video-look': {
+      const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace', '--kind',
+        '--look', '--intensity', '--target', '--purpose']);
+      requirePublic(opt);
+      if (!opt['--public-hex'] || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Missing public data for video look');
+      }
+      if (opt['--intensity'] !== undefined && !/^(?:0(?:\.\d+)?|1(?:\.0+)?)$/.test(opt['--intensity'])) {
+        throw new TypeError('Video look intensity must be a decimal 0..1');
+      }
+      const record = new PublicRecord(ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace: opt['--namespace'], kind: opt['--kind']
+      }));
+      const plan = await planPublicVideoLook(record, {
+        look: opt['--look'] ?? 'auto',
+        intensity: opt['--intensity'] === undefined ? 1 : Number(opt['--intensity']),
+        target: opt['--target'] ?? 'layer:bytefables-identity', purpose: opt['--purpose'] ?? 'public-art'
+      });
+      console.log(JSON.stringify(plan, null, 2)); return;
     }
     case 'demo': {
       if (rest.length) throw new TypeError('demo takes no arguments');
