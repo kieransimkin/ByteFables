@@ -11,9 +11,11 @@ import { decodeBytewords } from '../codecs/bytewords.js';
 import { decodeBip39PublicMnemonic } from '../codecs/bip39.js';
 import { decodeUrBytesTestOnly } from '../codecs/ur-bytes-test.js';
 import { decodeMultibase } from '../codecs/multibase.js';
+import { decodeLargeStoryV1 } from '../grammar/large-story-v1.js';
 
 const DECODERS: Readonly<Record<string, (text: string) => Uint8Array | Promise<Uint8Array>>> = {
   'codec/hex': decodeHex,
+  'codec/large-story-v1': async text => (await decodeLargeStoryV1(text)).bytes,
   'codec/rfc4648-base32-nopad': decodeBase32,
   'codec/base45': decodeBase45,
   'codec/base64-padded': decodeBase64,

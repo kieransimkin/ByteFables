@@ -1001,3 +1001,23 @@ colour conversion, GPU, compositing, rendering and video encoding; the
 optical QR protection rule remains hard. New effect algorithms await changes
 in the FrameRudiments repository under its own graph roadmap. No GPU
 performance or perceptual image-quality claim is made by this document.
+
+---
+
+## October 27, 2026 — aligned large English lexicons and public grammar
+
+A separate, experimental `BYTEFABLES-LARGE-STORY-V1` adds the user-researched
+English noun/adjective/past-tense verb codebooks without mutating published
+Story V2 word-index mappings. It ships pinned six-language-list source checks,
+locale-dependent written spelling with stable cross-locale indices, 66-bit
+five-slot mixed-radix payloads, two explicit template-selector bits, full
+public-byte framing and SHA-256-128 integrity, deterministic CLI and vectors.
+See [the complete immutable format specification](specs/large-story-lexicons-v1.md).
+
+**Pending Stage 2 enhancements:** grammatical/semantic compatibility, extra
+non-ambiguous template families, separately audited homophone-safe spoken lists,
+internationalisation and independent corpus provenance/licensing review. These
+are distinct from the finished written-codebook binary round-trip tests.
+
+**Release gate remains unchanged:** do not use any of this experimental text
+for private keys, wallet backup or cryptographic authentication.

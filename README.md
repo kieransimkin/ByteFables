@@ -288,6 +288,27 @@ selection, security boundaries, and limits. A style is not a reversible
 identity or proof of ownership. Actual new rendering algorithms belong in
 FrameRudiments, not this tool.
 
+## Large English lexicons and high-capacity public stories (experimental)
+
+The 27 October 2026 research import adds **16,396 aligned nouns**, **10,569
+adjectives** and **3,554 unique past-tense transitive verbs** in separately
+pinned US and UK written-English dictionaries. Region-specific spelling maps
+to the same conceptual index; the full source lists are kept under
+`src/grammar/wordlists/large-v1/`, with independently checked SHA-256 digests.
+
+The new **BYTEFABLES-LARGE-STORY-V1** format carries 68 actual source bits per
+sentence (66 mixed-radix lexical bits, plus two template-selector bits), with
+SHA-256-128 accidental integrity and strict bit-exact public-data decoding. It
+does **not** replace the earlier story packs or create a private-key backup.
+See [large lexicon and binary grammar specification](docs/specs/large-story-lexicons-v1.md).
+
+```sh
+node bin/bytefables.mjs story-large-lexicons
+node bin/bytefables.mjs story-large-encode --confirm-public \
+  --public-hex 00010203 --namespace danceflow --kind node-id --locale en-GB --raw > story.txt
+node bin/bytefables.mjs story-large-decode --confirm-public --story-file story.txt
+```
+
 ## Development
 
 Requires Node.js >=20 and TypeScript 5.8.3. There are no runtime dependencies.

@@ -12,6 +12,7 @@ export interface CatalogueEntry {
 const ENTRIES: CatalogueEntry[] = [
   { id: 'hex', category: 'lossless', maturity: 'foundation', reversible: true, handlesSecrets: false },
   { id: 'rfc4648-base32-nopad', category: 'lossless', maturity: 'foundation', reversible: true, handlesSecrets: false },
+  { id: 'bytefables-large-story-v1', category: 'lossless', maturity: 'experimental', reversible: true, handlesSecrets: false },
   { id: 'bytefables-story-prototype-1', category: 'lossless', maturity: 'experimental', reversible: true, handlesSecrets: false },
   { id: 'public-identity-sha256-v1', category: 'identity', maturity: 'foundation', reversible: false, handlesSecrets: false },
   { id: 'pixel-avatar-v1', category: 'identity', maturity: 'foundation', reversible: false, handlesSecrets: false },

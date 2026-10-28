@@ -5,7 +5,8 @@ import {
   executePublicFormat, decodePublicRecord, publicRecordFingerprint,
   createFrameRudimentsIdentityLayer, planPublicWatermark,
   encodeStoryV2, encodeScheduledStory, inspectStoryV2, createFrameRudimentsStoryPreview,
-  makeVisualBitPlan, choosePromptBits, composeBaselinePrompt, decodePublicTextFormat,
+  makeVisualBitPlan, choosePromptBits, composeBaselinePrompt,
+  encodeLargeStoryV1, decodeLargeStoryV1, LARGE_LEXICON_COUNTS_V1, decodePublicTextFormat,
   createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes,
   createPublicQrCard, encodePublicQrSession, decodePublicQrSession,
   createFrameRudimentsArtworkLayer, planPublicVideoLook, encodeUrBytesMultipartTestOnly,
@@ -25,6 +26,10 @@ const help = `ByteFables public-only CLI (no wallet/private-key support)
   bytefables decode-public-text --confirm-public --format FORMAT --text PUBLIC_TEXT [--experimental]
   bytefables story-encode --confirm-public --public-hex HEX --namespace NS --kind KIND
       [--theme nature|technology|music|fantasy|science|humour] [--profile prefix|scheduled] [--stats]
+  bytefables story-large-encode --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--locale en-US|en-GB] [--raw] # experimental, PUBLIC data only
+  bytefables story-large-decode --confirm-public --story-file FILE # public text file
+  bytefables story-large-lexicons # capacities / word counts; not spoken-safe
   bytefables story-preview --confirm-public --public-hex HEX --namespace NS --kind KIND
       [--theme THEME] [--box 0,0,640,120] [--font-size N] [--max-sentences N]
   bytefables short-hashes --confirm-public --public-hex HEX --namespace NS --kind KIND
@@ -69,7 +74,7 @@ function parseFlags(args, allowed) {
     if (!flag.startsWith('--') || !allowed.includes(flag) || flag in opts) {
       throw new TypeError(`Unknown or repeated flag: ${flag}`);
     }
-    if (['--json', '--planned', '--experimental', '--confirm-public', '--generation-controlled', '--stats', '--no-parity', '--include-layers'].includes(flag)) {
+    if (['--json', '--planned', '--experimental', '--confirm-public', '--generation-controlled', '--stats', '--no-parity', '--include-layers','--raw'].includes(flag)) {
       opts[flag] = true;
     } else {
       if (i + 1 >= args.length || args[i + 1].startsWith('--')) {
@@ -246,6 +251,40 @@ async function main(args) {
         'codec/story-v2-scheduled', experimental: true, publicOnly: true, story,
         ...(opt['--stats'] && profile === 'prefix' ? { stats: await inspectStoryV2(source, theme) } : {})
       }, null, 2)); return;
+    }
+    case 'story-large-lexicons': {
+      if (rest.length) throw new TypeError('No flags supported');
+      console.log(JSON.stringify({ format: 'bytefables.large-lexicons.v1',
+        counts: LARGE_LEXICON_COUNTS_V1, roles: ['adjectives','nouns','verbs'],
+        locales: ['en-US','en-GB'], sentenceBits: 68, rawPayloadBits: 66,
+        warning: 'Experimental public-written codebooks; visual/spoken mnemonic and private-key recovery not certified.' }, null, 2));
+      return;
+    }
+    case 'story-large-encode': {
+      const opt = parseFlags(rest, ['--confirm-public','--public-hex','--namespace','--kind','--locale','--raw']);
+      requirePublic(opt);
+      if (opt['--public-hex'] === undefined || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Expected PUBLIC hex, namespace and kind');
+      }
+      const value = ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace: opt['--namespace'], kind: opt['--kind']
+      });
+      const result = await encodeLargeStoryV1(value, opt['--locale'] ?? 'en-GB');
+      if (opt['--raw']) console.log(result);
+      else console.log(JSON.stringify({ experimental: true, publicOnly: true,
+        format: 'bytefables-large-story-v1', text: result }, null, 2));
+      return;
+    }
+    case 'story-large-decode': {
+      const opt = parseFlags(rest, ['--confirm-public','--story-file']);
+      requirePublic(opt);
+      if (!opt['--story-file']) throw new TypeError('Required --story-file (PUBLIC text only)');
+      const source = readFileSync(opt['--story-file'], 'utf8').replace(/\n$/, '');
+      const decoded = await decodeLargeStoryV1(source);
+      console.log(JSON.stringify({ experimental: true, publicOnly: true,
+        format: decoded.format, locale: decoded.locale, publicHex: encodeHex(decoded.bytes),
+        warning: 'Raw bytes only; original namespace/kind not preserved, no secret processing.' }, null, 2));
+      return;
     }
     case 'story-preview': {
       const opt = parseFlags(rest, ['--confirm-public', '--public-hex', '--namespace', '--kind',

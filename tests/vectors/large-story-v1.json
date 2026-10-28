@@ -1,0 +1,62 @@
+{
+  "schema": "bytefables.large-story.v1.vectors",
+  "format": "BYTEFABLES-LARGE-STORY-V1",
+  "cases": [
+    {
+      "locale": "en-US",
+      "publicHex": "",
+      "sha256": "8226f6992921ed9f3d7ab47ef13c6272929bed3e3098e079bd06cfcb9558d37d",
+      "sentences": 4,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-US/1\n"
+    },
+    {
+      "locale": "en-US",
+      "publicHex": "00",
+      "sha256": "10fce9fa70618e44cfa6ea7dc5ebf1cf1b955a971582be510a291fe8ff04c759",
+      "sentences": 4,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-US/1\n"
+    },
+    {
+      "locale": "en-US",
+      "publicHex": "000102030405060708090a0b0c0d0e0f",
+      "sha256": "0f06c5e4c3455b90e53eac2481266dd10ade397dd69e431fd2a4c190ce638ff2",
+      "sentences": 5,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-US/1\n"
+    },
+    {
+      "locale": "en-US",
+      "publicHex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "sha256": "4d77b991a44939f4a5699a6a443cf96dce5fbbf5790a5a73aa2b7488c612d413",
+      "sentences": 7,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-US/1\n"
+    },
+    {
+      "locale": "en-GB",
+      "publicHex": "",
+      "sha256": "7c730d5157eb708d0c45fe00d74a1f2a7e854d620005be2f96d6156556321ddf",
+      "sentences": 4,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-GB/1\n"
+    },
+    {
+      "locale": "en-GB",
+      "publicHex": "00",
+      "sha256": "62c42c43c1d6f4634de9be78dc6b6300b7f780681ae481dff94623510aad66cf",
+      "sentences": 4,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-GB/1\n"
+    },
+    {
+      "locale": "en-GB",
+      "publicHex": "000102030405060708090a0b0c0d0e0f",
+      "sha256": "4c5689b933facc29be43410bc47afde7ed9edd1dcb2fe1b96049c932cb379481",
+      "sentences": 5,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-GB/1\n"
+    },
+    {
+      "locale": "en-GB",
+      "publicHex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "sha256": "762d3cb8dc725e7bac8a847b0e53a050cf00825bd1cc294bf208c8c4e5af2635",
+      "sentences": 7,
+      "firstLine": "BYTEFABLES-LARGE-STORY-V1 en-GB/1\n"
+    }
+  ]
+}

@@ -173,6 +173,40 @@
       "adapter": "encodeStoryV2"
     },
     {
+      "formatId": "codec/large-story-v1",
+      "version": "1.0.0",
+      "category": "codec",
+      "maturity": "experimental",
+      "guarantee": "reversible-raw",
+      "input": "public-record",
+      "sensitivity": "public-only",
+      "reference": "https://github.com/kieransimkin/ByteFables/blob/main/docs/specs/large-story-lexicons-v1.md",
+      "standardStatus": "internal",
+      "license": "MIT",
+      "referenceVectors": "tests/vectors/large-story-v1.json",
+      "decoder": "decodeLargeStoryV1",
+      "minInputBytes": 0,
+      "maxInputBytes": 4096,
+      "maxOutputBytes": 200000,
+      "capacity": "story-variable",
+      "estimatedExpansion": 9,
+      "mediaTypes": [
+        "text/plain"
+      ],
+      "carriers": [
+        "text"
+      ],
+      "integrity": "sha256-unkeyed",
+      "errorCorrection": "none",
+      "deterministic": true,
+      "offlineSafe": true,
+      "runtime": [
+        "node",
+        "browser"
+      ],
+      "adapter": "encodeLargeStoryV1"
+    },
+    {
       "formatId": "codec/story-v2-scheduled",
       "version": "1.0.0",
       "category": "codec",

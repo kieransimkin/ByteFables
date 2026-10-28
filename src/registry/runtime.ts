@@ -11,6 +11,7 @@ import { encodeUrBytesTestOnly } from '../codecs/ur-bytes-test.js';
 import { encodeMultibase } from '../codecs/multibase.js';
 import { encodeExperimentalStory } from '../grammar/story.js';
 import { encodeStoryV2 } from '../grammar/story-v2.js';
+import { encodeLargeStoryV1 } from '../grammar/large-story-v1.js';
 import { encodeScheduledStory } from '../grammar/scheduled-story.js';
 import { identityFingerprint } from '../identity/identity.js';
 import { createPublicRecoverySheet } from '../engine/public-recovery-sheet.js';
@@ -88,6 +89,7 @@ const adapters: ReadonlyMap<string, (record: PublicRecord) => Promise<string | U
   ['encodePublicRecord', async (record: PublicRecord) => encodePublicRecord(record)],
   ['encodeExperimentalStory', async (record: PublicRecord) => encodeExperimentalStory(record.value)],
   ['encodeStoryV2', async (record: PublicRecord) => encodeStoryV2(record.value)],
+  ['encodeLargeStoryV1', async (record: PublicRecord) => encodeLargeStoryV1(record.value)],
   ['encodeScheduledStory', async (record: PublicRecord) => encodeScheduledStory(record.value)],
   ['identityFingerprint', async (record: PublicRecord) => identityFingerprint(record.value)],
   ['deriveShortPublicHash24', async (record: PublicRecord) => (await deriveShortPublicHash(record.value, 3)).label],

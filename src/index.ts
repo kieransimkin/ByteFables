@@ -117,3 +117,12 @@ export type { PublicRecoverySheet, PublicRecoverySheetOptions } from './engine/p
 // Declarative public video looks — existing FrameRudiments filters own rendering.
 export { PUBLIC_VIDEO_LOOK_VERSION, VIDEO_LOOK_PRESETS, planPublicVideoLook } from './effects/video-looks.js';
 export type { VideoLookId, PublicVideoLookOptions, PublicVideoLookPlan } from './effects/video-looks.js';
+
+// Experimental immutable US/UK past-tense, noun and adjective codebooks.
+export { LARGE_LEXICONS_V1, LARGE_LEXICON_COUNTS_V1, largeLexiconWordsV1,
+  largeLexiconWordV1, largeLexiconIndexV1, convertLexiconWordV1 } from './grammar/large-lexicons-v1.js';
+export type { LexiconRoleV1, LexiconLocaleV1 } from './grammar/large-lexicons-v1.js';
+export { LARGE_STORY_FORMAT_V1, LARGE_STORY_PAYLOAD_BITS, LARGE_STORY_SENTENCE_BITS,
+  LARGE_STORY_MAX_PUBLIC_BYTES, encodeLargeStoryV1, decodeLargeStoryV1 } from './grammar/large-story-v1.js';
+export type { LargeStoryResultV1 } from './grammar/large-story-v1.js';
+export { createFrameRudimentsLargeStoryPreview } from './engine/story-panels.js';
