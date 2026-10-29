@@ -6,7 +6,7 @@ import {
   createFrameRudimentsIdentityLayer, planPublicWatermark,
   encodeStoryV2, encodeScheduledStory, inspectStoryV2, createFrameRudimentsStoryPreview,
   makeVisualBitPlan, choosePromptBits, composeBaselinePrompt,
-  encodeLargeStoryV1, decodeLargeStoryV1, LARGE_LEXICON_COUNTS_V1, decodePublicTextFormat,
+  encodeLargeStoryV1, decodeLargeStoryV1, encodeLargeStoryV2, decodeLargeStoryV2, LARGE_LEXICON_COUNTS_V1, decodePublicTextFormat,
   createFrameRudimentsFractalLayer, deriveShortPublicHash, deriveShortPublicHashes,
   createPublicQrCard, encodePublicQrSession, decodePublicQrSession,
   createFrameRudimentsArtworkLayer, planPublicVideoLook, encodeUrBytesMultipartTestOnly,
@@ -30,6 +30,9 @@ const help = `ByteFables public-only CLI (no wallet/private-key support)
       [--locale en-US|en-GB] [--raw] # experimental, PUBLIC data only
   bytefables story-large-decode --confirm-public --story-file FILE # public text file
   bytefables story-large-lexicons # capacities / word counts; not spoken-safe
+  bytefables story-large-v2-encode --confirm-public --public-hex HEX --namespace NS --kind KIND
+      [--locale en-US|en-GB] [--raw] # new version, experimental
+  bytefables story-large-v2-decode --confirm-public --story-file FILE
   bytefables story-preview --confirm-public --public-hex HEX --namespace NS --kind KIND
       [--theme THEME] [--box 0,0,640,120] [--font-size N] [--max-sentences N]
   bytefables short-hashes --confirm-public --public-hex HEX --namespace NS --kind KIND
@@ -281,6 +284,32 @@ async function main(args) {
       if (!opt['--story-file']) throw new TypeError('Required --story-file (PUBLIC text only)');
       const source = readFileSync(opt['--story-file'], 'utf8').replace(/\n$/, '');
       const decoded = await decodeLargeStoryV1(source);
+      console.log(JSON.stringify({ experimental: true, publicOnly: true,
+        format: decoded.format, locale: decoded.locale, publicHex: encodeHex(decoded.bytes),
+        warning: 'Raw bytes only; original namespace/kind not preserved, no secret processing.' }, null, 2));
+      return;
+    }
+    case 'story-large-v2-encode': {
+      const opt = parseFlags(rest, ['--confirm-public','--public-hex','--namespace','--kind','--locale','--raw']);
+      requirePublic(opt);
+      if (opt['--public-hex'] === undefined || !opt['--namespace'] || !opt['--kind']) {
+        throw new TypeError('Expected PUBLIC hex, namespace and kind');
+      }
+      const value = ByteValue.public(decodeHex(opt['--public-hex']), {
+        namespace: opt['--namespace'], kind: opt['--kind']
+      });
+      const result = await encodeLargeStoryV2(value, opt['--locale'] ?? 'en-GB');
+      if (opt['--raw']) console.log(result);
+      else console.log(JSON.stringify({ experimental: true, publicOnly: true,
+        format: 'bytefables-large-story-v2', text: result }, null, 2));
+      return;
+    }
+    case 'story-large-v2-decode': {
+      const opt = parseFlags(rest, ['--confirm-public','--story-file']);
+      requirePublic(opt);
+      if (!opt['--story-file']) throw new TypeError('Required --story-file (PUBLIC text only)');
+      const source = readFileSync(opt['--story-file'], 'utf8').replace(/\n$/, '');
+      const decoded = await decodeLargeStoryV2(source);
       console.log(JSON.stringify({ experimental: true, publicOnly: true,
         format: decoded.format, locale: decoded.locale, publicHex: encodeHex(decoded.bytes),
         warning: 'Raw bytes only; original namespace/kind not preserved, no secret processing.' }, null, 2));

@@ -126,3 +126,8 @@ export { LARGE_STORY_FORMAT_V1, LARGE_STORY_PAYLOAD_BITS, LARGE_STORY_SENTENCE_B
   LARGE_STORY_MAX_PUBLIC_BYTES, encodeLargeStoryV1, decodeLargeStoryV1 } from './grammar/large-story-v1.js';
 export type { LargeStoryResultV1 } from './grammar/large-story-v1.js';
 export { createFrameRudimentsLargeStoryPreview } from './engine/story-panels.js';
+
+// Separate immutable large-story v2 wire format; v1 remains unchanged.
+export { LARGE_STORY_FORMAT_V2, LARGE_STORY_V2_PAYLOAD_BITS, LARGE_STORY_V2_SENTENCE_BITS,
+  encodeLargeStoryV2, decodeLargeStoryV2 } from './grammar/large-story-v2.js';
+export type { LargeStoryResultV2 } from './grammar/large-story-v2.js';

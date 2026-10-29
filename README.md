@@ -476,3 +476,7 @@ versions 1–40 and four ECC levels, plus saved-PNG readback with OpenCV for a
 specific sample rendered by the native FrameRudiments adapter. This does **not**
 certify physical media durability, all scanner/device combinations or any
 private-key backup. These are distinct release gates.
+
+### Experimental large-story v2 (new wire format)
+
+The new `BYTEFABLES-LARGE-STORY-V2` uses the immutable large US/UK dictionaries but includes eight canonical sentence structures and a computed written a/an determiner. It carries 69 source bits per sentence: 3 selector bits and 66 mixed-radix payload bits. See [the independent v2 specification](docs/specs/large-story-lexicons-v2.md). Story V1 remains byte-for-byte unchanged. The format is strictly public-data-only, not a wallet/secret backup or phonetic mnemonic.
