@@ -131,3 +131,7 @@ export { createFrameRudimentsLargeStoryPreview } from './engine/story-panels.js'
 export { LARGE_STORY_FORMAT_V2, LARGE_STORY_V2_PAYLOAD_BITS, LARGE_STORY_V2_SENTENCE_BITS,
   encodeLargeStoryV2, decodeLargeStoryV2 } from './grammar/large-story-v2.js';
 export type { LargeStoryResultV2 } from './grammar/large-story-v2.js';
+// Public identity image gallery: native FrameRudiments artwork contact sheets.
+export { createFrameRudimentsArtworkGallery, ARTWORK_GALLERY_VERSION,
+  ARTWORK_GALLERY_FAMILIES, ARTWORK_GALLERY_PALETTES } from './engine/artwork-gallery.js';
+export type { ArtworkGalleryOptions, ArtworkGalleryTile, ArtworkGalleryPlan } from './engine/artwork-gallery.js';
