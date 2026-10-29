@@ -135,3 +135,7 @@ export type { LargeStoryResultV2 } from './grammar/large-story-v2.js';
 export { createFrameRudimentsArtworkGallery, ARTWORK_GALLERY_VERSION,
   ARTWORK_GALLERY_FAMILIES, ARTWORK_GALLERY_PALETTES } from './engine/artwork-gallery.js';
 export type { ArtworkGalleryOptions, ArtworkGalleryTile, ArtworkGalleryPlan } from './engine/artwork-gallery.js';
+// Public image sprite atlases: layout/UV metadata; FrameRudiments renders.
+export { createFrameRudimentsArtworkAtlas, ARTWORK_ATLAS_VERSION } from './engine/artwork-atlas.js';
+export type { ArtworkAtlasOptions, ArtworkAtlasTile, ArtworkAtlasPage,
+  ArtworkAtlasPlan } from './engine/artwork-atlas.js';
