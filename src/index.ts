@@ -139,3 +139,7 @@ export type { ArtworkGalleryOptions, ArtworkGalleryTile, ArtworkGalleryPlan } fr
 export { createFrameRudimentsArtworkAtlas, ARTWORK_ATLAS_VERSION } from './engine/artwork-atlas.js';
 export type { ArtworkAtlasOptions, ArtworkAtlasTile, ArtworkAtlasPage,
   ArtworkAtlasPlan } from './engine/artwork-atlas.js';
+// Completed PNG export receipts (FrameRudiments owns rasterisation).
+export { ARTWORK_EXPORT_RECEIPT_VERSION, inspectArtworkPng, createArtworkPngReceipt } from './engine/artwork-export-receipt.js';
+export type { ArtworkPngPage, ArtworkPngReceiptPage, ArtworkPngReceipt } from './engine/artwork-export-receipt.js';
+
