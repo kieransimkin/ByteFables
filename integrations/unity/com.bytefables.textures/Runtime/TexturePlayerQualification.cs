@@ -29,13 +29,17 @@ namespace ByteFables.Textures
         [SerializeField] private Shader arrayShader;
         [SerializeField] private string expectedRunId, expectedVersion, expectedManifest, expectedSentinelManifest;
         [SerializeField] private string expectedPlatform, expectedGraphicsApi;
+        [SerializeField] private string expectedScriptingBackend, expectedColourSpace, expectedRenderPipeline;
 
         public void Configure(TextureBundleAsset artwork, TextureBundleAsset probes, Shader shader,
-            string runId, string version, string manifest, string sentinelManifest, string platform, string graphicsApi)
+            string runId, string version, string manifest, string sentinelManifest, string platform, string graphicsApi,
+            string scriptingBackend, string colourSpace, string renderPipeline)
         {
             actual = artwork; sentinel = probes; arrayShader = shader;
             expectedRunId = runId; expectedVersion = version; expectedManifest = manifest;
             expectedSentinelManifest = sentinelManifest; expectedPlatform = platform; expectedGraphicsApi = graphicsApi;
+            expectedScriptingBackend = scriptingBackend; expectedColourSpace = colourSpace;
+            expectedRenderPipeline = renderPipeline;
         }
 
         private static void Require(bool condition, string message)
@@ -103,8 +107,9 @@ namespace ByteFables.Textures
             Require(report.graphicsApi == expectedGraphicsApi && SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null &&
                 SystemInfo.supports2DArrayTextures && SystemInfo.supportsAsyncGPUReadback,
                 "Requested graphics API with array/readback support is required; no fallback/skip");
-            Require(report.colourSpace == "Gamma" && report.renderPipeline == "BuiltIn" && report.scriptingBackend == "Mono",
-                "This qualification profile is Built-in/Gamma/Mono only");
+            Require(report.colourSpace == expectedColourSpace && report.renderPipeline == expectedRenderPipeline &&
+                report.scriptingBackend == expectedScriptingBackend,
+                "Runtime scripting backend, colour space or render pipeline differs from the pinned profile");
             Require(arrayShader != null && arrayShader.isSupported, "Serialized array shader was stripped or is unsupported");
             report.playerExecuted = true;
             var data = TextureBundleDirectory.LoadDescriptor(Path.Combine(Application.streamingAssetsPath, "ByteFablesFixture/artwork.bftextures"));

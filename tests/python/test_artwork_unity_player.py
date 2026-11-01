@@ -94,6 +94,13 @@ class PreparedProject(FixtureBase):
     def test_linux_profile_is_explicit(self):
         q=self.prepare(target='linux-vulkan')['request']
         self.assertEqual(q['graphicsApi'],'Vulkan');self.assertEqual(q['target'],'StandaloneLinux64')
+        self.assertEqual(q['scriptingBackend'],'Mono');self.assertEqual(q['colourSpace'],'Gamma')
+    def test_il2cpp_linear_profiles_are_explicit_and_do_not_change_transport(self):
+        q=self.prepare(target='linux-vulkan-il2cpp-linear')['request']
+        self.assertEqual(q['target'],'StandaloneLinux64');self.assertEqual(q['graphicsApi'],'Vulkan')
+        self.assertEqual(q['scriptingBackend'],'IL2CPP');self.assertEqual(q['colourSpace'],'Linear')
+        self.assertEqual(q['renderPipeline'],'BuiltIn')
+        self.assertEqual(q['manifestSha256'],verify_unity_stage(self.output/'project/Assets/ByteFablesFixture')['manifestSha256'])
     def test_cli_prepare_and_missing_unity_failures_are_distinct(self):
         cli=[sys.executable,str(ROOT/'scripts/qualify-artwork-unity-player.py'),'--confirm-public',
             '--bundle',str(self.source),'--output',str(self.output),'--target','linux-vulkan']
@@ -213,8 +220,12 @@ class PlayerSourceInvariants(unittest.TestCase):
         self.assertIn('!Application.isEditor',s);self.assertIn('FileMode.CreateNew',s)
     def test_build_preserves_profile_and_non_development_player(self):
         s=(ROOT/'integrations/unity/com.bytefables.textures/Editor/TexturePlayerBuild.cs').read_text()
-        for token in ['StandaloneBuildSubtarget.Player','BuildOptions.None','ScriptingImplementation.Mono2x','ColorSpace.Gamma','SetUseDefaultGraphicsAPIs(target, false)']:
+        for token in ['StandaloneBuildSubtarget.Player','BuildOptions.None','ScriptingImplementation.Mono2x',
+            'ScriptingImplementation.IL2CPP','ColorSpace.Gamma','ColorSpace.Linear',
+            'SetUseDefaultGraphicsAPIs(target, false)','GetScriptingBackend']:
             self.assertIn(token,s)
+        runtime=(ROOT/'integrations/unity/com.bytefables.textures/Runtime/TexturePlayerQualification.cs').read_text()
+        self.assertIn('expectedScriptingBackend',runtime);self.assertIn('expectedColourSpace',runtime)
     def test_probe_yields_for_deferred_gpu_resource_release(self):
         s=(ROOT/'integrations/unity/com.bytefables.textures/Runtime/TexturePlayerReadback.cs').read_text()
         self.assertIn('yield return null;',s);self.assertIn('finally { TextureArrayUpload.Destroy(cpu); }',s)

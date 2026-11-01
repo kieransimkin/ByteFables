@@ -25,8 +25,10 @@ from tools.artwork_unity_qualification import PACKAGE, ROOT
 
 SCHEMA = 'bytefables.unity-player-qualification.v1'
 TARGETS = {
-    'windows-d3d11': ('Windows', 'StandaloneWindows64', 'WindowsPlayer', 'Direct3D11', '-force-d3d11', 'ByteFablesPlayer.exe', 'win64'),
-    'linux-vulkan': ('Linux', 'StandaloneLinux64', 'LinuxPlayer', 'Vulkan', '-force-vulkan', 'ByteFablesPlayer.x86_64', 'linux64'),
+    'windows-d3d11': ('Windows', 'StandaloneWindows64', 'WindowsPlayer', 'Direct3D11', '-force-d3d11', 'ByteFablesPlayer.exe', 'win64', 'Mono', 'Gamma'),
+    'linux-vulkan': ('Linux', 'StandaloneLinux64', 'LinuxPlayer', 'Vulkan', '-force-vulkan', 'ByteFablesPlayer.x86_64', 'linux64', 'Mono', 'Gamma'),
+    'windows-d3d11-il2cpp-linear': ('Windows', 'StandaloneWindows64', 'WindowsPlayer', 'Direct3D11', '-force-d3d11', 'ByteFablesPlayer.exe', 'win64', 'IL2CPP', 'Linear'),
+    'linux-vulkan-il2cpp-linear': ('Linux', 'StandaloneLinux64', 'LinuxPlayer', 'Vulkan', '-force-vulkan', 'ByteFablesPlayer.x86_64', 'linux64', 'IL2CPP', 'Linear'),
 }
 MAX_BUILD_BYTES = 2 * 1024 * 1024 * 1024
 
@@ -77,7 +79,7 @@ def prepare_player_project(bundle: Path, output: Path, *, confirm_public: bool =
         request = {
             'schema': 'bytefables.unity-player-request.v1', 'runId': secrets.token_hex(16),
             'editorVersion': editor_version, 'target': entry[1], 'runtimePlatform': entry[2],
-            'graphicsApi': entry[3], 'scriptingBackend': 'Mono', 'colourSpace': 'Gamma',
+            'graphicsApi': entry[3], 'scriptingBackend': entry[7], 'colourSpace': entry[8],
             'renderPipeline': 'BuiltIn', 'manifestSha256': actual['manifestSha256'],
             'sentinelManifestSha256': sentinel['manifestSha256'],
             'buildPath': str(output / 'player' / entry[5]),

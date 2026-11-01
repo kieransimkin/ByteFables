@@ -57,8 +57,10 @@ namespace ByteFables.Textures.Editor
                 Require(request.schema == "bytefables.unity-player-request.v1" &&
                     System.Text.RegularExpressions.Regex.IsMatch(request.runId ?? "", "^[a-f0-9]{32}$"), "Invalid request");
                 Require(request.editorVersion == Application.unityVersion, "Unity version differs from pinned build request");
-                Require(request.scriptingBackend == "Mono" && request.colourSpace == "Gamma" && request.renderPipeline == "BuiltIn",
-                    "Only the Built-in/Gamma/Mono desktop profile is defined");
+                bool monoGamma = request.scriptingBackend == "Mono" && request.colourSpace == "Gamma";
+                bool il2cppLinear = request.scriptingBackend == "IL2CPP" && request.colourSpace == "Linear";
+                Require((monoGamma || il2cppLinear) && request.renderPipeline == "BuiltIn",
+                    "Only Built-in/Gamma/Mono and Built-in/Linear/IL2CPP desktop profiles are defined");
                 bool windows = request.target == "StandaloneWindows64";
                 Require(windows || request.target == "StandaloneLinux64", "Unsupported target");
                 Require(Application.platform == (windows ? RuntimePlatform.WindowsEditor : RuntimePlatform.LinuxEditor), "Native build-and-run host required");
@@ -74,10 +76,15 @@ namespace ByteFables.Textures.Editor
                     SamePath(request.buildReportPath, Path.Combine(outputRoot, "build-result.json")) &&
                     !Directory.Exists(Path.GetDirectoryName(expectedBuildPath)) && !File.Exists(request.buildReportPath), "Fresh isolated build outputs required");
                 safeReportPath = Path.Combine(outputRoot, "build-result.json");
-                PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, ScriptingImplementation.Mono2x);
+                var backend = il2cppLinear ? ScriptingImplementation.IL2CPP : ScriptingImplementation.Mono2x;
+                PlayerSettings.SetScriptingBackend(NamedBuildTarget.Standalone, backend);
+                Require(PlayerSettings.GetScriptingBackend(NamedBuildTarget.Standalone) == backend,
+                    "Requested scripting backend did not persist");
                 PlayerSettings.SetUseDefaultGraphicsAPIs(target, false);
                 PlayerSettings.SetGraphicsAPIs(target, new[] { graphics });
-                PlayerSettings.colorSpace = ColorSpace.Gamma;
+                var colourSpace = il2cppLinear ? ColorSpace.Linear : ColorSpace.Gamma;
+                PlayerSettings.colorSpace = colourSpace;
+                Require(PlayerSettings.colorSpace == colourSpace, "Requested colour space did not persist");
                 PlayerSettings.runInBackground = true;
                 GraphicsSettings.defaultRenderPipeline = null; QualitySettings.renderPipeline = null;
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
@@ -94,7 +101,8 @@ namespace ByteFables.Textures.Editor
                 var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
                 var probe = new GameObject("ByteFables standalone acceptance").AddComponent<TexturePlayerQualification>();
                 probe.Configure(actual, sentinel, shader, request.runId, request.editorVersion, request.manifestSha256,
-                    request.sentinelManifestSha256, request.runtimePlatform, request.graphicsApi);
+                    request.sentinelManifestSha256, request.runtimePlatform, request.graphicsApi,
+                    request.scriptingBackend, request.colourSpace, request.renderPipeline);
                 const string scenePath = "Assets/ByteFablesPlayer.unity";
                 Require(EditorSceneManager.SaveScene(scene, scenePath), "Could not save qualification scene");
                 AssetDatabase.SaveAssets();
@@ -104,8 +112,8 @@ namespace ByteFables.Textures.Editor
                     subtarget = (int)StandaloneBuildSubtarget.Player, options = BuildOptions.None });
                 result.runId = request.runId; result.editorVersion = Application.unityVersion; result.target = request.target;
                 result.manifestSha256 = request.manifestSha256; result.sentinelManifestSha256 = request.sentinelManifestSha256;
-                result.graphicsApi = request.graphicsApi; result.scriptingBackend = "Mono";
-                result.colourSpace = "Gamma"; result.renderPipeline = "BuiltIn";
+                result.graphicsApi = request.graphicsApi; result.scriptingBackend = request.scriptingBackend;
+                result.colourSpace = request.colourSpace; result.renderPipeline = request.renderPipeline;
                 result.errors = checked((int)build.summary.totalErrors); result.totalSize = build.summary.totalSize;
                 result.developmentBuild = (build.summary.options & BuildOptions.Development) != 0;
                 result.buildSucceeded = build.summary.result == BuildResult.Succeeded;
