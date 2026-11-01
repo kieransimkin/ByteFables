@@ -116,3 +116,28 @@ word output, compressed transport or entire programme wave is changed/completed.
 Next: run and record managed/Unity GPU acceptance, then player-build and render-
 pipeline/device qualification before expanding Unity graph batching or compressed
 transport. The current pipeline's native/browser evidence is preserved separately.
+
+## Standalone Unity player qualification -- based on 552c6ff
+
+Observed baseline: managed C# contract run **41300078552** passed on Windows and
+Ubuntu on 2026-11-01. This closes the prior managed-reader compilation gate for
+that committed baseline. It is NOT a Unity Editor, standalone player or GPU pass.
+No completed real-Unity qualification was observed in that baseline's push runs.
+
+This increment adds isolated Windows/Direct3D11 and Linux/Vulkan player build-and-
+run profiles, serialized imported assets and explicit shader references, bundled
+pinned KTX2 expected pixels, every-layer/mip CPU/GPU/shader checks, orientation and
+source-over probes, and checked build/player/artifact receipts. It uses Built-in,
+Gamma, Mono and non-development desktop players only. See
+[the standalone player contract](specs/artwork-unity-player-v1.md).
+
+Preparation, subprocess/report tests and actual engine acceptance remain separate.
+The manual GPU workflow cannot promote missing Unity, missing build modules, an
+editor report, a zero-exit process without complete evidence, a changed binary,
+a different graphics backend or a skipped check to a pass. Outputs are scoped to
+a fresh isolated project; ordinary projects and existing generators are untouched.
+
+Next acceptance: execute the existing editor qualification and the new player
+profiles on configured licensed hosts, retaining exact build/device receipts.
+Then extend separately to IL2CPP, Linear colour space, URP/HDRP, more devices and
+large-graph workloads. None of those profiles or the whole BF-W9 wave is complete.

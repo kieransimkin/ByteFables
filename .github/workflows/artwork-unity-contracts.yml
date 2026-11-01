@@ -2,9 +2,9 @@ name: Artwork Unity CSharp contracts
 on:
   push:
     branches: [main]
-    paths: ['integrations/unity/**', 'tools/artwork_unity*.py', 'tests/dotnet/**', 'tests/helpers/artwork_unity_fixture.py', 'tests/python/test_artwork_unity.py', 'scripts/*artwork-unity*', '.github/workflows/artwork-unity-contracts.yml']
+    paths: ['integrations/unity/**', 'tools/artwork_unity*.py', 'tests/dotnet/**', 'tests/helpers/artwork_unity_fixture.py', 'tests/python/test_artwork_unity*.py', 'scripts/*artwork-unity*', '.github/workflows/artwork-unity-contracts.yml']
   pull_request:
-    paths: ['integrations/unity/**', 'tools/artwork_unity*.py', 'tests/dotnet/**', 'tests/helpers/artwork_unity_fixture.py', 'tests/python/test_artwork_unity.py', 'scripts/*artwork-unity*', '.github/workflows/artwork-unity-contracts.yml']
+    paths: ['integrations/unity/**', 'tools/artwork_unity*.py', 'tests/dotnet/**', 'tests/helpers/artwork_unity_fixture.py', 'tests/python/test_artwork_unity*.py', 'scripts/*artwork-unity*', '.github/workflows/artwork-unity-contracts.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -28,6 +28,7 @@ jobs:
           python-version: '3.11'
       - run: python -m pip install "Pillow==12.3.0"
       - run: python -m unittest discover -s tests/python -p test_artwork_unity.py -v
+      - run: python -m unittest discover -s tests/python -p test_artwork_unity_player.py -v
       - run: python tests/helpers/artwork_unity_fixture.py --output _work/unity-sentinel
       - run: python scripts/stage-artwork-unity.py --confirm-public stage --bundle _work/unity-sentinel --output _work/unity-staged
       - run: dotnet run --project tests/dotnet/ByteFables.TextureContracts --configuration Release -- --descriptor _work/unity-staged/artwork.bftextures
