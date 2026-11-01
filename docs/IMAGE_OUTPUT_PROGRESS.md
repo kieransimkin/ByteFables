@@ -31,3 +31,23 @@ Then add independently qualified transparent native-source exports and isolated
 mip levels/KTX2 (not page-wide mipmaps), followed by Unity consumption tests.
 Larger unique-identity and accessibility studies remain separate from repeated
 sprite display throughput. Existing formats and hashes are not silently changed.
+
+## Transparent source-sprite milestone -- based on 1d5497b
+
+Observed baseline: native image-output run **41279164273** completed successfully
+on 2026-11-01, including HTTP gallery, PNG/WebP readback and the 1,000-instance
+Canvas/WebGL texture check. This closes the preceding runtime/browser acceptance
+check for that committed baseline; it does not claim a run of this new patch.
+
+This increment adds the separate `bytefables.transparent-artwork-bundle.v1`:
+source RGBA PNG/WebP/native ICO, exact original native-matte comparison,
+post-save file/alpha verification, a static multi-background preview, and a
+separate real-native black/white qualification command. See
+[transparent source contract](specs/artwork-transparent-sprites-v1.md).
+The old opaque exports, runtime manifest and generator versions are unchanged.
+
+New local execution and remote acceptance results belong in the accompanying
+validation report; new native two-matte and HTTP browser gates must pass in CI.
+The next image work is isolated alpha-aware mip levels / versioned transparent
+texture consumption, then KTX2 and Unity qualification. No page-wide mipmap
+claim, speech/word work, identity authenticity or entire-wave completion is added.

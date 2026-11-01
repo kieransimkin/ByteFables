@@ -65,6 +65,8 @@ jobs:
       - name: Required native integration (missing host is a failure, never a skip)
         run: python -m unittest discover -s tests/python -p test_artwork_native_benchmark.py -v
       - run: python -m unittest discover -s tests/python -p test_artwork_atlas_readback.py -v
+      - name: Transparent source alpha and required native matte qualification tests
+        run: python -m unittest discover -s tests/python -p test_artwork_transparent_bundle.py -v
       - name: Prepare real TS public atlas plans
         run: node scripts/prepare-artwork-benchmark.mjs --confirm-public --count 16 --output _work/artwork-suite
       - name: Render native PNG contact sheets and verify saved pixels
@@ -73,6 +75,12 @@ jobs:
         run: python scripts/export-artwork-assets.py --confirm-public export --suite _work/artwork-suite/suite.json --benchmark _work/artwork-benchmark --output _work/artwork-assets
       - name: Independently re-read every saved image asset
         run: python scripts/export-artwork-assets.py --confirm-public verify --bundle _work/artwork-assets
+      - name: Export source RGBA with saved native matte verification
+        run: python scripts/export-artwork-transparent.py --confirm-public export --suite _work/artwork-suite/suite.json --benchmark _work/artwork-benchmark --output _work/artwork-transparent
+      - name: Reopen and verify every transparent PNG WebP ICO
+        run: python scripts/export-artwork-transparent.py --confirm-public verify --bundle _work/artwork-transparent
+      - name: Qualify saved RGBA on native black and white compositors
+        run: python scripts/export-artwork-transparent.py --confirm-public qualify --suite _work/artwork-suite/suite.json --benchmark _work/artwork-benchmark --bundle _work/artwork-transparent --output _work/artwork-transparent-qualified
       - name: Pack native assets into runtime textures
         run: python scripts/export-artwork-textures.py --confirm-public export --bundle _work/artwork-assets --output _work/artwork-textures --native-size 16 --page-size 256
       - name: Verify texture pages against original native image assets
@@ -85,6 +93,8 @@ jobs:
         run: python tests/browser/artwork-assets-smoke.py --bundle _work/artwork-assets
       - name: Strict-CSP texture loader and 1000-instance Canvas WebGL pixel readback
         run: python tests/browser/artwork-textures-smoke.py --bundle _work/artwork-textures --report _work/artwork-textures-browser.json
+      - name: Browser transparent source preview and exact matte readback
+        run: python tests/browser/artwork-transparent-smoke.py --bundle _work/artwork-transparent --report _work/artwork-transparent-browser.json
       - name: Upload benchmark evidence (partial runs carry failure.json, not report.json)
         if: always()
         uses: actions/upload-artifact@v6
@@ -96,5 +106,8 @@ jobs:
             _work/artwork-assets
             _work/artwork-textures
             _work/artwork-textures-browser.json
+            _work/artwork-transparent
+            _work/artwork-transparent-qualified
+            _work/artwork-transparent-browser.json
           if-no-files-found: warn
           retention-days: 14
