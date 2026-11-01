@@ -72,3 +72,23 @@ KTX2 transport and Unity consumption. Neither KTX2/Basis encoding nor Unity,
 linear-light filtering, cutout alpha coverage preservation or an entire BF-W9
 wave is claimed complete. Human recognisability/accessibility studies remain
 separate from repeated-instance display throughput.
+
+## Lossless KTX2 array transport -- based on 56d6c5c
+
+Observed baseline: native image-output run **41282545299** completed successfully
+on 2026-11-01, including the required alpha-array WebGL2 levels, blending and
+layer-isolation readback. This closes the prior alpha runtime's CI gate for that
+committed baseline; it does not claim acceptance of this increment.
+
+This increment adds `bytefables.ktx2-alpha-bundle.v1`: canonical uncompressed
+RGBA8 KTX2 arrays with every original mip byte preserved, strict Python/JavaScript
+parsers, source-manifest and layer-hash binding, a transport adapter into the
+existing alpha renderer, an independent Khronos validation/raw-extraction gate,
+and a real HTTP/WebGL2 readback gate. See
+[the KTX2 contract](specs/artwork-ktx2-transport-v1.md).
+
+The raw mip profile, existing image formats, generators and identity keys remain
+unchanged. New independent-tool/browser acceptance must be recorded separately
+from local unit results. Next is Unity consumption and qualification of this
+frozen uncompressed profile. Basis compression, streaming, colour-managed
+filtering and the rest of BF-W9 are not marked complete.

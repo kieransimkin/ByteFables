@@ -115,6 +115,39 @@
       dispose(){if(!state.disposed){state.payload.flat().forEach(a=>a.fill(0));state.payload=[];state.disposed=true;}}});
     bundles.set(bundle,state);return bundle;
   }
+  async function fromLevels(manifestBytes, levels, options={}) {
+    // A transport adapter cannot bypass the original hashes, bounds or alpha rules.
+    check(manifestBytes instanceof Uint8Array&&manifestBytes.length<=16*1024*1024,'Invalid manifest bytes');
+    const bytes=new Uint8Array(manifestBytes),manifest=validateManifest(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes)));
+    const budget=options.maxTextureBytes??64*1024*1024;
+    check(integer(budget,1024,128*1024*1024)&&manifest.payloadBytes<=budget,'Texture memory budget exceeded');
+    if(options.manifestSha256!==undefined)check(hex(options.manifestSha256),'Invalid manifest pin');
+    check(Array.isArray(levels)&&levels.length===manifest.banks.length,'Bank payload count mismatch');
+    // Validate every length BEFORE copying. No asynchronous suspension until all
+    // caller-owned arrays have been snapshotted; later mutation cannot affect GPU data.
+    manifest.banks.forEach((b,i)=>{check(Array.isArray(levels[i])&&levels[i].length===manifest.levelCount,'Mip payload count mismatch');
+      b.levels.forEach((r,l)=>check(levels[i][l] instanceof Uint8Array&&levels[i][l].length===r.byteLength,'Mip payload length mismatch'));});
+    const payload=levels.map(bank=>bank.map(data=>new Uint8Array(data)));
+    try {
+      const digest=await sha256(bytes);
+      if(options.manifestSha256!==undefined)check(digest===options.manifestSha256,'Manifest checksum mismatch');
+      for(const s of manifest.sprites)check(s.spriteKey==='bfalpha1-'+await sha256(new TextEncoder().encode(
+        JSON.stringify(identity(s),null,2)+'\n')),'Sprite identity checksum mismatch');
+      for(const bank of manifest.banks)for(const record of bank.levels){
+        if(options.signal?.aborted)throw new Error('Texture load aborted');
+        const data=payload[bank.index][record.level];
+        check(await sha256(data)===record.sha256,'Mip file checksum mismatch');checkPixels(data);
+        const length=record.size**2*4;
+        for(let layer=0;layer<bank.layerCount;layer++)check(await sha256(data.subarray(layer*length,(layer+1)*length))===
+          manifest.sprites[bank.index*manifest.layersPerBank+layer].levelSha256[record.level],'Sprite layer checksum mismatch');
+      }
+      if(options.signal?.aborted)throw new Error('Texture load aborted');
+      freeze(manifest);const state={payload,disposed:false};
+      const bundle=Object.freeze({manifest,manifestSha256:digest,get disposed(){return state.disposed;},
+        dispose(){if(!state.disposed){state.payload.flat().forEach(a=>a.fill(0));state.payload=[];state.disposed=true;}}});
+      bundles.set(bundle,state);return bundle;
+    } catch(error){payload.flat().forEach(a=>a.fill(0));throw error;}
+  }
   function lookup(manifest,{digestHex,family,palette='neon',complexity=4}) {
     check(hex(digestHex),'Full identity digest required');
     const i=manifest.sprites.findIndex(s=>s.digestHex===digestHex&&s.family===family&&s.palette===palette&&s.complexity===complexity);
@@ -225,5 +258,5 @@ void main(){color=textureLod(sprites,vec3(uv,chosen.x),chosen.y)*chosen.z;}`;
       this.textures.forEach(t=>gl.deleteTexture(t));this.buffers.forEach(b=>gl.deleteBuffer(b));this.shaders.forEach(s=>gl.deleteShader(s));
       if(this.vao)gl.deleteVertexArray(this.vao);if(this.program)gl.deleteProgram(this.program);}
   }
-  global.ByteFablesAlphaTextures=Object.freeze({validateManifest,sha256,loadBundle,lookup,makeGrid,runs,WebGLArray});
+  global.ByteFablesAlphaTextures=Object.freeze({validateManifest,sha256,loadBundle,fromLevels,lookup,makeGrid,runs,WebGLArray});
 })(globalThis);

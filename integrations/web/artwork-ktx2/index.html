@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<title>ByteFables · KTX2 mip textures</title><link rel="stylesheet" href="demo.css">
+<script src="alpha-runtime.js" defer></script><script src="ktx2-runtime.js" defer></script>
+<script src="demo.js" defer></script></head>
+<body><header><p>BYTEFABLES / IMAGE LAB</p><h1>KTX2 mip textures</h1>
+<p>Uncompressed KTX2 transport, isolated per-sprite mip levels. Public presentation only—not identity authentication.</p></header>
+<section aria-label="Display controls"><label>Instances <select id="count"><option>100</option><option selected>1000</option><option>10000</option></select></label>
+<label>Display pixels <select id="size"><option>1</option><option>2</option><option>4</option><option>8</option><option selected>16</option><option>32</option><option>64</option><option>128</option></select></label>
+<label>Sampling <select id="filter"><option value="nearest">Nearest mip</option><option value="linear-mipmap-linear">Trilinear mip</option></select></label>
+<label>Backdrop <select id="background"><option>checkerboard</option><option>black</option><option>white</option></select></label>
+<button id="render" type="button">Draw</button></section>
+<p id="status" role="status">Loading verified texture bytes…</p>
+<div id="viewport" class="checkerboard"><canvas id="canvas" width="640" height="400" aria-label="Transparent public identity sprites"></canvas></div>
+<section><label>Inspect sprite index <input id="inspect" type="number" min="0" value="0"></label><pre id="identity"></pre></section>
+<footer>No continuous animation, external fonts or network telemetry. Submission time excludes GPU completion. Lower mip levels are derived pixels, not separately rendered native artwork.</footer>
+</body></html>
