@@ -1,0 +1,37 @@
+name: Artwork family remediation triage
+on:
+  workflow_run:
+    workflows: ['Artwork distinctiveness screening']
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  triage:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.11'}
+      - uses: actions/download-artifact@v8
+        with:
+          name: artwork-distinctiveness-${{ github.event.workflow_run.head_sha }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: _work/distinctiveness
+      - name: Rank weak families and emit remediation queue
+        run: python scripts/triage-artwork-families.py --report _work/distinctiveness/report.json --output _work/family-triage
+      - uses: actions/upload-artifact@v6
+        with:
+          name: artwork-family-triage-${{ github.event.workflow_run.head_sha }}
+          path: _work/family-triage
+          if-no-files-found: error
+          retention-days: 30

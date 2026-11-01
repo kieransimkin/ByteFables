@@ -52,7 +52,7 @@ namespace ByteFables.Textures.Core
 
         public TextureSprite Find(string fullSpriteKey)
         {
-            int index; Checks.Require(fullSpriteKey!=null && byKey.TryGetValue(fullSpriteKey,out index),"Unknown full sprite key");
+            int index=-1; Checks.Require(fullSpriteKey!=null && byKey.TryGetValue(fullSpriteKey,out index),"Unknown full sprite key");
             return Sprites[index];
         }
 

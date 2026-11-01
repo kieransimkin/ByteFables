@@ -42,7 +42,7 @@ def smoke(bundle: Path, executable: str|None=None)->dict:
                     page.goto(origin,wait_until='load');page.locator('#status[data-status]').wait_for(timeout=30000)
                     status=page.locator('#status').get_attribute('data-status');text=page.locator('#status').text_content()
                     if status!='passed':raise RuntimeError(text)
-                    stats=json.loads(text);assert stats['loads']==2 and stats['evictions']==1 and stats['residentBanks']==1 and stats['hits']>=2,stats
+                    stats=json.loads(text);assert stats['loads']==3 and stats['evictions']==2 and stats['residentBanks']==1 and stats['hits']==1,stats
                     csp=page.locator('meta[http-equiv="Content-Security-Policy"]').get_attribute('content')
                     assert "script-src 'self'" in csp and 'unsafe-inline' not in csp and 'unsafe-eval' not in csp
                     assert not errors,errors

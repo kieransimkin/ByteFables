@@ -62,9 +62,9 @@ namespace ByteFables.Textures.Core
             byKey=new Dictionary<string,int>(StringComparer.Ordinal);for(int i=0;i<sprites.Count;i++)byKey.Add(sprites[i].SpriteKey,i);
         }
         public GpuBlockFormatRecord FindFormat(string id)
-        { GpuBlockFormatRecord result;Checks.Require(id!=null&&byFormat.TryGetValue(id,out result),"Unknown GPU block format");return result; }
+        { GpuBlockFormatRecord result=null;Checks.Require(id!=null&&byFormat.TryGetValue(id,out result),"Unknown GPU block format");return result; }
         public TextureSprite Find(string fullSpriteKey)
-        { int i;Checks.Require(fullSpriteKey!=null&&byKey.TryGetValue(fullSpriteKey,out i),"Unknown full sprite key");return Sprites[i]; }
+        { int i=-1;Checks.Require(fullSpriteKey!=null&&byKey.TryGetValue(fullSpriteKey,out i),"Unknown full sprite key");return Sprites[i]; }
         public byte[] LoadLevel(string formatId,int bankIndex,int level)
         {
             var format=FindFormat(formatId);Checks.Require(bankIndex>=0&&bankIndex<format.Banks.Count,"Invalid GPU bank index");
