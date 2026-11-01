@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[2]
 sys.path[:0]=[str(ROOT),str(ROOT/'integrations/framerudiments'),str(ROOT/'tests/helpers')]
 from artwork_unity_fixture import make_fixture
 from tools.artwork_ktx2_basis import (export_uastc_bundle,verify_uastc_bundle,validate_manifest,
-    encode_command,ktx_version,QUALITY_POLICY,_quality,SCHEMA,PROFILE,KTX_VERSION)
+    encode_command,ktx_version,QUALITY_POLICY,LEGACY_QUALITY_POLICY,_quality,SCHEMA,PROFILE,KTX_VERSION)
 
 FAKE='''#!/usr/bin/env python3
 import os,shutil,struct,sys
@@ -95,7 +95,10 @@ class ToolProtocol(Base):
    'alphaMeanAbsoluteError':1.0,'alphaMaxAbsoluteError':4,'alphaPsnrDb':45.0,'premultipliedViolations':0,
    'premultipliedViolationFraction':0.0,'maxPremultipliedOvershoot':0}
   _quality(good)
-  cases=[('psnrDb',29.9),('meanAbsoluteError',8.1),('maxAbsoluteError',97),('alphaPsnrDb',33.9),
+  peak=good.copy();peak['maxAbsoluteError']=255;_quality(peak)
+  with self.assertRaises(ValueError):_quality(peak,LEGACY_QUALITY_POLICY)
+  self.assertEqual(QUALITY_POLICY['version'],'bytefables.uastc-quality-policy.v2')
+  cases=[('psnrDb',29.9),('meanAbsoluteError',8.1),('alphaPsnrDb',33.9),
          ('alphaMeanAbsoluteError',6.1),('maxPremultipliedOvershoot',33),('premultipliedViolationFraction',.11)]
   for key,value in cases:
    bad=good.copy();bad[key]=value

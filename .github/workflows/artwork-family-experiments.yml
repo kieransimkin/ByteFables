@@ -1,0 +1,48 @@
+name: Artwork family remediation A-B experiments
+on:
+  workflow_run:
+    workflows: ['Artwork family remediation triage']
+    types: [completed]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  experiments:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.sha || github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.11'}
+      - run: python -m pip install --disable-pip-version-check -e ./integrations/framerudiments "Pillow==12.3.0" "numpy>=1.26"
+      - name: Candidate renderer and A-B contract tests
+        run: python -m unittest discover -s tests/python -p test_artwork_family_experiments.py -v
+      - uses: actions/download-artifact@v8
+        if: github.event_name == 'workflow_run'
+        with:
+          name: artwork-family-triage-${{ github.event.workflow_run.head_sha }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: _work/family-triage
+      - name: Compare ranked weak families against candidate geometry
+        run: |
+          if [ -f _work/family-triage/family-triage.json ]; then
+            python scripts/benchmark-artwork-family-experiments.py --triage _work/family-triage/family-triage.json --output _work/family-experiments --identities 128 --sizes 16,32,64,128 --preview-size 32
+          else
+            python scripts/benchmark-artwork-family-experiments.py --families mandala,heraldry,branching --output _work/family-experiments --identities 128 --sizes 16,32,64,128 --preview-size 32
+          fi
+      - uses: actions/upload-artifact@v6
+        with:
+          name: artwork-family-experiments-${{ github.run_id }}-${{ github.run_attempt }}
+          path: _work/family-experiments
+          if-no-files-found: error
+          retention-days: 30

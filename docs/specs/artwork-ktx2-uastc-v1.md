@@ -42,11 +42,13 @@ The v1 acceptance policy is intentionally explicit and conservative:
 
 - overall PSNR >= 30 dB;
 - mean absolute channel error <= 8;
-- maximum channel error <= 96;
+- maximum channel error is recorded as a diagnostic, not used as a hard gate by the current policy;
 - alpha PSNR >= 34 dB;
 - mean alpha error <= 6;
 - maximum RGB-over-alpha premultiplication overshoot <= 32;
 - decoded pixels violating RGB <= alpha <= 10%.
+
+Quality acceptance is versioned independently from the encoding profile. New exports use `bytefables.uastc-quality-policy.v2`: aggregate PSNR/mean-error, alpha and premultiplication gates remain enforced, while single maximum-channel error is diagnostic only. UASTC is block-lossy, so isolated edge/block-boundary samples can have large peaks even when aggregate and alpha quality remain bounded. The verifier remains backward-compatible with the original unversioned policy and its <=96 peak-error gate for any previously produced successful v1 manifest.
 
 The policy is a machine transport gate, **not human perceptual equivalence**.
 A later image-quality study may tighten it but must version any incompatible
@@ -100,3 +102,11 @@ encodes the real public identity banks, then performs source-backed verification
 against the downloaded lossless reference. Pull-request artifacts and failed or
 non-main native runs cannot enter this job. The resulting UASTC artifact is named
 with the originating native commit SHA.
+
+### Failed-run quality diagnostics
+
+If a real encoder run reaches decoded quality measurement and then fails a quality
+gate, export writes `quality-failure.json` before the normal `failure.json`. It
+contains only the pinned policy and completed bank/aggregate metrics; it is never
+part of a successful bundle. This makes future threshold failures inspectable
+without weakening a gate merely to obtain the measurements.

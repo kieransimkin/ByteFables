@@ -34,10 +34,19 @@ ENCODER = {
     'threads': 1,
     'zstdLevel': 18,
 }
-QUALITY_POLICY = {
+LEGACY_QUALITY_POLICY = {
     'minPsnrDb': 30.0,
     'maxMeanAbsoluteError': 8.0,
     'maxAbsoluteError': 96,
+    'minAlphaPsnrDb': 34.0,
+    'maxAlphaMeanAbsoluteError': 6.0,
+    'maxPremultipliedOvershoot': 32,
+    'maxPremultipliedViolationFraction': 0.10,
+}
+QUALITY_POLICY = {
+    'version': 'bytefables.uastc-quality-policy.v2',
+    'minPsnrDb': 30.0,
+    'maxMeanAbsoluteError': 8.0,
     'minAlphaPsnrDb': 34.0,
     'maxAlphaMeanAbsoluteError': 6.0,
     'maxPremultipliedOvershoot': 32,
@@ -176,7 +185,8 @@ def _quality(metrics: dict, policy: dict = QUALITY_POLICY) -> None:
     _validate_metrics(metrics)
     _expect(metrics['psnrDb'] >= policy['minPsnrDb'], 'UASTC PSNR below policy')
     _expect(metrics['meanAbsoluteError'] <= policy['maxMeanAbsoluteError'], 'UASTC mean error above policy')
-    _expect(metrics['maxAbsoluteError'] <= policy['maxAbsoluteError'], 'UASTC peak error above policy')
+    if 'maxAbsoluteError' in policy:
+        _expect(metrics['maxAbsoluteError'] <= policy['maxAbsoluteError'], 'UASTC peak error above legacy policy')
     _expect(metrics['alphaPsnrDb'] >= policy['minAlphaPsnrDb'], 'UASTC alpha PSNR below policy')
     _expect(metrics['alphaMeanAbsoluteError'] <= policy['maxAlphaMeanAbsoluteError'], 'UASTC alpha mean error above policy')
     _expect(metrics['maxPremultipliedOvershoot'] <= policy['maxPremultipliedOvershoot'], 'UASTC premultiplied overshoot above policy')
@@ -194,7 +204,7 @@ def validate_manifest(doc: dict) -> dict:
                 'sourceTransport','sourceManifest','banks','totals'}, 'UASTC manifest')
     _expect(doc['schema'] == SCHEMA and doc['profile'] == PROFILE and doc['status'] == 'passed' and
             doc['publicOnly'] is True and doc['guarantee'] == 'presentation-only', 'Unsupported UASTC bundle')
-    _expect(doc['encoder'] == ENCODER and doc['qualityPolicy'] == QUALITY_POLICY, 'Unexpected UASTC encoder/quality policy')
+    _expect(doc['encoder'] == ENCODER and doc['qualityPolicy'] in (QUALITY_POLICY, LEGACY_QUALITY_POLICY), 'Unexpected UASTC encoder/quality policy')
     tool = doc['tool']; _keys(tool, {'name','version'}, 'UASTC tool')
     _expect(tool == {'name':'Khronos KTX-Software','version':KTX_VERSION}, 'Unexpected UASTC tool version')
     for key, name in (('sourceTransport','source-transport.json'),('sourceManifest','source-manifest.json')):
@@ -254,7 +264,7 @@ def export_uastc_bundle(bundle: Path, output: Path, *, ktx: Path, confirm_public
     exe = _no_links(ktx); ktx_version(exe)
     root = _no_links(bundle); output = _new_output(output,(root,exe)); output.mkdir(parents=True)
     transport, transport_sha, source, source_sha = _source_docs(root)
-    writer = _Writer(output)
+    writer = _Writer(output); quality_diagnostics = []
     try:
         source_transport = writer.write('source-transport.json', _bytes(_file(root,'manifest.json'),MAX_REPORT_BYTES))
         source_manifest = writer.write('source-manifest.json', _bytes(_file(root,'source-manifest.json'),MAX_REPORT_BYTES))
@@ -273,6 +283,7 @@ def export_uastc_bundle(bundle: Path, output: Path, *, ktx: Path, confirm_public
                     repeat = Path(td)/'repeat.ktx2'; _run(encode_command(exe,src_path,repeat),timeout=300)
                     _expect(_bytes(_no_links(repeat),MAX_COMPRESSED_BYTES) == encoded, 'Pinned UASTC encoding is not deterministic')
             decoded, metrics = _verify_bank(exe,dest,src,source['nativeSize'],record['layerCount'])
+            quality_diagnostics.append({'bank': index, 'metrics': metrics})
             _quality(metrics)
             acc_source = decode_ktx2(src)
             for a,b in zip(acc_source.levels,decoded): _accumulate(total_acc,a,b)
@@ -282,7 +293,7 @@ def export_uastc_bundle(bundle: Path, output: Path, *, ktx: Path, confirm_public
                           'compressionRatio':round(len(encoded)/record['byteLength'],6),
                           'decodedLevels':_decoded_records(decoded,source['nativeSize']),'metrics':metrics})
             total_source += record['byteLength']; total_compressed += len(encoded)
-        total_metrics = _summary(total_acc); _quality(total_metrics)
+        total_metrics = _summary(total_acc); quality_diagnostics.append({'aggregate': True, 'metrics': total_metrics}); _quality(total_metrics)
         doc = {'schema':SCHEMA,'profile':PROFILE,'status':'passed','publicOnly':True,'guarantee':'presentation-only',
                'tool':{'name':'Khronos KTX-Software','version':KTX_VERSION},'encoder':ENCODER.copy(),
                'qualityPolicy':QUALITY_POLICY.copy(),'sourceTransport':source_transport,'sourceManifest':source_manifest,
@@ -291,6 +302,8 @@ def export_uastc_bundle(bundle: Path, output: Path, *, ktx: Path, confirm_public
         validate_manifest(doc); writer.write('manifest.json',_json(doc))
         return doc
     except Exception as exc:
+        if quality_diagnostics:
+            (output/'quality-failure.json').write_bytes(_json({'schema':'bytefables.uastc-quality-diagnostics.v1','qualityPolicy':QUALITY_POLICY,'completed':quality_diagnostics}))
         _failure(output,exc); raise
 
 
