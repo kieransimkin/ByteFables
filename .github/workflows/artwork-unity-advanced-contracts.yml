@@ -1,0 +1,53 @@
+name: Artwork Unity advanced contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/unity/com.bytefables.textures/Editor/TextureAdvancedBuild.cs'
+      - 'integrations/unity/com.bytefables.textures/Runtime/TextureAdvancedQualification.cs'
+      - 'integrations/unity/com.bytefables.textures/Runtime/TextureGraphBenchmark.cs'
+      - 'integrations/unity/com.bytefables.textures/Shaders/PremultipliedArrayInstanced.shader'
+      - 'tools/artwork_unity_advanced.py'
+      - 'scripts/qualify-artwork-unity-advanced.py'
+      - 'tests/python/test_artwork_unity_advanced.py'
+      - '.github/workflows/artwork-unity-advanced-contracts.yml'
+      - '.github/workflows/artwork-unity-advanced.yml'
+  pull_request:
+    paths:
+      - 'integrations/unity/com.bytefables.textures/Editor/TextureAdvancedBuild.cs'
+      - 'integrations/unity/com.bytefables.textures/Runtime/TextureAdvancedQualification.cs'
+      - 'integrations/unity/com.bytefables.textures/Runtime/TextureGraphBenchmark.cs'
+      - 'integrations/unity/com.bytefables.textures/Shaders/PremultipliedArrayInstanced.shader'
+      - 'tools/artwork_unity_advanced.py'
+      - 'scripts/qualify-artwork-unity-advanced.py'
+      - 'tests/python/test_artwork_unity_advanced.py'
+      - '.github/workflows/artwork-unity-advanced-contracts.yml'
+      - '.github/workflows/artwork-unity-advanced.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  python-contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - run: python -m pip install "Pillow==12.3.0"
+      - run: python -m unittest discover -s tests/python -p test_artwork_unity_advanced.py -v
+      - name: Prepare an IL2CPP Linear fixture without claiming Unity execution
+        shell: python
+        run: |
+          import subprocess, sys
+          subprocess.run([sys.executable, 'tests/helpers/artwork_unity_fixture.py', '--output', '_work/advanced-source'], check=True)
+          subprocess.run([sys.executable, 'scripts/qualify-artwork-unity-advanced.py', '--confirm-public', '--prepare-only',
+              '--bundle', '_work/advanced-source', '--output', '_work/advanced-prepared',
+              '--profile', 'windows-d3d11-il2cpp-linear' if sys.platform == 'win32' else 'linux-vulkan-il2cpp-linear'], check=True)
