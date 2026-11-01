@@ -179,8 +179,14 @@ class ArtworkRenderer:
                 for x in range(n):
                     if cells[y][x]:
                         visible += 1
-                        draw.rectangle((x0+x*pitch,y0+y*pitch,x0+(x+1)*pitch-1,
-                                        y0+(y+1)*pitch-1), fill=self.colors[(x+y)%len(self.colors)])
+                        if pitch < 1:
+                            # Subpixel cells used to invert the rectangle and crash.
+                            # Sample cell centres; preserve the old >=1px path exactly.
+                            draw.point((int(x0+(x+0.5)*pitch), int(y0+(y+0.5)*pitch)),
+                                       fill=self.colors[(x+y)%len(self.colors)])
+                        else:
+                            draw.rectangle((x0+x*pitch,y0+y*pitch,x0+(x+1)*pitch-1,
+                                            y0+(y+1)*pitch-1), fill=self.colors[(x+y)%len(self.colors)])
             if not visible:
                 draw.rectangle((cx-u*3,cy-u*3,cx+u*3,cy+u*3),fill=self.colors[0])
         elif self.family == "branching":
