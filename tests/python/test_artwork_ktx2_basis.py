@@ -2,11 +2,12 @@
 from __future__ import annotations
 import json, os, stat, sys, tempfile, unittest
 from pathlib import Path
+from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[2]
 sys.path[:0]=[str(ROOT),str(ROOT/'integrations/framerudiments'),str(ROOT/'tests/helpers')]
 from artwork_unity_fixture import make_fixture
 from tools.artwork_ktx2_basis import (export_uastc_bundle,verify_uastc_bundle,validate_manifest,
-    encode_command,ktx_version,QUALITY_POLICY,LEGACY_QUALITY_POLICY,_quality,SCHEMA,PROFILE,KTX_VERSION)
+    encode_command,ktx_version,QUALITY_POLICY,QUALITY_POLICY_V2,LEGACY_QUALITY_POLICY,_quality,SCHEMA,PROFILE,KTX_VERSION)
 
 FAKE='''#!/usr/bin/env python3
 import os,shutil,struct,sys
@@ -70,6 +71,12 @@ class ExportVerify(Base):
   export_uastc_bundle(self.source,self.out,ktx=self.ktx,confirm_public=True,verify_determinism=False)
   with self.assertRaises(ValueError):export_uastc_bundle(self.source,self.out,ktx=self.ktx,confirm_public=True)
 
+ def test_quality_failure_keeps_measured_diagnostics(self):
+  with patch('tools.artwork_ktx2_basis._quality',side_effect=ValueError('injected quality gate')):
+   with self.assertRaises(ValueError):export_uastc_bundle(self.source,self.out,ktx=self.ktx,confirm_public=True,verify_determinism=False)
+  diag=json.loads((self.out/'quality-failure.json').read_text())
+  self.assertEqual(diag['schema'],'bytefables.uastc-quality-diagnostics.v1');self.assertTrue(diag['completed']);self.assertIn('metrics',diag['completed'][0])
+
 class ToolProtocol(Base):
  def test_version_is_exact(self):
   self.assertEqual(ktx_version(self.ktx),KTX_VERSION)
@@ -95,11 +102,12 @@ class ToolProtocol(Base):
    'alphaMeanAbsoluteError':1.0,'alphaMaxAbsoluteError':4,'alphaPsnrDb':45.0,'premultipliedViolations':0,
    'premultipliedViolationFraction':0.0,'maxPremultipliedOvershoot':0}
   _quality(good)
-  peak=good.copy();peak['maxAbsoluteError']=255;_quality(peak)
+  peak=good.copy();peak['maxAbsoluteError']=255;peak['maxPremultipliedOvershoot']=255;peak['premultipliedViolationFraction']=.99;_quality(peak)
+  with self.assertRaises(ValueError):_quality(peak,QUALITY_POLICY_V2)
   with self.assertRaises(ValueError):_quality(peak,LEGACY_QUALITY_POLICY)
-  self.assertEqual(QUALITY_POLICY['version'],'bytefables.uastc-quality-policy.v2')
-  cases=[('psnrDb',29.9),('meanAbsoluteError',8.1),('alphaPsnrDb',33.9),
-         ('alphaMeanAbsoluteError',6.1),('maxPremultipliedOvershoot',33),('premultipliedViolationFraction',.11)]
+  self.assertEqual(QUALITY_POLICY['version'],'bytefables.uastc-quality-policy.v3')
+  self.assertEqual(QUALITY_POLICY_V2['version'],'bytefables.uastc-quality-policy.v2')
+  cases=[('psnrDb',29.9),('meanAbsoluteError',8.1),('alphaPsnrDb',33.9),('alphaMeanAbsoluteError',6.1)]
   for key,value in cases:
    bad=good.copy();bad[key]=value
    with self.subTest(key=key),self.assertRaises(ValueError):_quality(bad)

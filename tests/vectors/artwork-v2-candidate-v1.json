@@ -1,0 +1,297 @@
+{
+  "schema": "bytefables.artwork-v2-candidate-vectors.v1",
+  "profile": "bytefables.artwork-generator-v2-candidate.v1",
+  "remediationProfile": "bytefables.artwork-remediation-candidate.v2",
+  "cases": [
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "mandala",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 16,
+      "rgbaSha256": "2dd04435e3034b66c525c7c4238207861c8312345b9e31aa1c45b10843b2a9df",
+      "nonzeroAlphaPixels": 82
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "mandala",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 32,
+      "rgbaSha256": "5b0d947c3ce5cb1b63cafb19156b850a2f95adb01da4b1ce5db9bfb1ad645fe6",
+      "nonzeroAlphaPixels": 280
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "mandala",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 64,
+      "rgbaSha256": "dccd2dab3807d334fbdcdcd4bcd8614bb591945a07373801d918f7c9bbe71049",
+      "nonzeroAlphaPixels": 1123
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "mandala",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 16,
+      "rgbaSha256": "e3c5903325f55efdcb6c79fa077271fb9d6827e635e216b275421f90ca264976",
+      "nonzeroAlphaPixels": 72
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "mandala",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 32,
+      "rgbaSha256": "74202a09341bcad34a9e7ff4a2b40960811b7d05b0b10dd3545088d4360d3d1c",
+      "nonzeroAlphaPixels": 269
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "mandala",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 64,
+      "rgbaSha256": "213ed52167cc21f1f61fe6a024a7bdfb696f077dc23e8cc149d2d06b59b4adbc",
+      "nonzeroAlphaPixels": 1159
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "mandala",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 16,
+      "rgbaSha256": "2426a7ac0d202ada0169bc58ec3444eb997bedc2da350cfcfa4ec78c3366ae3a",
+      "nonzeroAlphaPixels": 99
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "mandala",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 32,
+      "rgbaSha256": "05a1d1f7606ea661e6612e3c3dbe81ce74c4b12048c2a66ac13011a71a5855da",
+      "nonzeroAlphaPixels": 314
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "mandala",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 64,
+      "rgbaSha256": "f1046db137ed4571120650cc75946f74f9a99677ee896e1c6d0d03b519504944",
+      "nonzeroAlphaPixels": 1281
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "heraldry",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 16,
+      "rgbaSha256": "a8ec0a28d672abfa4975c2a6ef8a8850b3dae604482a42e2009e3717d5b6e159",
+      "nonzeroAlphaPixels": 144
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "heraldry",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 32,
+      "rgbaSha256": "72ca717977580ee0b1f0da629771f1a032b485b8b2119d57632a12cb73318f02",
+      "nonzeroAlphaPixels": 583
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "heraldry",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 64,
+      "rgbaSha256": "7f5b758f2ffdcfb685ff6cf17d2c5142aa47cfe50aaf8394a04e7e67e97a2f4c",
+      "nonzeroAlphaPixels": 2305
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "heraldry",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 16,
+      "rgbaSha256": "511073c82218f7775c939f422cfa669c9cf4bb11710453cdcd1a16a3b408c405",
+      "nonzeroAlphaPixels": 131
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "heraldry",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 32,
+      "rgbaSha256": "a61bf035d4a5c70e52eebe61ec1fb0cca198ac60ce9a185e100fd7b3d6f6e66c",
+      "nonzeroAlphaPixels": 527
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "heraldry",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 64,
+      "rgbaSha256": "00588e8da53fff4544a94c8248ae22aad1af3c60d5719da6ebfc63545c1bd64a",
+      "nonzeroAlphaPixels": 2114
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "heraldry",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 16,
+      "rgbaSha256": "1b9241f24be59adaf6b74621802dae793d74106a403535653829f63b9d42ae1d",
+      "nonzeroAlphaPixels": 148
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "heraldry",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 32,
+      "rgbaSha256": "cdfb797e275384bae25e3a00a379ca5baddc779eb50ebc5304e3547cdc6988b3",
+      "nonzeroAlphaPixels": 578
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "heraldry",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 64,
+      "rgbaSha256": "b607a599795eacd445e92bfe68fc383dec4e9280a533bea89c24e98934b4e118",
+      "nonzeroAlphaPixels": 2287
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "branching",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 16,
+      "rgbaSha256": "b127ff06e679e3378fd6d3ddad577be7b281746fa0772f897a028e31035fba5e",
+      "nonzeroAlphaPixels": 122
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "branching",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 32,
+      "rgbaSha256": "2445ee8b18c1fea8ac3bc99568ea068b4c7d51ea17d4efe992c65c87cbbe1a8b",
+      "nonzeroAlphaPixels": 348
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "branching",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 64,
+      "rgbaSha256": "10119a02b4c5991ab4e071ec179c787fa6c3dc729d2966a4c1bcf753fe727aa2",
+      "nonzeroAlphaPixels": 1271
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "branching",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 16,
+      "rgbaSha256": "cefc3968c3805658c6d19a0b171930da761901b9e6f6a6cf97c71b5bb8dcf51f",
+      "nonzeroAlphaPixels": 106
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "branching",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 32,
+      "rgbaSha256": "f0acf28adf3bfa03e018ca6780173f94f0d6105878f357a59aa66a788f57fb9d",
+      "nonzeroAlphaPixels": 254
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "bba689f44191b2aad65a380cd6398ff429a84feb7136e4f6bf099f345eab9a47",
+      "style": "branching",
+      "palette": "pastel",
+      "complexity": 6,
+      "size": 64,
+      "rgbaSha256": "62d565b43e5666c11182e312aa2a3c926ad8a9c9517d4d3cfe1b3eb015e4a07d",
+      "nonzeroAlphaPixels": 889
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "branching",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 16,
+      "rgbaSha256": "c23467e93d6a4c0579b14b5f7755909e6b3f918707939b44d3573fd880ba5395",
+      "nonzeroAlphaPixels": 77
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "branching",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 32,
+      "rgbaSha256": "9e825e78ec28070303e04bec089ff5ce2d57f1d0ae213b93580c782a863a662b",
+      "nonzeroAlphaPixels": 153
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "138b5fcc6bc6581d2360668b795c0b67a5a4f3fa4ca00361af91d6b1c2f8df9f",
+      "style": "branching",
+      "palette": "pastel",
+      "complexity": 3,
+      "size": 64,
+      "rgbaSha256": "1ef1d4838dc539933665834e239870065f43192cb2b7f8622d3b855b5959e595",
+      "nonzeroAlphaPixels": 553
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "sigil",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 16,
+      "rgbaSha256": "a9abcd4cb6306ab3817645e1889b2a96392a3dcc2fe44e02898d25f2eed0acf5",
+      "nonzeroAlphaPixels": 81
+    },
+    {
+      "bridge_version": "bytefables.framerudiments.layer.v1",
+      "digest_hex": "6576cb064e9e1dbc3fcd52f23a108b8d58153cb55d2ec718ee394125a60ea0d0",
+      "style": "sigil",
+      "palette": "mono",
+      "complexity": 6,
+      "size": 64,
+      "rgbaSha256": "d6b3ebf6e8760933a816276350206d4c556f08ff17778595fae08bdcbfb6091a",
+      "nonzeroAlphaPixels": 544
+    }
+  ]
+}

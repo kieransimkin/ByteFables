@@ -1,0 +1,41 @@
+name: Artwork Unity Android compressed matrix contracts
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tools/artwork_unity_compressed_android.py'
+      - 'tools/artwork_unity_compressed_android_matrix.py'
+      - 'scripts/qualify-artwork-unity-compressed-android.py'
+      - 'scripts/qualify-artwork-unity-compressed-android-matrix.py'
+      - 'tests/python/test_artwork_unity_compressed_android.py'
+      - 'tests/python/test_artwork_unity_compressed_android_matrix.py'
+      - 'docs/specs/artwork-unity-compressed-android-matrix-v1.md'
+      - '.github/workflows/artwork-unity-compressed-android-matrix-contracts.yml'
+  pull_request:
+    paths:
+      - 'tools/artwork_unity_compressed_android.py'
+      - 'tools/artwork_unity_compressed_android_matrix.py'
+      - 'scripts/qualify-artwork-unity-compressed-android.py'
+      - 'scripts/qualify-artwork-unity-compressed-android-matrix.py'
+      - 'tests/python/test_artwork_unity_compressed_android.py'
+      - 'tests/python/test_artwork_unity_compressed_android_matrix.py'
+      - 'docs/specs/artwork-unity-compressed-android-matrix-v1.md'
+      - '.github/workflows/artwork-unity-compressed-android-matrix-contracts.yml'
+permissions:
+  contents: read
+jobs:
+  contracts:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.11'}
+      - run: python -m pip install --disable-pip-version-check -e ./integrations/framerudiments "Pillow==12.3.0"
+      - run: python -m unittest discover -s tests/python -p test_artwork_unity_compressed_android.py -v
+      - run: python -m unittest discover -s tests/python -p test_artwork_unity_compressed_android_matrix.py -v
+      - run: python -m compileall -q tools scripts

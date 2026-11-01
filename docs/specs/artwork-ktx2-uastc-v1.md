@@ -45,10 +45,10 @@ The v1 acceptance policy is intentionally explicit and conservative:
 - maximum channel error is recorded as a diagnostic, not used as a hard gate by the current policy;
 - alpha PSNR >= 34 dB;
 - mean alpha error <= 6;
-- maximum RGB-over-alpha premultiplication overshoot <= 32;
-- decoded pixels violating RGB <= alpha <= 10%.
+- maximum RGB-over-alpha premultiplication overshoot is recorded as a diagnostic;
+- the fraction of decoded pixels with RGB > alpha is recorded as a diagnostic.
 
-Quality acceptance is versioned independently from the encoding profile. New exports use `bytefables.uastc-quality-policy.v2`: aggregate PSNR/mean-error, alpha and premultiplication gates remain enforced, while single maximum-channel error is diagnostic only. UASTC is block-lossy, so isolated edge/block-boundary samples can have large peaks even when aggregate and alpha quality remain bounded. The verifier remains backward-compatible with the original unversioned policy and its <=96 peak-error gate for any previously produced successful v1 manifest.
+Quality acceptance is versioned independently from the encoding profile. New exports use `bytefables.uastc-quality-policy.v3`: aggregate PSNR/mean-error and alpha quality remain hard gates, while single-channel peaks and premultiplied-inequality peak/frequency are diagnostics. UASTC is block-lossy and compresses colour/alpha jointly without preserving the stored premultiplied inequality exactly; isolated transparent-edge violations can therefore occur even when aggregate and alpha reconstruction quality is bounded. Final premultiplied compositing is qualified separately by the real GPU matte/readback path. The verifier remains backward-compatible with both the original unversioned policy (including <=96 peak channel error) and `bytefables.uastc-quality-policy.v2` (including premultiplied overshoot/fraction gates).
 
 The policy is a machine transport gate, **not human perceptual equivalence**.
 A later image-quality study may tighten it but must version any incompatible
@@ -106,7 +106,9 @@ with the originating native commit SHA.
 ### Failed-run quality diagnostics
 
 If a real encoder run reaches decoded quality measurement and then fails a quality
-gate, export writes `quality-failure.json` before the normal `failure.json`. It
-contains only the pinned policy and completed bank/aggregate metrics; it is never
-part of a successful bundle. This makes future threshold failures inspectable
-without weakening a gate merely to obtain the measurements.
+gate, export writes `quality-failure.json` before the normal `failure.json`. Bank
+metrics are captured **before** policy evaluation, so the failing bank is included
+rather than being lost at the first exception. The file contains only the pinned
+policy and completed bank/aggregate metrics; it is never part of a successful
+bundle. This makes future threshold failures inspectable without weakening a gate
+merely to obtain the measurements.

@@ -43,7 +43,7 @@ LEGACY_QUALITY_POLICY = {
     'maxPremultipliedOvershoot': 32,
     'maxPremultipliedViolationFraction': 0.10,
 }
-QUALITY_POLICY = {
+QUALITY_POLICY_V2 = {
     'version': 'bytefables.uastc-quality-policy.v2',
     'minPsnrDb': 30.0,
     'maxMeanAbsoluteError': 8.0,
@@ -51,6 +51,13 @@ QUALITY_POLICY = {
     'maxAlphaMeanAbsoluteError': 6.0,
     'maxPremultipliedOvershoot': 32,
     'maxPremultipliedViolationFraction': 0.10,
+}
+QUALITY_POLICY = {
+    'version': 'bytefables.uastc-quality-policy.v3',
+    'minPsnrDb': 30.0,
+    'maxMeanAbsoluteError': 8.0,
+    'minAlphaPsnrDb': 34.0,
+    'maxAlphaMeanAbsoluteError': 6.0,
 }
 RAW_RE = re.compile(r'(?:^|_)level(\d+)(?:_face\d+)?_layer(\d+)(?:_depth\d+)?\.raw$', re.I)
 HEX = re.compile(r'^[0-9a-f]{64}$')
@@ -189,9 +196,11 @@ def _quality(metrics: dict, policy: dict = QUALITY_POLICY) -> None:
         _expect(metrics['maxAbsoluteError'] <= policy['maxAbsoluteError'], 'UASTC peak error above legacy policy')
     _expect(metrics['alphaPsnrDb'] >= policy['minAlphaPsnrDb'], 'UASTC alpha PSNR below policy')
     _expect(metrics['alphaMeanAbsoluteError'] <= policy['maxAlphaMeanAbsoluteError'], 'UASTC alpha mean error above policy')
-    _expect(metrics['maxPremultipliedOvershoot'] <= policy['maxPremultipliedOvershoot'], 'UASTC premultiplied overshoot above policy')
-    _expect(metrics['premultipliedViolationFraction'] <= policy['maxPremultipliedViolationFraction'],
-            'UASTC premultiplied violation rate above policy')
+    if 'maxPremultipliedOvershoot' in policy:
+        _expect(metrics['maxPremultipliedOvershoot'] <= policy['maxPremultipliedOvershoot'], 'UASTC premultiplied overshoot above legacy policy')
+    if 'maxPremultipliedViolationFraction' in policy:
+        _expect(metrics['premultipliedViolationFraction'] <= policy['maxPremultipliedViolationFraction'],
+                'UASTC premultiplied violation rate above legacy policy')
 
 
 def _decoded_records(levels: tuple[bytes, ...], size: int) -> list[dict]:
@@ -204,7 +213,7 @@ def validate_manifest(doc: dict) -> dict:
                 'sourceTransport','sourceManifest','banks','totals'}, 'UASTC manifest')
     _expect(doc['schema'] == SCHEMA and doc['profile'] == PROFILE and doc['status'] == 'passed' and
             doc['publicOnly'] is True and doc['guarantee'] == 'presentation-only', 'Unsupported UASTC bundle')
-    _expect(doc['encoder'] == ENCODER and doc['qualityPolicy'] in (QUALITY_POLICY, LEGACY_QUALITY_POLICY), 'Unexpected UASTC encoder/quality policy')
+    _expect(doc['encoder'] == ENCODER and doc['qualityPolicy'] in (QUALITY_POLICY, QUALITY_POLICY_V2, LEGACY_QUALITY_POLICY), 'Unexpected UASTC encoder/quality policy')
     tool = doc['tool']; _keys(tool, {'name','version'}, 'UASTC tool')
     _expect(tool == {'name':'Khronos KTX-Software','version':KTX_VERSION}, 'Unexpected UASTC tool version')
     for key, name in (('sourceTransport','source-transport.json'),('sourceManifest','source-manifest.json')):
@@ -225,13 +234,13 @@ def validate_manifest(doc: dict) -> dict:
         for level, rec in enumerate(levels):
             _keys(rec, {'level','size','byteLength','sha256'}, 'decoded level')
             _expect(rec['level'] == level and _int(rec['size'],1,128) and _int(rec['byteLength'],4,MAX_BANK_BYTES) and _hex(rec['sha256']), 'Invalid decoded level')
-        metrics = bank['metrics']; _quality(metrics)
+        metrics = bank['metrics']; _quality(metrics, doc['qualityPolicy'])
         source_total += bank['sourceByteLength']; compressed_total += bank['byteLength']
         # Aggregate summaries are separately recomputed during source-backed verification.
     totals = doc['totals']; _keys(totals, {'sourceBytes','compressedBytes','compressionRatio','metrics'}, 'UASTC totals')
     _expect(totals['sourceBytes'] == source_total and totals['compressedBytes'] == compressed_total and
             type(totals['compressionRatio']) in (int,float) and totals['compressionRatio'] > 0, 'UASTC total bytes mismatch')
-    _quality(totals['metrics'])
+    _quality(totals['metrics'], doc['qualityPolicy'])
     return doc
 
 
@@ -244,8 +253,8 @@ def _source_docs(root: Path):
     return transport, transport_sha, source, source_sha
 
 
-def _verify_bank(exe: Path, compressed: Path, source_bytes: bytes, size: int, layers: int,
-                 expected_levels: list[dict] | None = None) -> tuple[tuple[bytes,...], dict]:
+def _measure_bank(exe: Path, compressed: Path, source_bytes: bytes, size: int, layers: int,
+                  expected_levels: list[dict] | None = None) -> tuple[tuple[bytes,...], dict]:
     _validate_ktx(exe, compressed)
     decoded = _extract_rgba8(exe, compressed, size, layers)
     source = decode_ktx2(source_bytes)
@@ -254,7 +263,13 @@ def _verify_bank(exe: Path, compressed: Path, source_bytes: bytes, size: int, la
         _expect(_decoded_records(decoded,size) == expected_levels, 'UASTC transcode bytes changed')
     acc = _accumulator()
     for a,b in zip(source.levels, decoded): _accumulate(acc,a,b)
-    metrics = _summary(acc); _quality(metrics)
+    return decoded, _summary(acc)
+
+
+def _verify_bank(exe: Path, compressed: Path, source_bytes: bytes, size: int, layers: int,
+                 expected_levels: list[dict] | None = None, policy: dict = QUALITY_POLICY) -> tuple[tuple[bytes,...], dict]:
+    decoded, metrics = _measure_bank(exe, compressed, source_bytes, size, layers, expected_levels)
+    _quality(metrics, policy)
     return decoded, metrics
 
 
@@ -282,9 +297,9 @@ def export_uastc_bundle(bundle: Path, output: Path, *, ktx: Path, confirm_public
                 with tempfile.TemporaryDirectory(prefix='bytefables-uastc-repeat-') as td:
                     repeat = Path(td)/'repeat.ktx2'; _run(encode_command(exe,src_path,repeat),timeout=300)
                     _expect(_bytes(_no_links(repeat),MAX_COMPRESSED_BYTES) == encoded, 'Pinned UASTC encoding is not deterministic')
-            decoded, metrics = _verify_bank(exe,dest,src,source['nativeSize'],record['layerCount'])
+            decoded, metrics = _measure_bank(exe,dest,src,source['nativeSize'],record['layerCount'])
             quality_diagnostics.append({'bank': index, 'metrics': metrics})
-            _quality(metrics)
+            _quality(metrics, QUALITY_POLICY)
             acc_source = decode_ktx2(src)
             for a,b in zip(acc_source.levels,decoded): _accumulate(total_acc,a,b)
             banks.append({'index':index,'layerCount':record['layerCount'],'sourceFile':record['file'],
@@ -340,10 +355,10 @@ def verify_uastc_bundle(bundle: Path, *, ktx: Path, source_bundle: Path | None =
         if src is not None:
             parsed=decode_ktx2(src); acc=_accumulator()
             for a,b in zip(parsed.levels,decoded): _accumulate(acc,a,b); _accumulate(total_acc,a,b)
-            metrics=_summary(acc); _expect(metrics==bank['metrics'],'UASTC quality metrics changed'); _quality(metrics)
+            metrics=_summary(acc); _expect(metrics==bank['metrics'],'UASTC quality metrics changed'); _quality(metrics, doc['qualityPolicy'])
         source_total+=bank['sourceByteLength'];compressed_total+=bank['byteLength']
     if source_bundle is not None:
-        total_metrics=_summary(total_acc); _expect(total_metrics==doc['totals']['metrics'],'UASTC aggregate metrics changed'); _quality(total_metrics)
+        total_metrics=_summary(total_acc); _expect(total_metrics==doc['totals']['metrics'],'UASTC aggregate metrics changed'); _quality(total_metrics, doc['qualityPolicy'])
     _expect(source_total==doc['totals']['sourceBytes'] and compressed_total==doc['totals']['compressedBytes'],'UASTC totals changed')
     actual=set()
     for p in root.rglob('*'):

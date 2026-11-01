@@ -1,0 +1,81 @@
+name: Artwork Unity Android compressed same-device matrix
+on:
+  workflow_dispatch:
+    inputs:
+      gpu_run_id:
+        description: Successful main real GPU-block packaging workflow run ID
+        type: string
+        required: true
+      editor_version:
+        description: Exact installed Unity 6 version with Android Build Support
+        type: string
+        default: '6000.0.62f1'
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    outputs:
+      sha: ${{ steps.check.outputs.sha }}
+      native_run_id: ${{ steps.check.outputs.native_run_id }}
+    steps:
+      - uses: actions/github-script@v8
+        id: check
+        env:
+          GPU_RUN_ID: ${{ inputs.gpu_run_id }}
+          EDITOR_VERSION: ${{ inputs.editor_version }}
+        with:
+          script: |
+            if (!/^[0-9]+$/.test(process.env.GPU_RUN_ID)) throw new Error('Numeric GPU run ID required');
+            if (!/^6000\.\d+\.\d+[fp]\d+$/.test(process.env.EDITOR_VERSION)) throw new Error('Exact Unity 6 version required');
+            const id=Number(process.env.GPU_RUN_ID); if(!Number.isSafeInteger(id)) throw new Error('GPU run ID out of range');
+            const {data:gpu}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
+            if(gpu.status!=='completed'||gpu.conclusion!=='success'||gpu.path!=='.github/workflows/artwork-gpu-formats-real.yml'||gpu.head_branch!=='main'||gpu.head_repository.full_name!==`${context.repo.owner}/${context.repo.repo}`) throw new Error('Only successful main real GPU-block runs are eligible');
+            const {data:list}=await github.rest.actions.listWorkflowRunsForRepo({...context.repo,head_sha:gpu.head_sha,per_page:100});
+            const native=list.workflow_runs.find(r=>r.path==='.github/workflows/artwork-native-benchmark.yml'&&r.event==='push'&&r.conclusion==='success'&&r.head_branch==='main');
+            if(!native) throw new Error('No matching successful native reference run');
+            core.setOutput('sha',gpu.head_sha);core.setOutput('native_run_id',String(native.id));
+  android-matrix:
+    needs: source
+    runs-on: [self-hosted, unity-android-device]
+    environment: unity-compressed-android
+    timeout-minutes: 240
+    env:
+      UNITY_EDITOR: ${{ vars.UNITY_EDITOR }}
+      ADB: ${{ vars.ADB }}
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: '${{ needs.source.outputs.sha }}', persist-credentials: false}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.11'}
+      - run: python -m pip install --disable-pip-version-check -e ./integrations/framerudiments "Pillow==12.3.0"
+      - uses: actions/download-artifact@v8
+        with:
+          name: artwork-gpu-blocks-${{ needs.source.outputs.sha }}
+          run-id: ${{ inputs.gpu_run_id }}
+          github-token: ${{ github.token }}
+          path: _work/gpu-evidence
+      - uses: actions/download-artifact@v8
+        with:
+          name: artwork-native-benchmark-${{ needs.source.outputs.sha }}
+          run-id: ${{ needs.source.outputs.native_run_id }}
+          github-token: ${{ github.token }}
+          path: _work/native-evidence
+      - name: Build and execute Vulkan/ASTC then GLES3/ETC2 on the same physical device
+        shell: python
+        run: |
+          import os,subprocess,sys
+          subprocess.run([sys.executable,'scripts/qualify-artwork-unity-compressed-android-matrix.py','--confirm-public',
+            '--unity',os.environ['UNITY_EDITOR'],'--adb',os.environ.get('ADB') or 'adb',
+            '--gpu-bundle','_work/gpu-evidence','--reference-bundle','_work/native-evidence/artwork-ktx2',
+            '--output','_work/android-matrix','--editor-version','${{ inputs.editor_version }}'],check=True)
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: unity-android-compressed-matrix-${{ github.run_id }}-${{ github.run_attempt }}
+          path: _work/android-matrix
+          if-no-files-found: error
+          retention-days: 30

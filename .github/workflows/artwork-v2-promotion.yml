@@ -1,0 +1,70 @@
+name: Artwork generator v2 candidate promotion gate
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork.py'
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork_remediation.py'
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork_remediation_v2.py'
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork_v2.py'
+      - 'tools/artwork_v2_promotion.py'
+      - 'tools/artwork_distinctiveness.py'
+      - 'scripts/benchmark-artwork-v2-promotion.py'
+      - 'tests/python/test_artwork_v2_promotion.py'
+      - 'tests/vectors/artwork-v2-candidate-v1.json'
+      - 'docs/specs/artwork-generator-v2-candidate-v1.md'
+      - '.github/workflows/artwork-v2-promotion.yml'
+  pull_request:
+    paths:
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork.py'
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork_remediation.py'
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork_remediation_v2.py'
+      - 'integrations/framerudiments/bytefables_framerudiments/artwork_v2.py'
+      - 'tools/artwork_v2_promotion.py'
+      - 'tools/artwork_distinctiveness.py'
+      - 'scripts/benchmark-artwork-v2-promotion.py'
+      - 'tests/python/test_artwork_v2_promotion.py'
+      - 'tests/vectors/artwork-v2-candidate-v1.json'
+      - 'docs/specs/artwork-generator-v2-candidate-v1.md'
+      - '.github/workflows/artwork-v2-promotion.yml'
+  workflow_dispatch:
+    inputs:
+      identities:
+        description: Deterministic identities per target family
+        type: choice
+        options: ['128','256']
+        default: '256'
+        required: true
+permissions:
+  contents: read
+jobs:
+  promotion:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      IDENTITIES: ${{ github.event_name == 'workflow_dispatch' && inputs.identities || '128' }}
+    steps:
+      - uses: actions/checkout@v7
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.11'}
+      - run: python -m pip install --disable-pip-version-check -e ./integrations/framerudiments "Pillow==12.3.0" "numpy>=1.26"
+      - name: Candidate vectors and promotion contracts
+        run: python -m unittest discover -s tests/python -p test_artwork_v2_promotion.py -v
+      - name: Measure v1 vs prior candidate vs v2 candidate
+        run: python scripts/benchmark-artwork-v2-promotion.py --output _work/artwork-v2-promotion --identities "$IDENTITIES" --sizes 16,32,64,128 --preview-size 32
+      - name: Require engineering promotion gate to remain eligible
+        run: |
+          python - <<'PY'
+          import json
+          report=json.load(open('_work/artwork-v2-promotion/report.json',encoding='utf-8'))
+          if report.get('manualPromotionEligible') is not True:
+              raise SystemExit('artwork-v2 candidate no longer clears the engineering promotion gate')
+          PY
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: artwork-v2-promotion-${{ github.sha }}-${{ github.run_id }}
+          path: _work/artwork-v2-promotion
+          if-no-files-found: error
+          retention-days: 30
