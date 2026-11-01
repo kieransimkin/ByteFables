@@ -92,3 +92,27 @@ unchanged. New independent-tool/browser acceptance must be recorded separately
 from local unit results. Next is Unity consumption and qualification of this
 frozen uncompressed profile. Basis compression, streaming, colour-managed
 filtering and the rest of BF-W9 are not marked complete.
+
+## Unity Texture2DArray consumer -- based on 73e82e0
+
+Observed baseline: native image-output run **41297971184** completed successfully
+on 2026-11-01, including independent Khronos validation/all-image extraction and
+the real KTX2 HTTP/WebGL2 readback. The preceding KTX2 acceptance gate is closed
+for that committed baseline, not for any new Unity code.
+
+This increment adds the optional Unity 6 package, strict immutable C# readers,
+verified `.bftextures` staging, Texture2DArray upload with explicit row orientation
+and preserved mip bytes, serialized identity lookup, premultiplied preview shader,
+managed cross-platform conformance tests, and actual Unity importer/GPU acceptance
+harness. See [the Unity contract](specs/artwork-unity-textures-v1.md).
+
+Local Python staging and existing artwork regression tests were executed. **C#
+compilation and Unity execution were unavailable locally and remain acceptance
+gates**. Hosted .NET jobs do not qualify the Unity runtime. The GPU workflow is
+manual-only on a configured licensed workstation; it cannot report a skipped
+renderer as passed. No generator, public identity key, existing texture format,
+word output, compressed transport or entire programme wave is changed/completed.
+
+Next: run and record managed/Unity GPU acceptance, then player-build and render-
+pipeline/device qualification before expanding Unity graph batching or compressed
+transport. The current pipeline's native/browser evidence is preserved separately.

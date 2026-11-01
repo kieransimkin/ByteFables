@@ -1,0 +1,11 @@
+{
+  "name": "com.bytefables.textures",
+  "version": "0.1.0",
+  "displayName": "ByteFables Verified Texture Arrays",
+  "description": "Public-only, versioned KTX2 texture-array import and readback. No artwork renderer or general KTX2 support.",
+  "unity": "6000.0",
+  "license": "MIT",
+  "author": {
+    "name": "ByteFables contributors"
+  }
+}

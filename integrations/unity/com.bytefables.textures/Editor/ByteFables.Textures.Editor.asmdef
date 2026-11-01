@@ -1,0 +1,13 @@
+{
+  "name": "ByteFables.Textures.Editor",
+  "rootNamespace": "ByteFables.Textures.Editor",
+  "references": [
+    "ByteFables.Textures.Core",
+    "ByteFables.Textures"
+  ],
+  "autoReferenced": true,
+  "noEngineReferences": false,
+  "includePlatforms": [
+    "Editor"
+  ]
+}

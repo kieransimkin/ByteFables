@@ -9,6 +9,9 @@ on:
       - 'integrations/web/artwork-textures/**'
       - 'integrations/web/artwork-alpha-textures/**'
       - 'integrations/web/artwork-ktx2/**'
+      - 'integrations/unity/**'
+      - 'tests/dotnet/**'
+      - 'tests/helpers/artwork_unity_fixture.py'
       - 'tests/browser/artwork-*-smoke.py'
       - 'tests/vectors/artwork-textures-v1.json'
       - 'tests/vectors/artwork-alpha-textures-v1.json'
@@ -26,6 +29,9 @@ on:
       - 'integrations/web/artwork-textures/**'
       - 'integrations/web/artwork-alpha-textures/**'
       - 'integrations/web/artwork-ktx2/**'
+      - 'integrations/unity/**'
+      - 'tests/dotnet/**'
+      - 'tests/helpers/artwork_unity_fixture.py'
       - 'tests/browser/artwork-*-smoke.py'
       - 'tests/vectors/artwork-textures-v1.json'
       - 'tests/vectors/artwork-alpha-textures-v1.json'
@@ -105,6 +111,15 @@ jobs:
         run: |
           python scripts/export-artwork-ktx2.py --confirm-public export --bundle _work/artwork-alpha-textures --output _work/artwork-ktx2
           python scripts/export-artwork-ktx2.py --confirm-public verify --bundle _work/artwork-ktx2 --source-bundle _work/artwork-alpha-textures
+      - name: Unity staging and qualification-boundary tests
+        run: python -m unittest discover -s tests/python -p test_artwork_unity.py -v
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '8.0.x'
+      - name: Stage verified images for Unity (no engine execution in this step)
+        run: python scripts/stage-artwork-unity.py --confirm-public stage --bundle _work/artwork-ktx2 --output _work/artwork-unity-staged
+      - name: Compile and execute the real C# parser on native image data
+        run: dotnet run --project tests/dotnet/ByteFables.TextureContracts --configuration Release -- --descriptor _work/artwork-unity-staged/artwork.bftextures
       - name: Install checksum-pinned independent Khronos tools
         run: |
           curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/ktx.deb" https://github.com/KhronosGroup/KTX-Software/releases/download/v4.4.2/KTX-Software-4.4.2-Linux-x86_64.deb
@@ -145,5 +160,6 @@ jobs:
             _work/artwork-ktx2
             _work/artwork-ktx2-khronos.json
             _work/artwork-ktx2-browser.json
+            _work/artwork-unity-staged
           if-no-files-found: warn
           retention-days: 14

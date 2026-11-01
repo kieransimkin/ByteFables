@@ -1,0 +1,7 @@
+{
+  "name": "ByteFables.Textures.Core",
+  "rootNamespace": "ByteFables.Textures.Core",
+  "references": [],
+  "autoReferenced": true,
+  "noEngineReferences": true
+}
