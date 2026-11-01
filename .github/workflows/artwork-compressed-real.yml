@@ -1,0 +1,53 @@
+name: Artwork real UASTC compression qualification
+on:
+  workflow_run:
+    workflows: ['Artwork native compositor benchmark']
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  real-uastc:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - name: Install ByteFables image integration
+        run: python -m pip install --disable-pip-version-check -e ./integrations/framerudiments "Pillow==12.3.0"
+      - uses: actions/download-artifact@v8
+        with:
+          name: artwork-native-benchmark-${{ github.event.workflow_run.head_sha }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: _work/native-evidence
+      - name: Require the native run's verified lossless KTX2 evidence
+        run: |
+          test -f _work/native-evidence/artwork-ktx2/manifest.json
+          test ! -f _work/native-evidence/artwork-ktx2/failure.json
+      - name: Install checksum-pinned Khronos KTX 4.4.2
+        run: |
+          curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/ktx.deb" https://github.com/KhronosGroup/KTX-Software/releases/download/v4.4.2/KTX-Software-4.4.2-Linux-x86_64.deb
+          echo "ca635ed489d8bf54fac8d7687056c651193de0740830a7738cc034adc63e3027  $RUNNER_TEMP/ktx.deb" | sha256sum --check --strict
+          sudo dpkg -i "$RUNNER_TEMP/ktx.deb"
+      - name: Deterministically compress real native identity banks
+        run: python scripts/export-artwork-ktx2-basis.py --confirm-public --ktx "$(command -v ktx)" export --bundle _work/native-evidence/artwork-ktx2 --output _work/artwork-uastc
+      - name: Re-transcode and source-compare every real bank/mip/layer
+        run: python scripts/export-artwork-ktx2-basis.py --confirm-public --ktx "$(command -v ktx)" verify --bundle _work/artwork-uastc --source-bundle _work/native-evidence/artwork-ktx2
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: artwork-uastc-${{ github.event.workflow_run.head_sha }}
+          path: _work/artwork-uastc
+          if-no-files-found: error
+          retention-days: 14

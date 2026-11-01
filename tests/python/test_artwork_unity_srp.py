@@ -90,17 +90,17 @@ class Runner(unittest.TestCase):
         if 'BYTEFABLES_SRP_REQUEST' in env:
             exe=Path(plan['request']['buildPath']);exe.parent.mkdir();exe.write_bytes(b'MOCK');(self.output/'build-result.json').write_bytes(_json(build_result(plan)))
         else:(self.output/'player-result.json').write_bytes(_json(player_result(plan)))
-    def run(self,**kw):return run_srp_qualification(self.editor,self.source,self.output,confirm_public=True,profile='linux-vulkan-urp-il2cpp-linear',**kw)
+    def run_qualification(self,**kw):return run_srp_qualification(self.editor,self.source,self.output,confirm_public=True,profile='linux-vulkan-urp-il2cpp-linear',**kw)
     def test_mock_protocol_binds_build_player_and_artifact(self):
-        with patch('platform.system',return_value='Linux'),patch('tools.artwork_unity_srp._execute',side_effect=self.fake) as ex:r=self.run()
-        self.assertEqual(ex.call_count,2);self.assertEqual(r['status'],'passed');self.assertTrue(r['pipelineExecuted']);self.assertTrue(r['graphExecuted']);self.assertIn('TextureSrpBuild.RunFromCommandLine',ex.call_args_list[0].args[0]);self.assertIn('-force-vulkan',ex.call_args_list[1].args[0])
+        with patch('platform.system',return_value='Linux'),patch('tools.artwork_unity_srp._execute',side_effect=self.fake) as ex:r=self.run_qualification()
+        self.assertEqual(ex.call_count,2);self.assertEqual(r['status'],'passed');self.assertTrue(r['pipelineExecuted']);self.assertTrue(r['graphExecuted']);self.assertIn('ByteFables.Textures.Editor.TextureSrpBuild.RunFromCommandLine',ex.call_args_list[0].args[0]);self.assertIn('-force-vulkan',ex.call_args_list[1].args[0])
     def test_wrong_host_and_missing_editor_fail_before_output(self):
-        with patch('platform.system',return_value='Windows'),self.assertRaises(ValueError):self.run()
+        with patch('platform.system',return_value='Windows'),self.assertRaises(ValueError):self.run_qualification()
         self.editor.unlink()
-        with patch('platform.system',return_value='Linux'),self.assertRaises(ValueError):self.run()
+        with patch('platform.system',return_value='Linux'),self.assertRaises(ValueError):self.run_qualification()
         self.assertFalse(self.output.exists())
     def test_zero_exit_without_reports_never_passes(self):
-        with patch('platform.system',return_value='Linux'),patch('tools.artwork_unity_srp._execute'),self.assertRaises(ValueError):self.run()
+        with patch('platform.system',return_value='Linux'),patch('tools.artwork_unity_srp._execute'),self.assertRaises(ValueError):self.run_qualification()
         self.assertTrue((self.output/'failure.json').exists());self.assertFalse((self.output/'report.json').exists())
 
 class SourceInvariants(unittest.TestCase):
