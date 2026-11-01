@@ -1,0 +1,39 @@
+name: Artwork distinctiveness screening
+on:
+  workflow_run:
+    workflows: ['Artwork native compositor benchmark']
+    types: [completed]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  screen:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.11'}
+      - run: python -m pip install --disable-pip-version-check -e ./integrations/framerudiments "Pillow==12.3.0" "numpy>=1.26"
+      - uses: actions/download-artifact@v8
+        with:
+          name: artwork-native-benchmark-${{ github.event.workflow_run.head_sha }}
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ github.token }}
+          path: _work/native-evidence
+      - name: Screen saved native transparent artwork at every native size
+        run: python scripts/benchmark-artwork-distinctiveness.py --bundle _work/native-evidence/artwork-transparent --output _work/distinctiveness --sizes 16,32,64,128 --preview-size 64 --top-pairs 100
+      - uses: actions/upload-artifact@v6
+        with:
+          name: artwork-distinctiveness-${{ github.event.workflow_run.head_sha }}
+          path: _work/distinctiveness
+          if-no-files-found: error
+          retention-days: 30

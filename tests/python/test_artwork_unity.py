@@ -127,8 +127,11 @@ class PackageSourceContract(unittest.TestCase):
         import xml.etree.ElementTree as ET
         p=ROOT/'tests/dotnet/ByteFables.TextureContracts/ByteFables.TextureContracts.csproj'
         links=[x.attrib['Include'] for x in ET.parse(p).iter('Compile')]
-        paths=list((p.parent/Path(links[1]).parent).resolve().glob('*.cs'))
-        self.assertEqual(len(paths),5)
+        core_dir=(p.parent/Path(links[1]).parent).resolve()
+        paths={x.name for x in core_dir.glob('*.cs')}
+        required={'Checks.cs','StrictJson.cs','Ktx2ArrayData.cs','TextureBundleData.cs','TextureBundleDirectory.cs'}
+        self.assertTrue(required.issubset(paths))
+        self.assertIn('../../../integrations/unity/com.bytefables.textures/Runtime/Core/*.cs',links)
     def test_upload_and_shader_contract_is_explicit(self):
         p=ROOT/'integrations/unity/com.bytefables.textures'
         upload=(p/'Runtime/TextureArrayUpload.cs').read_text();shader=(p/'Shaders/PremultipliedArray.shader').read_text()

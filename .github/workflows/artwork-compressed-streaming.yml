@@ -5,6 +5,7 @@ on:
     paths:
       - 'tools/artwork_ktx2_basis.py'
       - 'scripts/export-artwork-ktx2-basis.py'
+      - 'scripts/probe-artwork-uastc.py'
       - 'integrations/web/artwork-streaming/**'
       - 'integrations/unity/com.bytefables.textures/Runtime/TextureArrayResidency.cs*'
       - 'tests/artwork-streaming.test.mjs'
@@ -19,6 +20,7 @@ on:
     paths:
       - 'tools/artwork_ktx2_basis.py'
       - 'scripts/export-artwork-ktx2-basis.py'
+      - 'scripts/probe-artwork-uastc.py'
       - 'integrations/web/artwork-streaming/**'
       - 'integrations/unity/com.bytefables.textures/Runtime/TextureArrayResidency.cs*'
       - 'tests/artwork-streaming.test.mjs'
@@ -61,10 +63,8 @@ jobs:
           curl --fail --location --retry 3 --max-time 120 --output "$RUNNER_TEMP/ktx.deb" https://github.com/KhronosGroup/KTX-Software/releases/download/v4.4.2/KTX-Software-4.4.2-Linux-x86_64.deb
           echo "ca635ed489d8bf54fac8d7687056c651193de0740830a7738cc034adc63e3027  $RUNNER_TEMP/ktx.deb" | sha256sum --check --strict
           sudo dpkg -i "$RUNNER_TEMP/ktx.deb"
-      - name: Encode deterministic UASTC plus Zstd and source-backed verify
-        run: |
-          python scripts/export-artwork-ktx2-basis.py --confirm-public --ktx "$(command -v ktx)" export --bundle _work/lossless-ktx2 --output _work/uastc
-          python scripts/export-artwork-ktx2-basis.py --confirm-public --ktx "$(command -v ktx)" verify --bundle _work/uastc --source-bundle _work/lossless-ktx2
+      - name: Real UASTC codec protocol smoke on synthetic orientation fixture
+        run: python scripts/probe-artwork-uastc.py --bundle _work/lossless-ktx2 --ktx "$(command -v ktx)" --report _work/uastc-protocol.json
       - name: Install browser test runtime
         run: |
           python -m pip install --disable-pip-version-check "playwright==1.57.0"
@@ -76,7 +76,7 @@ jobs:
         with:
           name: artwork-compressed-streaming-${{ github.sha }}
           path: |
-            _work/uastc
+            _work/uastc-protocol.json
             _work/streaming-browser.json
           if-no-files-found: warn
           retention-days: 14

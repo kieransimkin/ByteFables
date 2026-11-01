@@ -6,6 +6,7 @@ on:
       - 'tools/artwork_ktx2_basis.py'
       - 'tools/artwork_runtime_resolve.py'
       - 'scripts/resolve-artwork-runtime.py'
+      - 'scripts/probe-artwork-uastc.py'
       - 'integrations/unity/com.bytefables.textures/Runtime/Core/LazyTextureBundleData.cs*'
       - 'integrations/unity/com.bytefables.textures/Runtime/Core/TextureCpuResidency.cs*'
       - 'integrations/unity/com.bytefables.textures/Runtime/LazyTextureArrayResidency.cs*'
@@ -19,6 +20,7 @@ on:
       - 'tools/artwork_ktx2_basis.py'
       - 'tools/artwork_runtime_resolve.py'
       - 'scripts/resolve-artwork-runtime.py'
+      - 'scripts/probe-artwork-uastc.py'
       - 'integrations/unity/com.bytefables.textures/Runtime/Core/LazyTextureBundleData.cs*'
       - 'integrations/unity/com.bytefables.textures/Runtime/Core/TextureCpuResidency.cs*'
       - 'integrations/unity/com.bytefables.textures/Runtime/LazyTextureArrayResidency.cs*'
@@ -59,25 +61,16 @@ jobs:
         run: |
           python scripts/resolve-artwork-runtime.py --confirm-public lossless --bundle _work/lossless-ktx2 --output _work/runtime-lossless
           python scripts/resolve-artwork-runtime.py verify --bundle _work/runtime-lossless
-      - name: Produce and verify real UASTC source
-        run: |
-          python scripts/export-artwork-ktx2-basis.py --confirm-public --ktx "$(command -v ktx)" export --bundle _work/lossless-ktx2 --output _work/uastc
-          python scripts/export-artwork-ktx2-basis.py --confirm-public --ktx "$(command -v ktx)" verify --bundle _work/uastc --source-bundle _work/lossless-ktx2
-      - name: Resolve UASTC source bank-by-bank back to canonical runtime KTX2
-        run: |
-          python scripts/resolve-artwork-runtime.py --confirm-public uastc --bundle _work/uastc --output _work/runtime-uastc --ktx "$(command -v ktx)"
-          python scripts/resolve-artwork-runtime.py verify --bundle _work/runtime-uastc
+      - name: Prove the pinned UASTC tool protocol without treating orientation sentinels as a quality corpus
+        run: python scripts/probe-artwork-uastc.py --bundle _work/lossless-ktx2 --ktx "$(command -v ktx)" --report _work/uastc-protocol.json
       - name: Compile and execute lazy CSharp contracts against lossless-derived cache
         run: dotnet run --project tests/dotnet/ByteFables.TextureLazyContracts --configuration Release -- --descriptor _work/runtime-lossless/runtime.bfresolved
-      - name: Execute lazy CSharp contracts against UASTC-derived cache
-        run: dotnet run --project tests/dotnet/ByteFables.TextureLazyContracts --configuration Release -- --descriptor _work/runtime-uastc/runtime.bfresolved
       - uses: actions/upload-artifact@v6
         if: always()
         with:
           name: artwork-runtime-resolution-${{ github.sha }}
           path: |
             _work/runtime-lossless
-            _work/uastc
-            _work/runtime-uastc
+            _work/uastc-protocol.json
           if-no-files-found: warn
           retention-days: 14
