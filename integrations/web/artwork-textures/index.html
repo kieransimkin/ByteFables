@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<title>ByteFables · Runtime Texture Atlas</title>
+<link rel="stylesheet" href="demo.css">
+<script defer src="runtime.js"></script><script defer src="demo.js"></script>
+</head>
+<body>
+<header><p class="eyebrow">BYTEFABLES / IMAGE RUNTIME</p><h1>One atlas. Many identities.</h1>
+<p>Verified native artwork displayed through WebGL2 instancing or Canvas2D. No new artwork is generated here.</p></header>
+<main>
+<form id="controls"><label>Backend <select id="backend"><option value="webgl2">WebGL2</option><option value="canvas2d">Canvas2D</option></select></label>
+<label>Displayed instances <select id="count"><option>100</option><option selected>1000</option><option>10000</option></select></label>
+<label>Display size <select id="size"><option value="native">Native</option><option>16</option><option>32</option><option>64</option></select></label>
+<button id="draw" type="submit" disabled>Draw instances</button></form>
+<p id="status" role="status" aria-live="polite">Loading verified textures…</p>
+<p id="stats"></p><div id="viewport"><canvas id="scene" aria-label="Public identity sprite grid"></canvas></div>
+<section><h2>Inspect full identity</h2><label>Instance number <input id="inspect" type="number" min="0" value="0"></label>
+<pre id="identity" tabindex="0"></pre></section>
+<p>Repeated instances are not additional unique identities. Timings measure CPU submission, not GPU completion or frame rate.
+Images and unsigned checksums do not establish ownership. Serve this folder over loopback HTTP or HTTPS.</p>
+</main></body></html>

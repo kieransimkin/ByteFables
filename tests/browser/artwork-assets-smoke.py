@@ -14,7 +14,7 @@ import threading
 
 
 def smoke(bundle: Path, executable: str | None = None, screenshot: Path | None = None):
-    from playwright.sync_api import sync_playwright
+    from playwright.sync_api import sync_playwright, expect
     root = Path(bundle).resolve(strict=True)
     manifest = json.loads((root / 'manifest.json').read_text())
     assert manifest['status'] == 'passed' and manifest['assets'], 'Expected completed asset bundle'
@@ -52,7 +52,7 @@ def smoke(bundle: Path, executable: str | None = None, screenshot: Path | None =
                         request.continue_()
                 page.route('**/*', route)
                 page.goto(origin + '/index.html')
-                page.wait_for_function("document.getElementById('status').textContent.includes('matching')")
+                expect(page.locator("#status")).to_contain_text("matching")
                 assert page.locator('article').count() > 0, 'No asset cards'
                 page.locator('#query').fill('not-a-public-digest')
                 assert page.locator('article').count() == 0, 'Search does not filter'
@@ -62,7 +62,12 @@ def smoke(bundle: Path, executable: str | None = None, screenshot: Path | None =
                 page.locator('#family').select_option(first['family'])
                 page.locator('#palette').select_option(first['palette'])
                 page.locator('#size').select_option(str(size))
-                page.wait_for_function("Array.from(document.querySelectorAll('article img')).every(x => x.complete && x.naturalWidth)")
+                # No string predicate polling: it invokes eval under Playwright 1.57
+                # and violates this gallery's intentional strict CSP. Decode the
+                # actual image under test; unrelated lazy images may be offscreen.
+                image = page.locator('article img').first
+                image.scroll_into_view_if_needed()
+                image.evaluate('async image => { await image.decode(); }')
                 assert page.locator('article').count() >= 1
                 actual = page.locator('article img').first.evaluate('(x)=>[x.width,x.height,x.naturalWidth,x.naturalHeight]')
                 assert actual == [size]*4, f'Native dimensions changed: {actual}'

@@ -6,7 +6,9 @@ on:
       - 'src/engine/artwork-*.ts'
       - 'integrations/framerudiments/**'
       - 'integrations/web/artwork-assets/**'
-      - 'tests/browser/artwork-assets-smoke.py'
+      - 'integrations/web/artwork-textures/**'
+      - 'tests/browser/artwork-*-smoke.py'
+      - 'tests/vectors/artwork-textures-v1.json'
       - 'tools/artwork_*.py'
       - 'scripts/*artwork*'
       - 'tests/*artwork*'
@@ -17,7 +19,9 @@ on:
       - 'src/engine/artwork-*.ts'
       - 'integrations/framerudiments/**'
       - 'integrations/web/artwork-assets/**'
-      - 'tests/browser/artwork-assets-smoke.py'
+      - 'integrations/web/artwork-textures/**'
+      - 'tests/browser/artwork-*-smoke.py'
+      - 'tests/vectors/artwork-textures-v1.json'
       - 'tools/artwork_*.py'
       - 'scripts/*artwork*'
       - 'tests/*artwork*'
@@ -53,9 +57,11 @@ jobs:
       - run: npm run build
       - name: Install real native host and public artwork plugin
         run: python -m pip install --disable-pip-version-check "Pillow==12.3.0" "numpy>=1.26" ./_host/FrameRudiments -e ./integrations/framerudiments
-      - run: node --test tests/artwork-native-benchmark.test.mjs tests/artwork-asset-gallery.test.mjs
+      - run: node --test tests/artwork-native-benchmark.test.mjs tests/artwork-asset-gallery.test.mjs tests/artwork-texture-runtime.test.mjs
       - name: Lossless PNG WebP ICO codecs and bundle boundaries
         run: python -m unittest discover -s tests/python -p test_artwork_image_assets.py -v
+      - name: Texture atlas packing and saved-file verification
+        run: python -m unittest discover -s tests/python -p test_artwork_texture_bundle.py -v
       - name: Required native integration (missing host is a failure, never a skip)
         run: python -m unittest discover -s tests/python -p test_artwork_native_benchmark.py -v
       - run: python -m unittest discover -s tests/python -p test_artwork_atlas_readback.py -v
@@ -67,12 +73,18 @@ jobs:
         run: python scripts/export-artwork-assets.py --confirm-public export --suite _work/artwork-suite/suite.json --benchmark _work/artwork-benchmark --output _work/artwork-assets
       - name: Independently re-read every saved image asset
         run: python scripts/export-artwork-assets.py --confirm-public verify --bundle _work/artwork-assets
+      - name: Pack native assets into runtime textures
+        run: python scripts/export-artwork-textures.py --confirm-public export --bundle _work/artwork-assets --output _work/artwork-textures --native-size 16 --page-size 256
+      - name: Verify texture pages against original native image assets
+        run: python scripts/export-artwork-textures.py --confirm-public verify --bundle _work/artwork-textures --source-bundle _work/artwork-assets
       - name: Install browser test runtime
         run: |
           python -m pip install --disable-pip-version-check "playwright==1.57.0"
           python -m playwright install --with-deps chromium
       - name: Browser filtering and PNG WebP pixel readback
         run: python tests/browser/artwork-assets-smoke.py --bundle _work/artwork-assets
+      - name: Strict-CSP texture loader and 1000-instance Canvas WebGL pixel readback
+        run: python tests/browser/artwork-textures-smoke.py --bundle _work/artwork-textures --report _work/artwork-textures-browser.json
       - name: Upload benchmark evidence (partial runs carry failure.json, not report.json)
         if: always()
         uses: actions/upload-artifact@v6
@@ -82,5 +94,7 @@ jobs:
             _work/artwork-suite
             _work/artwork-benchmark
             _work/artwork-assets
+            _work/artwork-textures
+            _work/artwork-textures-browser.json
           if-no-files-found: warn
           retention-days: 14
