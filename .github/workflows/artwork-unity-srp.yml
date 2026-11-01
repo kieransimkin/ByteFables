@@ -1,0 +1,99 @@
+name: Artwork Unity URP HDRP real GPU qualification
+# Licensed GPU workstations never execute pull-request code.
+on:
+  workflow_dispatch:
+    inputs:
+      native_run_id:
+        description: Successful main-branch native benchmark containing artwork-ktx2
+        type: string
+        required: true
+      profile:
+        description: Exact SRP / OS / graphics API profile
+        type: choice
+        options:
+          - windows-d3d11-urp-il2cpp-linear
+          - windows-d3d12-urp-il2cpp-linear
+          - linux-vulkan-urp-il2cpp-linear
+          - windows-d3d12-hdrp-il2cpp-linear
+          - linux-vulkan-hdrp-il2cpp-linear
+        default: windows-d3d12-urp-il2cpp-linear
+        required: true
+      editor_version:
+        description: Exact installed Unity 6.0 version with IL2CPP desktop support
+        type: string
+        default: '6000.0.62f1'
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    outputs:
+      sha: ${{ steps.check.outputs.sha }}
+      runner_os: ${{ steps.check.outputs.runner_os }}
+    steps:
+      - uses: actions/github-script@v8
+        id: check
+        env:
+          NATIVE_RUN_ID: ${{ inputs.native_run_id }}
+          PROFILE: ${{ inputs.profile }}
+          EDITOR_VERSION: ${{ inputs.editor_version }}
+        with:
+          script: |
+            if (!/^[0-9]+$/.test(process.env.NATIVE_RUN_ID)) throw new Error('Numeric run ID required');
+            if (!/^6000\.\d+\.\d+[fp]\d+$/.test(process.env.EDITOR_VERSION)) throw new Error('Exact Unity 6 version required');
+            const systems = {
+              'windows-d3d11-urp-il2cpp-linear':'Windows','windows-d3d12-urp-il2cpp-linear':'Windows',
+              'linux-vulkan-urp-il2cpp-linear':'Linux','windows-d3d12-hdrp-il2cpp-linear':'Windows',
+              'linux-vulkan-hdrp-il2cpp-linear':'Linux'};
+            if (!Object.hasOwn(systems, process.env.PROFILE)) throw new Error('Unsupported SRP profile');
+            const id=Number(process.env.NATIVE_RUN_ID); if(!Number.isSafeInteger(id)) throw new Error('Run ID out of range');
+            const {data:run}=await github.rest.actions.getWorkflowRun({...context.repo,run_id:id});
+            if(run.status!=='completed'||run.conclusion!=='success'||run.event!=='push'||run.head_branch!=='main'||
+               run.path!=='.github/workflows/artwork-native-benchmark.yml'||run.head_repository.full_name!==`${context.repo.owner}/${context.repo.repo}`)
+              throw new Error('Only successful main-branch native benchmark artifacts are eligible');
+            core.setOutput('sha',run.head_sha);core.setOutput('runner_os',systems[process.env.PROFILE]);
+  srp-player:
+    needs: source
+    runs-on: [self-hosted, unity-gpu, '${{ needs.source.outputs.runner_os }}']
+    environment: unity-srp-qualification
+    timeout-minutes: 90
+    env:
+      UNITY_EDITOR: ${{ vars.UNITY_EDITOR }}
+      BYTEFABLES_UNITY_EDITOR_VERSION: ${{ inputs.editor_version }}
+      SRP_PROFILE: ${{ inputs.profile }}
+    steps:
+      - uses: actions/checkout@v7
+        with: {ref: '${{ github.sha }}', persist-credentials: false}
+      - uses: actions/setup-python@v7
+        with: {python-version: '3.11'}
+      - run: python -m pip install "Pillow==12.3.0"
+      - uses: actions/download-artifact@v8
+        with:
+          name: artwork-native-benchmark-${{ needs.source.outputs.sha }}
+          run-id: ${{ inputs.native_run_id }}
+          github-token: ${{ github.token }}
+          path: _work/native-evidence
+      - name: Resolve pinned SRP, build IL2CPP player, execute camera and graph probes
+        shell: python
+        run: |
+          import os,subprocess,sys
+          subprocess.run([sys.executable,'scripts/qualify-artwork-unity-srp.py','--confirm-public',
+            '--bundle','_work/native-evidence/artwork-ktx2','--output','_work/unity-srp',
+            '--profile',os.environ['SRP_PROFILE']],check=True)
+      - uses: actions/upload-artifact@v6
+        if: always()
+        with:
+          name: unity-srp-${{ inputs.profile }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            _work/unity-srp/report.json
+            _work/unity-srp/failure.json
+            _work/unity-srp/plan.json
+            _work/unity-srp/player-inventory.json
+            _work/unity-srp/build-result.json
+            _work/unity-srp/player-result.json
+            _work/unity-srp/*.log
+          if-no-files-found: error
+          retention-days: 14
