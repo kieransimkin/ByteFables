@@ -51,3 +51,24 @@ validation report; new native two-matte and HTTP browser gates must pass in CI.
 The next image work is isolated alpha-aware mip levels / versioned transparent
 texture consumption, then KTX2 and Unity qualification. No page-wide mipmap
 claim, speech/word work, identity authenticity or entire-wave completion is added.
+
+## Transparent GPU arrays and isolated mip levels -- based on 9bc9cb7
+
+Observed baseline: native image-output run **41281039108** completed successfully
+on 2026-11-01. All transparent-source export, black/white native qualification,
+HTTP preview and previous opaque Canvas/WebGL checks passed. These observations
+refer to the merged baseline, not this new patch's workflow.
+
+This increment adds `bytefables.alpha-texture-array-bundle.v1`: explicit
+premultiplied RGBA8, independent per-sprite area-filtered levels through 1x1,
+raw level readback/source recomputation, and a separately versioned WebGL2
+texture-array consumer. Opaque formats and lossless source PNGs are unchanged.
+The browser qualification requires complete level readback, painter-order
+blending, fractional LOD and synthetic red/blue layer-isolation tests. See
+[the mip/array contract](specs/artwork-alpha-textures-v1.md).
+
+Next: qualify this new browser/GPU path in CI and additional real devices, then
+KTX2 transport and Unity consumption. Neither KTX2/Basis encoding nor Unity,
+linear-light filtering, cutout alpha coverage preservation or an entire BF-W9
+wave is claimed complete. Human recognisability/accessibility studies remain
+separate from repeated-instance display throughput.
