@@ -84,7 +84,17 @@ def encode_command(executable: Path, source: Path, output: Path) -> list[str]:
 
 
 def _validate_ktx(executable: Path, file: Path) -> None:
-    _run([str(executable), 'validate', '--warnings-as-errors', str(file)], timeout=90)
+    # ByteFables' frozen lossless profile carries one intentional custom K/V key,
+    # org.bytefables.profile. Khronos KTX 4.4.2 reports that standards-compliant
+    # extension metadata as warning-7010; --warnings-as-errors therefore rejects
+    # our own canonical files after UASTC encoding. Run normal validation, then
+    # fail closed on every warning except that exact known key/code.
+    result = _run([str(executable), 'validate', str(file)], timeout=90)
+    text = (result.stdout + '\n' + result.stderr).strip()
+    warnings = re.findall(r'warning-(\d+)', text, flags=re.I)
+    if warnings:
+        _expect(all(code == '7010' for code in warnings) and 'org.bytefables.profile' in text,
+                f'Unexpected KTX validation warning: {text[-2000:]}')
 
 
 def _extract_rgba8(executable: Path, file: Path, size: int, layers: int) -> tuple[bytes, ...]:

@@ -30,8 +30,11 @@ payload after that lossy transform.
 
 ## Verification and quality gate
 
-Every compressed bank is independently accepted by `ktx validate
---warnings-as-errors`, then all layers and mip levels are transcoded to RGBA8 with
+Every compressed bank is independently accepted by `ktx validate`. Validation
+fails on errors and on every warning except Khronos warning 7010 for the already-
+qualified custom `org.bytefables.profile` metadata key. KTX 4.4.2 preserves this
+key during UASTC encoding, so treating all warnings as errors would reject the
+canonical ByteFables source itself. All layers and mip levels are then transcoded to RGBA8 with
 `ktx extract --transcode rgba8 --all --raw`. ByteFables measures the decoded
 bytes against the lossless bank and records per-bank and aggregate metrics.
 
