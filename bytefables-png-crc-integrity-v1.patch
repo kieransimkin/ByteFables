@@ -1,0 +1,178 @@
+diff --git a/docs/specs/artwork-png-integrity-v1.md b/docs/specs/artwork-png-integrity-v1.md
+new file mode 100644
+index 0000000..c51e9b5
+--- /dev/null
++++ b/docs/specs/artwork-png-integrity-v1.md
+@@ -0,0 +1,16 @@
++# PNG integrity gate for public identity artwork
++
++This additive ByteFables validator checks the exact exported PNG byte stream
++from FrameRudiments. It validates every chunk CRC-32, chunk sizes, IHDR-first,
++IEND-last, contiguous IDAT, required PLTE for indexed colour and rejects unknown
++critical chunks. The previous `inspectArtworkPng` and exported atlas-receipt API
++remain available, but now reject files with corrupt chunk CRCs.
++
++This gate **does not decompress IDAT, reconstruct filtered pixels, check colour
++profiles or measure visual identity accuracy**. PNG CRC-32 is accidental-damage
++detection, not authentication. `sha256Hex` on the receipt binds exact exported
++file bytes, but neither checksum certifies authorisation or provenance.
++
++Next gate: FrameRudiments renders real PNG fixtures, an independent PNG decoder
++reads exported pixels, and the visual benchmark measures recognition at
++16/32/64/128 pixels across many distinct public identities.
+diff --git a/src/engine/png-integrity.ts b/src/engine/png-integrity.ts
+new file mode 100644
+index 0000000..5960c96
+--- /dev/null
++++ b/src/engine/png-integrity.ts
+@@ -0,0 +1,76 @@
++/** CRC-checked PNG chunk inspection for PUBLIC artwork receipts.
++ * This checks file transport integrity, not decompression or pixel fidelity.
++ */
++export interface PngIntegrity {
++  readonly chunkCount: number;
++  readonly idatChunks: number;
++  readonly crcVerified: true;
++}
++const SIGNATURE = [137, 80, 78, 71, 13, 10, 26, 10] as const;
++const U32 = (bytes: Uint8Array, at: number): number =>
++  ((bytes[at]! * 0x1000000) + (bytes[at + 1]! << 16) +
++    (bytes[at + 2]! << 8) + bytes[at + 3]!) >>> 0;
++
++/** Standard PNG CRC-32 (ISO 3309), calculated across type + data. */
++export function pngCrc32(bytes: Uint8Array): number {
++  if (!(bytes instanceof Uint8Array)) throw new TypeError('PNG CRC input must be bytes');
++  let crc = 0xffffffff;
++  for (const octet of bytes) {
++    crc ^= octet;
++    for (let bit = 0; bit < 8; bit++) crc = crc & 1 ? (crc >>> 1) ^ 0xedb88320 : crc >>> 1;
++  }
++  return (crc ^ 0xffffffff) >>> 0;
++}
++
++/** Bounded chunk walk: requires valid CRCs, order and contiguous IDAT sequence.
++ * It intentionally does not decode DEFLATE streams, validate the PNG filter
++ * reconstruction or establish that the visible image matches the identity.
++ */
++export function verifyArtworkPngChunks(bytes: Uint8Array): PngIntegrity {
++  if (!(bytes instanceof Uint8Array) || bytes.length < 57 ||
++      bytes.length > 128 * 1024 * 1024 ||
++      !SIGNATURE.every((n, i) => bytes[i] === n)) {
++    throw new TypeError('Invalid PNG signature or size');
++  }
++  let offset = 8, chunkCount = 0, idatChunks = 0;
++  let header = false, ended = false, afterIdat = false, palette = false;
++  let colourType = -1;
++  while (offset < bytes.length) {
++    if (bytes.length - offset < 12) throw new TypeError('Truncated PNG chunk');
++    const length = U32(bytes, offset);
++    if (length > bytes.length - offset - 12) throw new TypeError('PNG chunk length exceeds file');
++    const typeBytes = bytes.subarray(offset + 4, offset + 8);
++    const type = String.fromCharCode(...typeBytes);
++    if (!/^[A-Za-z]{4}$/.test(type) || (typeBytes[2]! & 0x20) !== 0)
++      throw new TypeError('Malformed or noncanonical PNG chunk type');
++    const end = offset + 12 + length;
++    const actual = U32(bytes, end - 4);
++    const expected = pngCrc32(bytes.subarray(offset + 4, end - 4));
++    if (actual !== expected) throw new TypeError(`PNG CRC mismatch in ${type}`);
++    if (!header && (type !== 'IHDR' || length !== 13)) throw new TypeError('PNG must start with IHDR');
++    if (type === 'IHDR') {
++      if (header || offset !== 8 || length !== 13) throw new TypeError('Duplicate PNG IHDR');
++      header = true;
++      colourType = bytes[offset + 17]!;
++    } else if (type === 'PLTE') {
++      if (palette || idatChunks || length === 0 || length % 3 !== 0 || length > 768 || colourType === 0 || colourType === 4)
++        throw new TypeError('Invalid PNG palette');
++      palette = true;
++    } else if (type === 'IDAT') {
++      if (afterIdat || (colourType === 3 && !palette)) throw new TypeError('Invalid PNG IDAT ordering');
++      idatChunks++;
++    } else if (type === 'IEND') {
++      if (!idatChunks || length !== 0 || end !== bytes.length) throw new TypeError('Invalid PNG IEND');
++      ended = true;
++    } else if ((typeBytes[0]! & 0x20) === 0) {
++      throw new TypeError(`Unsupported critical PNG chunk: ${type}`);
++    }
++    if (idatChunks && type !== 'IDAT') afterIdat = true;
++    offset = end;
++    chunkCount++;
++    if (chunkCount > 100000) throw new RangeError('PNG has too many chunks');
++    if (ended) break;
++  }
++  if (!header || !idatChunks || !ended || offset !== bytes.length) throw new TypeError('Incomplete PNG structure');
++  return Object.freeze({ chunkCount, idatChunks, crcVerified: true as const });
++}
+diff --git a/tests/png-integrity.test.mjs b/tests/png-integrity.test.mjs
+new file mode 100644
+index 0000000..b79e57b
+--- /dev/null
++++ b/tests/png-integrity.test.mjs
+@@ -0,0 +1,32 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { pngCrc32, verifyArtworkPngChunks } from '../dist/engine/png-integrity.js';
++import { inspectArtworkPng } from '../dist/index.js';
++const signature = [137,80,78,71,13,10,26,10];
++const u32 = n => [(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255];
++function chunk(type, data) {
++  const body = Uint8Array.from([...Buffer.from(type,'ascii'), ...data]);
++  return [...u32(data.length), ...body, ...u32(pngCrc32(body))];
++}
++function fixture() {
++  return Uint8Array.from([...signature,
++    ...chunk('IHDR',[...u32(2),...u32(2),8,6,0,0,0]),
++    ...chunk('IDAT',[120,156,3,0,0,0,0,1]),
++    ...chunk('IEND',[])]);
++}
++test('known CRC and CRC-checked PNG metadata', () => {
++  assert.equal(pngCrc32(Buffer.from('123456789')),0xcbf43926);
++  const png = fixture();
++  assert.deepEqual(inspectArtworkPng(png),{width:2,height:2});
++  assert.deepEqual(verifyArtworkPngChunks(png),{chunkCount:3,idatChunks:1,crcVerified:true});
++});
++test('rejects corrupted data, CRC, trailing bytes and missing IDAT', () => {
++  const png = fixture();
++  for (const offset of [12, 29, 46, png.length - 1]) {
++    const changed = Uint8Array.from(png); changed[offset] ^= 1;
++    assert.throws(()=>inspectArtworkPng(changed));
++  }
++  assert.throws(()=>verifyArtworkPngChunks(Uint8Array.from([...png, 0])));
++  assert.throws(()=>verifyArtworkPngChunks(Uint8Array.from([
++    ...signature,...chunk('IHDR',[...u32(2),...u32(2),8,6,0,0,0]),...chunk('IEND',[])])));
++});
+diff --git a/src/engine/artwork-export-receipt.ts b/src/engine/artwork-export-receipt.ts
+--- a/src/engine/artwork-export-receipt.ts
++++ b/src/engine/artwork-export-receipt.ts
+@@ -4,5 +4,6 @@
+ import { sha256 } from '../identity/sha256.js';
+ import { encodeHex } from '../codecs/hex.js';
+ import { ARTWORK_ATLAS_VERSION, type ArtworkAtlasPlan } from './artwork-atlas.js';
++import { verifyArtworkPngChunks } from './png-integrity.js';
+ 
+ export const ARTWORK_EXPORT_RECEIPT_VERSION = 'bytefables.artwork-export-receipt.v1' as const;
+@@ -48,4 +49,5 @@
+   }
+   if (ihdr !== 1 || !idat || iend !== 1 || p !== bytes.length) throw new TypeError('Incomplete PNG');
++  verifyArtworkPngChunks(bytes);
+   return { width, height };
+ }
+diff --git a/tests/artwork-export-receipt.test.mjs b/tests/artwork-export-receipt.test.mjs
+--- a/tests/artwork-export-receipt.test.mjs
++++ b/tests/artwork-export-receipt.test.mjs
+@@ -1,9 +1,14 @@
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+ import { ByteValue, PublicRecord, createFrameRudimentsArtworkAtlas,
+   createArtworkPngReceipt, inspectArtworkPng } from '../dist/index.js';
++import { pngCrc32 } from '../dist/engine/png-integrity.js';
+ const record = i => new PublicRecord(ByteValue.public(Uint8Array.of(i), {namespace:'danceflow',kind:'node-id'}));
+-// The container inspector checks framing and dimensions, not compressed pixels or CRC.
++// Container checks framing and chunk CRCs; decoded pixels remain a later gate.
+ function fixturePng(width, height) {
+   const a=[137,80,78,71,13,10,26,10];
+-  function chunk(type,data){a.push(0,0,0,data.length,...[...type].map(c=>c.charCodeAt(0)),...data,0,0,0,0)}
++  function chunk(type,data){
++    const body=Uint8Array.from([...type].map(c=>c.charCodeAt(0)).concat(data));
++    const crc=pngCrc32(body);
++    a.push(0,0,0,data.length,...body,crc>>>24,(crc>>>16)&255,(crc>>>8)&255,crc&255);
++  }

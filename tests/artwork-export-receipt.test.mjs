@@ -1,3 +1,4 @@
+import { pngCrc32 } from '../dist/engine/png-integrity.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { ByteValue, PublicRecord, createFrameRudimentsArtworkAtlas,
@@ -6,7 +7,11 @@ const record = i => new PublicRecord(ByteValue.public(Uint8Array.of(i), {namespa
 // The container inspector checks framing and dimensions, not compressed pixels or CRC.
 function fixturePng(width, height) {
   const a=[137,80,78,71,13,10,26,10];
-  function chunk(type,data){a.push(0,0,0,data.length,...[...type].map(c=>c.charCodeAt(0)),...data,0,0,0,0)}
+  function chunk(type,data){
+    const body=Uint8Array.from([...type].map(c=>c.charCodeAt(0)).concat(data));
+    const crc=pngCrc32(body);
+    a.push(0,0,0,data.length,...body,crc>>>24,(crc>>>16)&255,(crc>>>8)&255,crc&255);
+  }
   const w=[width>>>24,(width>>>16)&255,(width>>>8)&255,width&255];
   const h=[height>>>24,(height>>>16)&255,(height>>>8)&255,height&255];
   chunk('IHDR',[...w,...h,8,6,0,0,0]);chunk('IDAT',[1]);chunk('IEND',[]);

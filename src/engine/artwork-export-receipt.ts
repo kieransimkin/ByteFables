@@ -4,6 +4,7 @@
 import { sha256 } from '../identity/sha256.js';
 import { encodeHex } from '../codecs/hex.js';
 import { ARTWORK_ATLAS_VERSION, type ArtworkAtlasPlan } from './artwork-atlas.js';
+import { verifyArtworkPngChunks } from './png-integrity.js';
 
 export const ARTWORK_EXPORT_RECEIPT_VERSION = 'bytefables.artwork-export-receipt.v1' as const;
 export interface ArtworkPngPage {
@@ -58,6 +59,7 @@ export function inspectArtworkPng(bytes: Uint8Array): { width: number; height: n
     if (iend) break;
   }
   if (ihdr !== 1 || !idat || iend !== 1 || p !== bytes.length) throw new TypeError('Incomplete PNG');
+  verifyArtworkPngChunks(bytes);
   return { width, height };
 }
 /** Receipts are evidence of *exact exported file bytes*, not optical correctness.
