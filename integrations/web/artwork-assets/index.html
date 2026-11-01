@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none';">
+<title>ByteFables • native image assets</title>
+<link rel="stylesheet" href="gallery.css">
+<script defer src="gallery-data.js"></script>
+<script defer src="gallery.js"></script>
+</head>
+<body>
+<header><p class="eyebrow">BYTEFABLES / IMAGE ASSETS</p><h1>One identity. Native pixels.</h1>
+<p>PNG, lossless WebP and ICO exports from saved FrameRudiments atlas images.
+Sizes are separately rendered, not resized. The opaque <code>#111827</code> background is preserved.</p>
+<p class="notice">Presentation only. The full identifier matters; an image never proves identity or ownership.
+<a href="manifest.json">View the export manifest</a>.</p></header>
+<main>
+<noscript><p>JavaScript enables filtering. All image paths and checksums remain available in <a href="manifest.json">manifest.json</a>.</p></noscript>
+<form id="filters" aria-label="Filter identity assets">
+<label>Identity digest<input id="query" type="search" placeholder="Search the full public digest" maxlength="64" autocomplete="off"></label>
+<label>Artwork<select id="family"><option value="">All artwork families</option></select></label>
+<label>Palette<select id="palette"><option value="">All palettes</option></select></label>
+<label>Native image size<select id="size"><option value="16">16 pixels</option><option value="32">32 pixels</option><option value="64">64 pixels</option><option value="128" selected>128 pixels</option></select></label>
+</form>
+<p id="status" role="status" aria-live="polite">Loading local asset inventory…</p>
+<section id="grid" aria-label="Native identity assets"></section>
+<nav aria-label="Result pages"><button id="previous" type="button">Previous</button><span id="position"></span><button id="next" type="button">Next</button></nav>
+</main>
+<footer>Everything here is local. No remote images, fonts, model calls, tracking or network dependencies.</footer>
+</body></html>

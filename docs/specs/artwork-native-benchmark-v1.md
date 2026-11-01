@@ -51,8 +51,14 @@ requires `--synthetic-fixture` to generate a genuine one-second, mono, 48kHz,
 labels the clock `synthetic` with a benchmark-only authority. No production song,
 measured tempo, font, external media or fictitious music analysis is substituted.
 
-Native frame postprocessing is disabled for exact source-on-matte verification;
-there are no captions, motion effects, quality filters, masks or effect graphs.
+Native frame postprocessing and spatial/temporal supersampling are disabled for
+exact source-on-matte verification. Each generated project explicitly sets
+`render_quality: {enabled: false}`, and the runner checks effective spatial/time
+sampling is one before constructing the compositor. `apply_quality=False` alone
+only skips final AA in the pinned host; it does not disable supersampling. This
+explicit setting repairs the pixel mismatch observed in the first native CI run
+at ByteFables `046cca4`. There are no captions, motion effects, quality filters,
+masks or effect graphs.
 Those need a separate acceptance profile. The runner verifies host inputs before
 and after rendering, records host Python source-tree and generator-file hashes,
 and records Python, platform, FrameRudiments, DanceRudiments and Pillow versions.
@@ -130,9 +136,16 @@ and timing measurements, offline gallery, mandatory native integration workflow.
 
 Still separate: actual CI execution results, larger-corpus results on target
 hardware, measured human recognition and colour accessibility, effect-enabled
-acceptance, WebP/ICO/KTX2 exports, mipmaps, a production native still-export API,
+acceptance, KTX2 exports, mipmaps, a production native still-export API,
 and GPU/Unity resource-lifetime/performance validation. Image identity remains
 presentation-only and never substitutes for the full public identifier.
+
+The follow-on [native image asset bundle](artwork-image-assets-v1.md) adds
+PNG/WebP/ICO packaging and a filterable local gallery from a **successful fresh**
+benchmark. It requires the corrected non-supersampled project contract and checks
+the saved pixels before exporting. It neither re-renders artwork nor turns an
+unsigned benchmark receipt into proof of provenance. Its browser/native CI
+qualification gates remain separately reported.
 
 References: the pinned FrameRudiments `docs/rudiment-renderers.md`,
 `src/framerudiments/project.py` and `src/framerudiments/compositor.py`;

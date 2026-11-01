@@ -249,6 +249,8 @@ def project_for_page(page: dict[str, Any], clock_sha: str) -> dict[str, Any]:
             'clock': {'bpm': 120, 'origin': 0, 'status': 'synthetic',
                       'authority': 'ByteFables synthetic benchmark fixture; not music analysis'},
             'background': {'colour': '#111827'},
+            # apply_quality=False skips final AA only, not spatial/time sampling.
+            'render_quality': {'enabled': False},
             'layers': [tile['layer'] for tile in page['tiles']],
             'notes': 'Native static benchmark. No fonts, captions, effects, models or secret inputs.'}
 
@@ -296,6 +298,8 @@ def _render_page(api, data, case_dir, page, samples):
     path.write_bytes(_json(data))
     start = time.perf_counter()
     project = api.Project.load(path)
+    if project.output_quality.vector_scale != 1 or project.output_quality.time_samples != 1:
+        raise BenchmarkError('Native benchmark must disable spatial and temporal supersampling')
     compositor = api.Compositor(project, renderers=api.registry)
     try:
         project.verify_inputs()

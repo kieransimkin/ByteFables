@@ -5,6 +5,8 @@ on:
     paths:
       - 'src/engine/artwork-*.ts'
       - 'integrations/framerudiments/**'
+      - 'integrations/web/artwork-assets/**'
+      - 'tests/browser/artwork-assets-smoke.py'
       - 'tools/artwork_*.py'
       - 'scripts/*artwork*'
       - 'tests/*artwork*'
@@ -14,6 +16,8 @@ on:
     paths:
       - 'src/engine/artwork-*.ts'
       - 'integrations/framerudiments/**'
+      - 'integrations/web/artwork-assets/**'
+      - 'tests/browser/artwork-assets-smoke.py'
       - 'tools/artwork_*.py'
       - 'scripts/*artwork*'
       - 'tests/*artwork*'
@@ -49,7 +53,9 @@ jobs:
       - run: npm run build
       - name: Install real native host and public artwork plugin
         run: python -m pip install --disable-pip-version-check "Pillow==12.3.0" "numpy>=1.26" ./_host/FrameRudiments -e ./integrations/framerudiments
-      - run: node --test tests/artwork-native-benchmark.test.mjs
+      - run: node --test tests/artwork-native-benchmark.test.mjs tests/artwork-asset-gallery.test.mjs
+      - name: Lossless PNG WebP ICO codecs and bundle boundaries
+        run: python -m unittest discover -s tests/python -p test_artwork_image_assets.py -v
       - name: Required native integration (missing host is a failure, never a skip)
         run: python -m unittest discover -s tests/python -p test_artwork_native_benchmark.py -v
       - run: python -m unittest discover -s tests/python -p test_artwork_atlas_readback.py -v
@@ -57,6 +63,16 @@ jobs:
         run: node scripts/prepare-artwork-benchmark.mjs --confirm-public --count 16 --output _work/artwork-suite
       - name: Render native PNG contact sheets and verify saved pixels
         run: python scripts/benchmark-artwork-atlas.py --confirm-public --synthetic-fixture --suite _work/artwork-suite/suite.json --output _work/artwork-benchmark --samples 2
+      - name: Export verified native PNG WebP ICO asset bundles
+        run: python scripts/export-artwork-assets.py --confirm-public export --suite _work/artwork-suite/suite.json --benchmark _work/artwork-benchmark --output _work/artwork-assets
+      - name: Independently re-read every saved image asset
+        run: python scripts/export-artwork-assets.py --confirm-public verify --bundle _work/artwork-assets
+      - name: Install browser test runtime
+        run: |
+          python -m pip install --disable-pip-version-check "playwright==1.57.0"
+          python -m playwright install --with-deps chromium
+      - name: Browser filtering and PNG WebP pixel readback
+        run: python tests/browser/artwork-assets-smoke.py --bundle _work/artwork-assets
       - name: Upload benchmark evidence (partial runs carry failure.json, not report.json)
         if: always()
         uses: actions/upload-artifact@v6
@@ -65,5 +81,6 @@ jobs:
           path: |
             _work/artwork-suite
             _work/artwork-benchmark
+            _work/artwork-assets
           if-no-files-found: warn
           retention-days: 14

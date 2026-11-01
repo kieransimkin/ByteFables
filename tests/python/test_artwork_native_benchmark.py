@@ -8,7 +8,8 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
+from types import SimpleNamespace
 import wave
 
 from PIL import Image
@@ -17,7 +18,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / 'integrations' / 'framerudiments'))
 from tools.artwork_native_benchmark import (
     BACKGROUND, SUITE_SCHEMA, BenchmarkError, load_suite, run_benchmark,
-    create_fixture_clock, project_for_page, verify_composited_page,
+    create_fixture_clock, project_for_page, verify_composited_page, _render_page,
 )
 from tools.artwork_atlas_readback import AtlasReadbackError, readback_artwork_atlas
 from bytefables_framerudiments.artwork import ArtworkRenderer, BRIDGE
@@ -79,7 +80,18 @@ class InputBoundaries(unittest.TestCase):
             self.assertEqual(project['clock']['status'],'synthetic')
             self.assertEqual(project['background'],{'colour':'#111827'})
             self.assertNotIn('post_effects',project)
+            self.assertEqual(project['render_quality'], {'enabled': False})
             self.assertEqual(project['audio']['source']['sha256'],'ab'*32)
+
+    def test_native_setup_rejects_implicit_supersampling_before_composition(self):
+        # Failure-path check, not a simulated successful native render.
+        with tempfile.TemporaryDirectory() as tmp:
+            for spatial, temporal in ((4, 1), (1, 8)):
+                project = SimpleNamespace(output_quality=SimpleNamespace(vector_scale=spatial, time_samples=temporal))
+                api = SimpleNamespace(Project=SimpleNamespace(load=lambda _path: project), Compositor=Mock())
+                with self.assertRaisesRegex(BenchmarkError, 'disable spatial and temporal'):
+                    _render_page(api, {}, Path(tmp), fixture_plan()['pages'][0], 1)
+                api.Compositor.assert_not_called()
 
     def test_suite_rejects_changed_hash_traversal_and_duplicate_cases(self):
         for mutation in ('hash','path','duplicate','public','count','budget','extra'):
